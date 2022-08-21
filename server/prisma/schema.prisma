@@ -1,0 +1,409 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  String                @id @default(uuid())
+  idx                 Int                   @unique @default(autoincrement())
+  name                String
+  email               String                @unique
+  password            String
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @default(now())
+  Company             Company[]
+  Outlet              Outlet[]
+  Product             Product[]
+  DetailCompany       DetailCompany[]
+  MRole               MRole?                @relation(fields: [mRoleId], references: [id])
+  mRoleId             String?
+  Employee            Employee[]
+  Category            Category[]
+  PaymentMethod       PaymentMethod[]
+  Bill                Bill[]
+  Device              Device[]
+  ProductImage        ProductImage[]
+  ProductOutlet       ProductOutlet[]
+  PaymentMethodOutlet PaymentMethodOutlet[]
+}
+
+model Company {
+  id                  String                @id @default(uuid())
+  idx                 Int                   @unique @default(autoincrement())
+  name                String
+  User                User?                 @relation(fields: [userId], references: [id])
+  userId              String?
+  Outlet              Outlet[]
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @default(now())
+  Customer            Customer[]
+  DetailCompany       DetailCompany[]
+  Category            Category[]
+  Product             Product[]
+  PaymentMethod       PaymentMethod[]
+  Bill                Bill[]
+  Device              Device[]
+  address             String?
+  phone               String?
+  email               String?
+  logo                String?
+  logoUrl             String?
+  ProductOutlet       ProductOutlet[]
+  PaymentMethodOutlet PaymentMethodOutlet[]
+  Employee            Employee[]
+}
+
+model DetailCompany {
+  id              String       @id @default(uuid())
+  idx             Int          @unique @default(autoincrement())
+  nameOwner       String
+  address         String
+  phone           String
+  numberEmployees Int
+  User            User?        @relation(fields: [userId], references: [id])
+  userId          String?
+  MJeniUsaha      MJenisUsaha? @relation(fields: [mJenisUsahaId], references: [id])
+  mJenisUsahaId   String?
+  Company         Company?     @relation(fields: [companyId], references: [id])
+  companyId       String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @default(now())
+  logo            String?
+}
+
+model Device {
+  id        String     @id @default(uuid())
+  idx       Int        @unique @default(autoincrement())
+  deviceId  String     @unique
+  name      String
+  User      User?      @relation(fields: [userId], references: [id])
+  userId    String?
+  Outlet    Outlet?    @relation(fields: [outletId], references: [id])
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @default(now())
+  outletId  String?
+  Company   Company?   @relation(fields: [companyId], references: [id])
+  Employee  Employee[]
+  companyId String?
+  Bill      Bill[]
+}
+
+model Outlet {
+  id                  String                @id @default(uuid())
+  idx                 Int                   @unique @default(autoincrement())
+  name                String
+  User                User?                 @relation(fields: [userId], references: [id])
+  userId              String?
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @default(now())
+  Company             Company?              @relation(fields: [companyId], references: [id])
+  companyId           String?
+  Product             Product[]
+  Employee            Employee[]
+  Bill                Bill[]
+  address             String?
+  phone               String?
+  email               String?
+  logo                String?
+  logoUrl             String?
+  Device              Device[]
+  Category            Category[]
+  ProductOutlet       ProductOutlet[]
+  PaymentMethodOutlet PaymentMethodOutlet[]
+}
+
+model Product {
+  id             String          @id @default(uuid())
+  idx            Int             @unique @default(autoincrement())
+  name           String
+  price          Int
+  description    String?         @db.LongText
+  isCustomPrice  Boolean         @default(false)
+  User           User?           @relation(fields: [userId], references: [id])
+  userId         String?
+  Outlet         Outlet?         @relation(fields: [outletId], references: [id])
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @default(now())
+  outletId       String?
+  Category       Category?       @relation(fields: [categoryId], references: [id])
+  categoryId     String?
+  Stock          Stock[]
+  CustomPrice    CustomPrice[]
+  Favorite       Favorite[]
+  Company        Company?        @relation(fields: [companyId], references: [id])
+  companyId      String?
+  Order          Order[]
+  ProductImage   ProductImage?   @relation(fields: [productImageId], references: [id])
+  productImageId String?
+  ProductOutlet  ProductOutlet[]
+}
+
+model ProductImage {
+  id        String    @id @default(uuid())
+  idx       Int       @unique @default(autoincrement())
+  name      String
+  url       String
+  Product   Product[]
+  productId String?
+  User      User?     @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now())
+  userId    String?
+}
+
+model ProductOutlet {
+  id        String   @id @default(uuid())
+  idx       Int      @unique @default(autoincrement())
+  User      User?    @relation(fields: [userId], references: [id])
+  Company   Company? @relation(fields: [companyId], references: [id])
+  Product   Product? @relation(fields: [productId], references: [id])
+  Outlet    Outlet?  @relation(fields: [outletId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  userId    String?
+  companyId String?
+  productId String?
+  outletId  String?
+}
+
+model CustomPrice {
+  id        String   @id @default(uuid())
+  idx       Int      @unique @default(autoincrement())
+  name      String?
+  price     String?
+  Product   Product? @relation(fields: [productId], references: [id])
+  productId String?
+}
+
+model Category {
+  id        String    @id @default(uuid())
+  idx       Int       @unique @default(autoincrement())
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now())
+  Product   Product[]
+  Company   Company?  @relation(fields: [companyId], references: [id])
+  User      User?     @relation(fields: [userId], references: [id])
+  Outlet    Outlet?   @relation(fields: [outletId], references: [id])
+  companyId String?
+  userId    String?
+  outletId  String?
+}
+
+model Stock {
+  id        String   @id @default(uuid())
+  idx       Int      @unique @default(autoincrement())
+  productId String
+  outletId  String
+  quantity  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  Product   Product  @relation(fields: [productId], references: [id])
+}
+
+model Favorite {
+  id        String   @id @default(uuid())
+  idx       Int      @unique @default(autoincrement())
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  Product   Product  @relation(fields: [productId], references: [id])
+}
+
+model Bill {
+  id         String    @id @default(uuid())
+  idx        Int       @unique @default(autoincrement())
+  totalQty   Int?
+  totalPrice Int?
+  User       User?     @relation(fields: [userId], references: [id])
+  Company    Company?  @relation(fields: [companyId], references: [id])
+  Outlet     Outlet?   @relation(fields: [outletId], references: [id])
+  Employee   Employee? @relation(fields: [employeeId], references: [id])
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @default(now())
+  userId     String?
+  companyId  String?
+  outletId   String?
+  employeeId String?
+  Order      Order[]
+  Cashier    Cashier?  @relation(fields: [cashierId], references: [id])
+  cashierId  String?
+  discount   String?
+  tax        String?
+  payment    Int?
+  change     Int?
+  Customer   Customer? @relation(fields: [customerId], references: [id])
+  customerId String?
+  Device     Device?   @relation(fields: [deviceId], references: [id])
+  deviceId   String?
+}
+
+model Order {
+  id        String   @id @default(uuid())
+  idx       Int      @unique @default(autoincrement())
+  quantity  Int?
+  note      String?
+  total     String?
+  discount  String?
+  tax       String?
+  Bill      Bill?    @relation(fields: [billId], references: [id])
+  Product   Product? @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  productId String?
+  billId    String?
+}
+
+model OrderHistory {
+  id        String   @id @default(uuid())
+  idx       Int      @unique @default(autoincrement())
+  userId    String
+  productId String
+  quantity  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model Customer {
+  id        String   @id @default(uuid())
+  idx       Int      @unique @default(autoincrement())
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  Company   Company? @relation(fields: [companyId], references: [id])
+  companyId String?
+  Bill      Bill[]
+}
+
+model Employee {
+  id        String    @id @default(uuid())
+  idx       Int       @unique @default(autoincrement())
+  name      String?
+  password  String?
+  User      User?     @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now())
+  Outlet    Outlet?   @relation(fields: [outletId], references: [id])
+  outletId  String?
+  userId    String?
+  Bill      Bill[]
+  Cashier   Cashier[]
+  Device    Device?   @relation(fields: [deviceId], references: [id])
+  Company   Company?  @relation(fields: [companyId], references: [id])
+  deviceId  String?
+  companyId String?
+}
+
+model Cashier {
+  id         String    @id @default(uuid())
+  idx        Int       @unique @default(autoincrement())
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @default(now())
+  Employee   Employee? @relation(fields: [employeeId], references: [id])
+  isOwner    Boolean   @default(false)
+  employeeId String?
+  Bill       Bill[]
+}
+
+model PaymentMethod {
+  id          String   @id @default(uuid())
+  idx         Int      @unique @default(autoincrement())
+  name        String?
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  User        User?    @relation(fields: [userId], references: [id])
+  userId      String?
+  Company     Company? @relation(fields: [companyId], references: [id])
+  companyId   String?
+}
+
+model PaymentMethodOutlet {
+  id          String   @id @default(uuid())
+  idx         Int      @unique @default(autoincrement())
+  name        String?
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  Outlet      Outlet?  @relation(fields: [outletId], references: [id])
+  outletId    String?
+  User        User?    @relation(fields: [userId], references: [id])
+  userId      String?
+  Company     Company? @relation(fields: [companyId], references: [id])
+  companyId   String?
+}
+
+//  *** MASTER MODEL ***
+model MOrderStatus {
+  id        String   @id @default(uuid())
+  idx       Int      @unique @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model MRole {
+  id        String   @id @default(uuid())
+  name      String
+  idx       Int      @unique @default(autoincrement())
+  User      User[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model MJenisUsaha {
+  id            String          @id @default(uuid())
+  idx           Int             @unique @default(autoincrement())
+  name          String
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @default(now())
+  DetailCompany DetailCompany[]
+}
+
+model MKategori {
+  id        String   @id @default(uuid())
+  idx       Int      @unique @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model MKota {
+  id        String   @id @default(uuid())
+  idx       Int      @unique @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model MProvinsi {
+  id        String   @id @default(uuid())
+  idx       Int      @unique @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model MKecamatan {
+  id        String   @id @default(uuid())
+  idx       Int      @unique @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model MPaymentMethod {
+  id        String   @id @default(uuid())
+  idx       Int      @unique @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
