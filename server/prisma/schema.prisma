@@ -12,7 +12,6 @@ datasource db {
 
 model User {
   id                  String                @id @default(uuid())
-  idx                 Int                   @unique @default(autoincrement())
   name                String
   email               String                @unique
   password            String
@@ -32,11 +31,12 @@ model User {
   ProductImage        ProductImage[]
   ProductOutlet       ProductOutlet[]
   PaymentMethodOutlet PaymentMethodOutlet[]
+  Customer            Customer[]
+  CustomerCompany     CustomerCompany[]
 }
 
 model Company {
   id                  String                @id @default(uuid())
-  idx                 Int                   @unique @default(autoincrement())
   name                String
   User                User?                 @relation(fields: [userId], references: [id])
   userId              String?
@@ -58,11 +58,11 @@ model Company {
   ProductOutlet       ProductOutlet[]
   PaymentMethodOutlet PaymentMethodOutlet[]
   Employee            Employee[]
+  CustomerCompany     CustomerCompany[]
 }
 
 model DetailCompany {
   id              String       @id @default(uuid())
-  idx             Int          @unique @default(autoincrement())
   nameOwner       String
   address         String
   phone           String
@@ -80,7 +80,6 @@ model DetailCompany {
 
 model Device {
   id        String     @id @default(uuid())
-  idx       Int        @unique @default(autoincrement())
   deviceId  String     @unique
   name      String
   User      User?      @relation(fields: [userId], references: [id])
@@ -97,7 +96,6 @@ model Device {
 
 model Outlet {
   id                  String                @id @default(uuid())
-  idx                 Int                   @unique @default(autoincrement())
   name                String
   User                User?                 @relation(fields: [userId], references: [id])
   userId              String?
@@ -121,7 +119,6 @@ model Outlet {
 
 model Product {
   id             String          @id @default(uuid())
-  idx            Int             @unique @default(autoincrement())
   name           String
   price          Int
   description    String?         @db.LongText
@@ -147,7 +144,6 @@ model Product {
 
 model ProductImage {
   id        String    @id @default(uuid())
-  idx       Int       @unique @default(autoincrement())
   name      String
   url       String
   Product   Product[]
@@ -160,13 +156,12 @@ model ProductImage {
 
 model ProductOutlet {
   id        String   @id @default(uuid())
-  idx       Int      @unique @default(autoincrement())
   User      User?    @relation(fields: [userId], references: [id])
   Company   Company? @relation(fields: [companyId], references: [id])
   Product   Product? @relation(fields: [productId], references: [id])
   Outlet    Outlet?  @relation(fields: [outletId], references: [id])
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   userId    String?
   companyId String?
   productId String?
@@ -175,7 +170,6 @@ model ProductOutlet {
 
 model CustomPrice {
   id        String   @id @default(uuid())
-  idx       Int      @unique @default(autoincrement())
   name      String?
   price     String?
   Product   Product? @relation(fields: [productId], references: [id])
@@ -184,7 +178,6 @@ model CustomPrice {
 
 model Category {
   id        String    @id @default(uuid())
-  idx       Int       @unique @default(autoincrement())
   name      String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now())
@@ -199,28 +192,25 @@ model Category {
 
 model Stock {
   id        String   @id @default(uuid())
-  idx       Int      @unique @default(autoincrement())
   productId String
   outletId  String
   quantity  String
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   Product   Product  @relation(fields: [productId], references: [id])
 }
 
 model Favorite {
   id        String   @id @default(uuid())
-  idx       Int      @unique @default(autoincrement())
   userId    String
   productId String
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   Product   Product  @relation(fields: [productId], references: [id])
 }
 
 model Bill {
   id         String    @id @default(uuid())
-  idx        Int       @unique @default(autoincrement())
   totalQty   Int?
   totalPrice Int?
   User       User?     @relation(fields: [userId], references: [id])
@@ -248,7 +238,6 @@ model Bill {
 
 model Order {
   id        String   @id @default(uuid())
-  idx       Int      @unique @default(autoincrement())
   quantity  Int?
   note      String?
   total     String?
@@ -257,35 +246,51 @@ model Order {
   Bill      Bill?    @relation(fields: [billId], references: [id])
   Product   Product? @relation(fields: [productId], references: [id])
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   productId String?
   billId    String?
 }
 
 model OrderHistory {
   id        String   @id @default(uuid())
-  idx       Int      @unique @default(autoincrement())
   userId    String
   productId String
   quantity  String
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Customer {
-  id        String   @id @default(uuid())
-  idx       Int      @unique @default(autoincrement())
-  userId    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-  Company   Company? @relation(fields: [companyId], references: [id])
-  companyId String?
-  Bill      Bill[]
+  id              String            @id @default(uuid())
+  userId          String
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @default(now())
+  Company         Company?          @relation(fields: [companyId], references: [id])
+  companyId       String?
+  Bill            Bill[]
+  User            User?             @relation(fields: [userId], references: [id])
+  name            String?
+  email           String?
+  address         String?
+  whatsapp        String?
+  phone           String?
+  CustomerCompany CustomerCompany[]
+}
+
+model CustomerCompany {
+  id         String    @id @default(uuid())
+  Customer   Customer? @relation(fields: [customerId], references: [id])
+  customerId String?
+  Company    Company?  @relation(fields: [companyId], references: [id])
+  companyId  String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  User       User?     @relation(fields: [userId], references: [id])
+  userId     String?
 }
 
 model Employee {
   id        String    @id @default(uuid())
-  idx       Int       @unique @default(autoincrement())
   name      String?
   password  String?
   User      User?     @relation(fields: [userId], references: [id])
@@ -304,7 +309,6 @@ model Employee {
 
 model Cashier {
   id         String    @id @default(uuid())
-  idx        Int       @unique @default(autoincrement())
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @default(now())
   Employee   Employee? @relation(fields: [employeeId], references: [id])
@@ -315,7 +319,6 @@ model Cashier {
 
 model PaymentMethod {
   id          String   @id @default(uuid())
-  idx         Int      @unique @default(autoincrement())
   name        String?
   description String?
   createdAt   DateTime @default(now())
@@ -328,7 +331,6 @@ model PaymentMethod {
 
 model PaymentMethodOutlet {
   id          String   @id @default(uuid())
-  idx         Int      @unique @default(autoincrement())
   name        String?
   description String?
   createdAt   DateTime @default(now())
@@ -344,24 +346,22 @@ model PaymentMethodOutlet {
 //  *** MASTER MODEL ***
 model MOrderStatus {
   id        String   @id @default(uuid())
-  idx       Int      @unique @default(autoincrement())
   name      String
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model MRole {
-  id        String   @id @default(uuid())
-  name      String
-  idx       Int      @unique @default(autoincrement())
+  id   String @id @default(uuid())
+  name String
+
   User      User[]
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model MJenisUsaha {
   id            String          @id @default(uuid())
-  idx           Int             @unique @default(autoincrement())
   name          String
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @default(now())
@@ -370,40 +370,35 @@ model MJenisUsaha {
 
 model MKategori {
   id        String   @id @default(uuid())
-  idx       Int      @unique @default(autoincrement())
   name      String
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model MKota {
   id        String   @id @default(uuid())
-  idx       Int      @unique @default(autoincrement())
   name      String
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model MProvinsi {
   id        String   @id @default(uuid())
-  idx       Int      @unique @default(autoincrement())
   name      String
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model MKecamatan {
   id        String   @id @default(uuid())
-  idx       Int      @unique @default(autoincrement())
   name      String
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model MPaymentMethod {
   id        String   @id @default(uuid())
-  idx       Int      @unique @default(autoincrement())
   name      String
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

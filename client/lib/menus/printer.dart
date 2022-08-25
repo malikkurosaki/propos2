@@ -10,7 +10,7 @@ class Printer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(children: [
-      
+
       GetPlatform.isAndroid ? SelectPrinterAndroid() : SelectPrinterWeb(),
 
     ]);

@@ -8,6 +8,7 @@ import 'package:propos/utils/router_api.dart';
 import 'package:propos/utils/struk_tiket.dart';
 import 'package:propos/utils/val.dart';
 import 'package:propos/utils/val_def.dart';
+import 'package:propos/utils/vl.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:get/get.dart';
 
@@ -271,7 +272,7 @@ class Struk extends StatelessWidget {
                           ],
                         ),
                         onPressed: () async {
-                          if (Val.printerDevice.value.val.isEmpty) {
+                          if (Vl.selectedPrinter.val.isEmpty) {
                             SmartDialog.showToast("select printer first");
                             return;
                           }

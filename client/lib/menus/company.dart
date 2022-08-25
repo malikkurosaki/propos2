@@ -45,128 +45,11 @@ class Company extends StatelessWidget {
                 child: Row(
                   children: [
                     Expanded(
-                      child: Card(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                'List Company',
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            Flexible(
-                              child: Obx(
-                                () => ListView(
-                                  children: [
-                                    ..._companyList.map(
-                                      (e) {
-                                        return ListTile(
-                                          leading: Checkbox(
-                                            value: false,
-                                            onChanged: (value) {
-                                              
-                                            },
-                                          ),
-                                          title: Text(e['name']),
-                                          trailing: PopupMenuButton(
-                                            onSelected: (value) {},
-                                            itemBuilder: (BuildContext context) => [
-                                              ..._popMenu.map(
-                                                (e) {
-                                                  return PopupMenuItem(
-                                                    value: e['title'],
-                                                    child: Text(e['title'].toString()),
-                                                  );
-                                                },
-                                              ).toList(),
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      child: _listDisplay(media),
                     ),
-                    SizedBox(
-                      width: media.isMobile ? Get.width : 360,
-                      child: Builder(
-                        builder: (context) {
-                          return Column(
-                            children: [
-                              Flexible(
-                                child: Card(
-                                  child: ListView(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                          "Create Company",
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: TextField(
-                                          controller: _conName,
-                                          decoration: InputDecoration(
-                                            prefixIcon: Icon(Icons.home_work_rounded),
-                                            hintText: 'Company Name',
-                                            border: OutlineInputBorder(
-                                              borderSide: BorderSide.none,
-                                            ),
-                                            filled: true,
-                                          ),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: MaterialButton(
-                                          color: Colors.cyan,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(10.0),
-                                            child: Center(
-                                              child: Text(
-                                                "Create",
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          onPressed: () async {
-                                            final body = <String, String>{
-                                              'name': _conName.text,
-                                            };
-
-                                            if (body.values.contains("")) {
-                                              SmartDialog.showToast("Please fill all field");
-                                              return;
-                                            }
-
-                                            final kirim = await RouterApi.companyCreate().postData(body);
-                                            await _loadCompany();
-                                          },
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              )
-                            ],
-                          );
-                        },
-                      ),
-                    )
+                    Visibility(
+                      visible: !media.isMobile,
+                      child: _create(media))
                   ],
                 ),
               ),
@@ -175,5 +58,142 @@ class Company extends StatelessWidget {
         ),
       );
     });
+  }
+
+  Widget _create(SizingInformation media) {
+    return SizedBox(
+      width: media.isMobile ? Get.width : 360,
+      child: Builder(
+        builder: (context) {
+          return Column(
+            children: [
+              Flexible(
+                child: Card(
+                  child: ListView(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "Create Company",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextField(
+                          controller: _conName,
+                          decoration: InputDecoration(
+                            prefixIcon: Icon(Icons.home_work_rounded),
+                            hintText: 'Company Name',
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                            ),
+                            filled: true,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: MaterialButton(
+                          color: Colors.cyan,
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Center(
+                              child: Text(
+                                "Create",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                          onPressed: () async {
+                            final body = <String, String>{
+                              'name': _conName.text,
+                            };
+
+                            if (body.values.contains("")) {
+                              SmartDialog.showToast("Please fill all field");
+                              return;
+                            }
+
+                            final kirim = await RouterApi.companyCreate().postData(body);
+                            await _loadCompany();
+                          },
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              )
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _listDisplay(SizingInformation media) {
+    return Scaffold(
+      floatingActionButton:! media.isMobile? null: FloatingActionButton(
+        onPressed: () {
+          Get.dialog(
+            Dialog(
+              child: _create(media),
+            )
+          );
+        },
+        child: Icon(Icons.add, color: Colors.white,),
+      ),
+      body: Card(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'List Company',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
+            Flexible(
+              child: Obx(
+                () => ListView(
+                  children: [
+                    ..._companyList.map(
+                      (e) {
+                        return ListTile(
+                          leading: Checkbox(
+                            value: false,
+                            onChanged: (value) {},
+                          ),
+                          title: Text(e['name']),
+                          trailing: PopupMenuButton(
+                            onSelected: (value) {},
+                            itemBuilder: (BuildContext context) => [
+                              ..._popMenu.map(
+                                (e) {
+                                  return PopupMenuItem(
+                                    value: e['title'],
+                                    child: Text(e['title'].toString()),
+                                  );
+                                },
+                              ).toList(),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

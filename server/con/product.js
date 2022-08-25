@@ -5,12 +5,23 @@ const _ = require('lodash');
 
 const getListProduct = expressAsyncHandler(async (req, res, next) => {
     const { userId, companyId, outletId } = req.query;
+
     if (userId == undefined) return res.status(401).send("user id tidak boleh kosong");
     const getListProduct = await prisma.product.findMany({
         where: {
-            userId: userId,
-            companyId: companyId,
-            outletId: outletId,
+            userId: {
+                equals: userId
+            },
+            companyId: {
+                equals: companyId
+            },
+            ProductOutlet: {
+                every: {
+                    outletId: {
+                        equals: outletId
+                    }
+                }
+            }
         },
         select: {
             id: true,
@@ -45,13 +56,19 @@ const getProduct = expressAsyncHandler(async (req, res, next) => {
 
 // menyediakan produk saat catagory di pilih
 const getProductByCategory = expressAsyncHandler(async (req, res, next) => {
-    const {categoryId, userId, companyId, outletId} = req.query;
+    const { categoryId, userId, companyId, outletId } = req.query;
     const getProductByCategory = await prisma.product.findMany({
         where: {
             categoryId: categoryId ?? undefined,
             userId: userId,
             companyId: companyId,
-            outletId: outletId,
+            ProductOutlet: {
+                every: {
+                    outletId: {
+                        equals: outletId
+                    }
+                }
+            }
         },
         select: {
             id: true,
@@ -97,6 +114,8 @@ const createProduct = expressAsyncHandler(async (req, res, next) => {
         productImageId,
     } = req.body;
 
+    console.log(outletList)
+
     // [{ "id": "235d21e5-fd30-4a83-a166-fdcfc9803f36", "name": "baru tiga" }, { "id": "2d1c6cec-b8ad-48f5-b8fb-f4b2314d7967", "name": "baru nih" }, { "id": "7b60b369-584f-4aaf-a7a9-7791b214212c", "name": "baru dua" }, { "id": "db2dce47-d655-4fe4-a4f0-96bb53d06b2f", "name": "usahaku" }]
 
     const createProduct = await prisma.product.create({
@@ -111,7 +130,7 @@ const createProduct = expressAsyncHandler(async (req, res, next) => {
             ProductOutlet: {
                 createMany: {
                     data: JSON.parse(outletList).map(outlet => ({
-                        outletId: outlet.id,
+                        outletId: outlet,
                         userId: userId,
                         companyId: companyId,
                     }
@@ -225,7 +244,7 @@ const productbyUserId = expressAsyncHandler(async (req, res, next) => {
             userId: userId
         },
         orderBy: {
-            idx: "asc"
+            createdAt: "asc"
         },
         select: {
             id: true,

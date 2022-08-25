@@ -10,4 +10,6 @@ class RouterAuth {
 
     static Future < http.Response > registerDetail(Map body) => http.post(Uri.parse("${Conf.host}/auth/register-detail"), body: body);
 
+    static Future < http.Response > loginDevice(Map body) => http.post(Uri.parse("${Conf.host}/auth/login-device"), body: body);
+
 }

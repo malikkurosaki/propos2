@@ -10,8 +10,8 @@ class Val {
   static final listorder = [].val("Val.listorder").obs;
   static final listSavedOrder = [].val("Val.listSavedOrder").obs;
   static final cashierlistProduct = [].val("Val.cashierlistProduct").obs;
-  static final listPrinter = [].val("Val.listPrinter2").obs;
-  static final printerDevice = {}.val("Val.printer2").obs;
+  // static final listPrinter = [].val("Val.listPrinter2").obs;
+  // static final printerDevice = {}.val("Val.printer2").obs;
   static final change = "".val("Val.change").obs;
   static final billId = "".val("Val.billId").obs;
   static final cashier = {}.val("Val.cashier").obs;
@@ -30,8 +30,8 @@ class Val {
     Val.listorder.value.val = [];
     Val.listSavedOrder.value.val = [];
     Val.cashierlistProduct.value.val = [];
-    Val.listPrinter.value.val = [];
-    Val.printerDevice.value.val = {};
+    // Val.listPrinter.value.val = [];
+    // Val.printerDevice.value.val = {};
     Val.printerWeb.value.val = [];
     Val.change.value.val = "";
     Val.billId.value.val = "";

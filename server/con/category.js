@@ -67,7 +67,7 @@ const getAllCategoryByCompany = expressAsyncHandler(async (req, res) => {
             userId: userId
         },
         orderBy: {
-            idx: 'asc',
+            createdAt: 'asc',
         },
         select: {
             id: true,

@@ -84,7 +84,7 @@ const getListOutletCompany = expressAsyncHandler(async (req, res, next) => {
             userId: userId,
         },
         orderBy: {
-            idx: 'asc',
+            createdAt: 'asc',
         },
         select: {
             id: true,
@@ -111,7 +111,7 @@ const outletByCompanyId = expressAsyncHandler(async (req, res, next) => {
             companyId: cusCompanyId,
         },
         orderBy: {
-            idx: 'asc',
+            createdAt: 'asc',
         },
         select: {
             id: true,

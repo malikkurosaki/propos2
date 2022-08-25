@@ -5,6 +5,7 @@ import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:propos/utils/val.dart';
 import 'package:propos/utils/val_def.dart';
+import 'package:propos/utils/vl.dart';
 
 class StrukTiket {
   List<int> textCenter(Generator generator, String text) => generator.text(text,
@@ -19,8 +20,8 @@ class StrukTiket {
     final generator = Generator(PaperSize.mm58, profile);
     List<int> bytes = [];
 
-    bytes += textCenter(generator, ValDef.companyDefMap.value.val['name'].toString());
-    bytes += textCenter(generator, ValDef.outletDefMap.value.val['name'].toString());
+    bytes += textCenter(generator, Vl.defCompany.val['name'].toString());
+    bytes += textCenter(generator, Vl.defOutlet.val['name'].toString());
     bytes += textCenter(generator, "Jalan Hasanudin No 38 Denpasar - Bali");
     bytes += textCenter(generator, "Telp: 089697338821");
     bytes += generator.hr();
@@ -48,7 +49,7 @@ class StrukTiket {
     bytes += textLeft(generator, "Total  : ${Val.totalOrder.toString()}");
     bytes += textLeft(generator, "Kembali: ${Val.change.value.val}");
     bytes += generator.hr();
-    bytes += textCenter(generator, "Terima Kasih telah berbelanja di ${ValDef.outletDefMap.value.val['name']}");
+    bytes += textCenter(generator, "Terima Kasih telah berbelanja di ${Vl.defOutlet.val['name']}");
     bytes += textCenter(generator, "Selamat berbelanja kembali");
     bytes += generator.feed(2);
     bytes += generator.cut();
@@ -58,15 +59,15 @@ class StrukTiket {
 
   toPrint() async {
     SmartDialog.showLoading();
-    if (Val.printerDevice.value.val.isEmpty) {
+    if (Vl.selectedPrinter.val.isEmpty) {
       SmartDialog.showToast("Printer belum dipilih");
       return;
     }
     final printerManager = besc.PrinterBluetoothManager();
     final printer = besc.PrinterBluetooth(bd.BluetoothDevice.fromJson({
-      "id": Val.printerDevice.value.val['id'],
-      "name": Val.printerDevice.value.val['name'],
-      "address": Val.printerDevice.value.val['address'],
+      "id": Vl.selectedPrinter.val['id'],
+      "name": Vl.selectedPrinter.val['name'],
+      "address": Vl.selectedPrinter.val['address'],
     }));
     printerManager.selectPrinter(printer);
     final besc.PosPrintResult res = await printerManager.printTicket(await tiket());

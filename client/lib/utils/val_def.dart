@@ -10,8 +10,8 @@ class ValDef {
   static final paymentMethodList = [].val("ValDef.paymentMethodList").obs;
   static final deviceList = [].val("ValDef.deviceList").obs;
   static final userMap = {}.val('ValDef.user').obs;
-  static final companyDefMap = {}.val('ValDef.defCompany').obs;
-  static final outletDefMap = {}.val('ValDef.defOutlet').obs;
+  // static final companyDefMap = {}.val('ValDef.defCompany').obs;
+  // static final outletDefMap = {}.val('ValDef.defOutlet').obs;
   static final userDefMap = {}.val('ValDef.defUser').obs;
 
   static clear() {
@@ -23,8 +23,8 @@ class ValDef {
     ValDef.paymentMethodList.value.val = [];
     ValDef.deviceList.value.val = [];
     ValDef.userMap.value.val = {};
-    ValDef.companyDefMap.value.val = {};
-    ValDef.outletDefMap.value.val = {};
+    // ValDef.companyDefMap.value.val = {};
+    // ValDef.outletDefMap.value.val = {};
     ValDef.userDefMap.value.val = {};
   }
 }

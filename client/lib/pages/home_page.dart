@@ -6,6 +6,7 @@ import 'package:propos/pages.dart';
 import 'package:propos/utils/router_api.dart';
 import 'package:propos/utils/val.dart';
 import 'package:propos/utils/val_def.dart';
+import 'package:propos/utils/vl.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -98,40 +99,40 @@ class HomePage extends StatelessWidget {
           child: ListView(
             controller: ScrollController(),
             children: [
-              Obx(() => DrawerHeader(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          _drawerHeader['companyName'].toString(),
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          _drawerHeader['outletName'].toString(),
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text('Probus System'),
-                        Text('Version 1.0.0'),
-                        // Text(Val.userId.val),
-                        Align(
-                          alignment: Alignment.bottomRight,
-                          child: TextButton(
-                              onPressed: () {
-                                Get.toNamed(Pages.businessDetailPage().route, arguments: _userData);
-                              },
-                              child: Text("Detail")),
-                        )
-                      ],
+              DrawerHeader(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      Vl.defCompany.val['name'].toString(),
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  )),
+                    Text(
+                      Vl.defOutlet.val['name'].toString(),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text('Probus System'),
+                    Text('Version 1.0.0'),
+                    // Text(Val.userId.val),
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: TextButton(
+                          onPressed: () {
+                            Get.toNamed(Pages.businessDetailPage().route, arguments: _userData);
+                          },
+                          child: Text("Detail")),
+                    )
+                  ],
+                ),
+              ),
               Menus.listButton(media),
               ListTile(
                 leading: Icon(Icons.exit_to_app),

@@ -1,27 +1,47 @@
-import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:esc_pos_bluetooth/esc_pos_bluetooth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
 import 'package:propos/utils/val.dart';
+import 'package:propos/utils/vl.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
 class SelectPrinterAndroid extends StatelessWidget {
   SelectPrinterAndroid({Key? key}) : super(key: key);
   final _printerManager = PrinterBluetoothManager();
+  final _listPrinter = [].obs;
+  final _selectedPrinter = {}.obs;
 
   _onLoad() async {
     await 1.delay();
+
+    if (Vl.selectedPrinter.val.isNotEmpty) {
+      _selectedPrinter.assignAll(Vl.selectedPrinter.val);
+    }
+
+    if(Vl.listPrinter.val.isNotEmpty){
+      _listPrinter.assignAll(Vl.listPrinter.val);
+    }
+
     SmartDialog.showLoading();
     _printerManager.scanResults.listen((event) async {
-      Val.listPrinter.value.val = event
+      final printers = event
           .map((e) => {
                 'name': e.name,
                 'address': e.address,
                 'type': e.type,
               })
           .toList();
-      Val.listPrinter.refresh();
+      _listPrinter.assignAll(printers);
+      Vl.listPrinter.val = printers;
+      // Val.listPrinter.value.val = event
+      //     .map((e) => {
+      //           'name': e.name,
+      //           'address': e.address,
+      //           'type': e.type,
+      //         })
+      //     .toList();
+      // Val.listPrinter.refresh();
 
       // _printers.value.val = event;
       // _printers.refresh();
@@ -38,7 +58,7 @@ class SelectPrinterAndroid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // _onLoad();
+    _onLoad();
     return Material(
       child: SafeArea(
         child: ResponsiveBuilder(
@@ -46,7 +66,7 @@ class SelectPrinterAndroid extends StatelessWidget {
             return Obx(
               () => Column(
                 children: [
-                  Val.printerDevice.value.val.isEmpty
+                  _selectedPrinter.isEmpty
                       ? Text(
                           "Please Select Printer",
                           style: TextStyle(
@@ -73,7 +93,7 @@ class SelectPrinterAndroid extends StatelessWidget {
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Text(
-                                        Val.printerDevice.value.val['name'].toString(),
+                                        _selectedPrinter['name'].toString(),
                                         style: TextStyle(fontSize: 16),
                                       ),
                                     ),
@@ -97,12 +117,11 @@ class SelectPrinterAndroid extends StatelessWidget {
                       ],
                     ),
                   ),
-                  for (final itm in Val.listPrinter.value.val)
+                  for (final itm in _listPrinter)
                     Column(
                       children: [
                         ListTile(
-                          leading: Val.printerDevice.value.val.isNotEmpty &&
-                                  Val.printerDevice.value.val['address'] == itm['address']
+                          leading: _selectedPrinter.isNotEmpty && _selectedPrinter['address'] == itm['address']
                               ? Icon(
                                   Icons.check_circle,
                                   color: Colors.green,
@@ -111,8 +130,10 @@ class SelectPrinterAndroid extends StatelessWidget {
                           title: Text(itm['name']),
                           // subtitle: Text(itm.address!),
                           onTap: () async {
-                            Val.printerDevice.value.val.assignAll(itm);
-                            Val.printerDevice.refresh();
+                            _selectedPrinter.assignAll(itm);
+                            Vl.selectedPrinter.val = itm;
+                            // Val.printerDevice.value.val.assignAll(itm);
+                            // Val.printerDevice.refresh();
                           },
                         ),
                         Divider()

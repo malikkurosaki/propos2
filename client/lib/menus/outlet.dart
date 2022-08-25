@@ -11,11 +11,11 @@ import 'package:get/get.dart';
 class Outlet extends StatelessWidget {
   Outlet({Key? key}) : super(key: key);
   final _eidtVal = "".obs;
-  final _listOutlet = [].obs;
+  final _listCompany = [].obs;
 
   _loadOutlet() async {
     final data = await RouterApi.outletCompanyList().getData();
-    if (data.statusCode == 200) _listOutlet.assignAll(jsonDecode(data.body));
+    if (data.statusCode == 200) _listCompany.assignAll(jsonDecode(data.body));
   }
 
   @override
@@ -32,185 +32,7 @@ class Outlet extends StatelessWidget {
                 child: Row(
                   children: [
                     Expanded(
-                      child: Card(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                // Expanded(
-                                //   child: Padding(
-                                //     padding: const EdgeInsets.all(8.0),
-                                //     child: Text(
-                                //       'List Outlet',
-                                //       style: TextStyle(
-                                //         fontSize: 16,
-                                //         fontWeight: FontWeight.bold,
-                                //       ),
-                                //     ),
-                                //   ),
-                                // ),
-                                Visibility(
-                                  visible: media.isMobile,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: IconButton(
-                                      icon: Icon(
-                                        Icons.add_circle,
-                                        color: Colors.cyan,
-                                      ),
-                                      onPressed: () {
-                                        Get.dialog(
-                                          SimpleDialog(
-                                            children: [_create(media)],
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Flexible(
-                              child: Obx(() => _listOutlet.isEmpty
-                                  ? Text("empty")
-                                  : SizedBox(
-                                      width: double.infinity,
-                                      child: ContainedTabBarView(
-                                        tabs: [
-                                          ..._listOutlet.map(
-                                            (e) {
-                                              return Tab(
-                                                child: Text(e['name'].toString()),
-                                              );
-                                            },
-                                          ),
-                                        ],
-                                        views: [
-                                          ..._listOutlet.map(
-                                            (e) {
-                                              return Container(
-                                                child: ListView(
-                                                  children: [
-                                                    ...(e['Outlet'] as List).map(
-                                                      (e) {
-                                                        return ListTile(
-                                                          leading: Icon(Icons.shopping_bag_outlined),
-                                                          title: Text(e['name']),
-                                                          trailing: PopupMenuButton(itemBuilder: (context) => [
-                                                            PopupMenuItem(child: Text('Edit'), value: 'edit'),
-                                                            PopupMenuItem(child: Text('Delete'), value: 'delete'),
-                                                          ],),
-                                                        );
-                                                      },
-                                                    ).toList(),
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    )),
-                            )
-                            // Flexible(
-                            //   child: Obx(
-                            //     () => ListView(
-                            //       children: [
-                            //         for (final outlet in _listOutlet)
-                            //           _eidtVal.value == outlet['id']
-                            //               ? Builder(builder: (context) {
-                            //                   final conName = TextEditingController(text: outlet['name']);
-                            //                   return Card(
-                            //                     child: ListTile(
-                            //                       leading: IconButton(
-                            //                           onPressed: () {
-                            //                             _eidtVal.value = "";
-                            //                           },
-                            //                           icon: Icon(
-                            //                             Icons.close,
-                            //                             color: Colors.pink,
-                            //                           )),
-                            //                       title: TextFormField(
-                            //                         controller: conName,
-                            //                         decoration: InputDecoration(
-                            //                           filled: true,
-                            //                           border: OutlineInputBorder(
-                            //                             borderSide: BorderSide.none,
-                            //                           ),
-                            //                           labelText: 'Nama Outlet',
-                            //                         ),
-                            //                       ),
-                            //                       trailing: IconButton(
-                            //                           onPressed: () async {
-                            //                             final body = {
-                            //                               'id': outlet['id'],
-                            //                               'name': conName.value.text,
-                            //                             };
-
-                            //                             if (body.values.contains("")) {
-                            //                               SmartDialog.showToast("Data tidak boleh kosong");
-                            //                               return;
-                            //                             }
-
-                            //                             await RouterApi.outletUpdate().putData(body);
-                            //                             await _loadOutlet();
-                            //                           },
-                            //                           icon: Icon(
-                            //                             Icons.save,
-                            //                             color: Colors.green,
-                            //                           )),
-                            //                     ),
-                            //                   );
-                            //                 })
-                            //               : ListTile(
-                            //                   leading: IconButton(
-                            //                     onPressed: () {
-                            //                       _eidtVal.value = outlet['id'];
-                            //                     },
-                            //                     icon: Icon(Icons.edit, color: Colors.cyan),
-                            //                   ),
-                            //                   title: Text(outlet['name'].toString()),
-                            //                   trailing: IconButton(
-                            //                     onPressed: () async {
-                            //                       Get.dialog(
-                            //                         AlertDialog(
-                            //                           content: Text('Are you sure?'),
-                            //                           actions: [
-                            //                             MaterialButton(
-                            //                               child: Text('Yes'),
-                            //                               onPressed: () async {
-                            //                                 final body = {
-                            //                                   "id": outlet['id'],
-                            //                                 };
-                            //                                 await RouterApi.outletDelete().deleteData(body);
-                            //                                 await _loadOutlet();
-                            //                                 Get.back();
-                            //                               },
-                            //                             ),
-                            //                             MaterialButton(
-                            //                               child: Text('No'),
-                            //                               onPressed: () {
-                            //                                 Get.back();
-                            //                               },
-                            //                             ),
-                            //                           ],
-                            //                         ),
-                            //                       );
-                            //                     },
-                            //                     icon: Icon(
-                            //                       Icons.delete,
-                            //                       color: Colors.pink,
-                            //                     ),
-                            //                   ),
-                            //                 ),
-                            //       ],
-                            //     ),
-                            //   ),
-                            // ),
-                          ],
-                        ),
-                      ),
+                      child: _listDisplay(media),
                     ),
                     Visibility(visible: !media.isMobile, child: Card(child: _create(media)))
                   ],
@@ -220,6 +42,123 @@ class Outlet extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget _listDisplay(SizingInformation media) {
+    return Scaffold(
+      floatingActionButton: !media.isMobile? null: FloatingActionButton(
+        child: Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
+        onPressed: () {
+          Get.dialog(
+            SimpleDialog(
+              children: [_create(media)],
+            ),
+          );
+        },
+      ),
+      body: Card(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Row(
+            //   children: [
+            //     Visibility(
+            //       visible: media.isMobile,
+            //       child: Padding(
+            //         padding: const EdgeInsets.all(8.0),
+            //         child: IconButton(
+            //           icon: Icon(
+            //             Icons.add_circle,
+            //             color: Colors.cyan,
+            //           ),
+            //           onPressed: () {
+            //             Get.dialog(
+            //               SimpleDialog(
+            //                 children: [_create(media)],
+            //               ),
+            //             );
+            //           },
+            //         ),
+            //       ),
+            //     ),
+            //   ],
+            // ),
+            Flexible(
+              child: Obx(() => _listCompany.isEmpty
+                  ? Text("empty")
+                  : SizedBox(
+                      width: double.infinity,
+                      child: ContainedTabBarView(
+                        tabs: [
+                          ..._listCompany.map(
+                            (e) {
+                              return Tab(
+                                child: Text(e['name'].toString()),
+                              );
+                            },
+                          ),
+                        ],
+                        views: [
+                          ..._listCompany.map(
+                            (e) {
+                              return Container(
+                                child: ListView(
+                                  children: [
+                                    ListTile(
+                                      leading: Checkbox(value: false, onChanged: (value){}),
+                                      title: TextField(
+                                        decoration: InputDecoration(
+                                          isDense: true,
+                                          filled: true,
+                                          hintText: 'Search',
+                                          prefixIcon: Icon(Icons.search),
+                                          suffixIcon: IconButton(
+                                            icon: Icon(Icons.clear),
+                                            onPressed: () {
+                                             
+                                            },
+                                          ),
+                                          border: OutlineInputBorder(
+                                            borderSide: BorderSide.none,
+                                          )
+                                        ),
+                                      )
+                                    ),
+                                    ...(e['Outlet'] as List).map(
+                                      (e) {
+                                        return ListTile(
+                                          leading: Checkbox(
+                                            value: false,
+                                            onChanged: (v) {
+                                              
+                                            },
+                                          ),
+                                          title: Text(e['name']),
+                                          trailing: PopupMenuButton(
+                                            itemBuilder: (context) => [
+                                              PopupMenuItem(child: Text('Edit'), value: 'edit'),
+                                              PopupMenuItem(child: Text('Delete'), value: 'delete'),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ).toList(),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    )),
+            )
+          ],
+        ),
+      ),
     );
   }
 

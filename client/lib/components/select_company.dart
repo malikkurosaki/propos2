@@ -9,7 +9,7 @@ import 'package:propos/utils/router_api.dart';
 class SelectCompany extends StatelessWidget {
   SelectCompany({Key? key, required this.onSelectCompany}) : super(key: key);
   final _lsCompany = [].obs;
-  final Function(String) onSelectCompany;
+  final Function(String id) onSelectCompany;
 
   _onLoad() async {
     RouterApi.listCompany()
@@ -38,8 +38,8 @@ class SelectCompany extends StatelessWidget {
                     value: e['id'],
                   ))
               .toList(),
-          onChanged: (value) {
-            onSelectCompany(value!.toString());
+          onChanged: (companyId) {
+            onSelectCompany(companyId!.toString());
           },
         ),
       ),

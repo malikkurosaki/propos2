@@ -16,6 +16,7 @@ import 'package:propos/utils/load_data.dart';
 import 'package:propos/utils/router_api.dart';
 import 'package:propos/utils/val.dart';
 import 'package:propos/utils/val_def.dart';
+import 'package:propos/utils/vl.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -134,7 +135,7 @@ class CheckoutPage extends StatelessWidget {
                                                 child: Column(
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
-                                                    Text("Total Payment: "),
+                                                    Text("Total Tagihan: "),
                                                     Text(
                                                       NumberFormat.currency(
                                                         locale: 'id_ID',
@@ -275,9 +276,9 @@ class CheckoutPage extends StatelessWidget {
                                                       "id": Val.billId.value.val.toString(),
                                                       "totalQty": _totalQty.toString(),
                                                       "totalPrice": _totalPrice.toString(),
-                                                      "userId": Val.userId.val,
-                                                      "companyId": ValDef.companyDefMap.value.val['id'],
-                                                      "outletId": ValDef.outletDefMap.value.val['id'],
+                                                      "userId": Vl.userId.val.toString(),
+                                                      "companyId": Vl.companyId.val.toString(),
+                                                      "outletId": Vl.outletId.val.toString(),
                                                       // "employeeId": "",
                                                       // "cashierId": "",
                                                       // "discount": "",
@@ -292,8 +293,7 @@ class CheckoutPage extends StatelessWidget {
                                                       final order = {
                                                         "quantity": itm['qty'],
                                                         "note": itm['note'],
-                                                        "total": int.parse(itm['qty'].toString()) *
-                                                            int.parse(itm['price'].toString()),
+                                                        "total": itm['total'],
                                                         // "discount": "",
                                                         // "tax": "",
                                                         "productId ": itm['productId'],
@@ -308,14 +308,20 @@ class CheckoutPage extends StatelessWidget {
                                                       "listOrder": jsonEncode(listOrder)
                                                     };
 
-                                                    final pay = await RouterApi.billCreate().postData(body);
-                                                    await SmartDialog.showToast("Payment Success");
-                                                    Val.change.value.val = _change();
-                                                    // Val.billId.value.val = Val.billId.value.val;
+                                                    try {
+                                                      final pay = await RouterApi.billCreate().postData(body);
+                                                      await SmartDialog.showToast("Payment Success");
+                                                      Val.change.value.val = _change();
+                                                      // Val.billId.value.val = Val.billId.value.val;
 
-                                                    // Val.struk.value.val = _struk(media).toString();
-                                                    Get.offAllNamed(Pages.paymentSuccessPage().route);
-                                                    loading.value = false;
+                                                      // Val.struk.value.val = _struk(media).toString();
+                                                      Get.offAllNamed(Pages.paymentSuccessPage().route);
+                                                      loading.value = false;
+                                                    } catch (e) {
+                                                      debugPrint(e.toString());
+                                                      SmartDialog.showToast(e.toString());
+                                                    }
+                                                    
                                                   },
                                                   child: Padding(
                                                     padding: const EdgeInsets.all(10.0),
@@ -355,204 +361,6 @@ class CheckoutPage extends StatelessWidget {
       },
     );
   }
-
-  // Widget _struk(SizingInformation media) => RepaintBoundary(
-  //       key: globalKey,
-  //       child:
-  //       SizedBox(
-  //         width: media.isMobile ? Get.width : 360,
-  //         height: media.isMobile ? Get.height : Get.height * 0.92,
-  //         child: Card(
-  //           child: Column(
-  //             children: [
-  //               Flexible(
-  //                 child: ListView(
-  //                   controller: ScrollController(),
-  //                   children: [
-  //                     Padding(
-  //                       padding: const EdgeInsets.symmetric(vertical: 16),
-  //                       child: Column(
-  //                         children: [
-  //                           Text(
-  //                             ValDef.companyDefMap.value.val['name'].toString(),
-  //                             style: TextStyle(
-  //                               fontSize: 20,
-  //                               fontWeight: FontWeight.bold,
-  //                             ),
-  //                           ),
-  //                           Text(
-  //                             ValDef.outletDefMap.value.val['name'].toString(),
-  //                             style: TextStyle(
-  //                               fontWeight: FontWeight.bold,
-  //                             ),
-  //                           ),
-  //                           Text(
-  //                             "jl. hasanudin nomer 36 x denpasar bali",
-  //                             style: TextStyle(
-  //                               fontWeight: FontWeight.bold,
-  //                             ),
-  //                           ),
-  //                           Text(
-  //                             "bill",
-  //                             style: TextStyle(
-  //                               fontWeight: FontWeight.bold,
-  //                             ),
-  //                           ),
-  //                         ],
-  //                       ),
-  //                     ),
-  //                     Padding(
-  //                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-  //                       child: Row(
-  //                         children: [Text("Receipt: "), Text("10xx2030")],
-  //                       ),
-  //                     ),
-  //                     Padding(
-  //                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-  //                       child: Row(
-  //                         children: [Text("Date: "), Text(DateFormat('dd-MM-yyyy').format(DateTime.now()))],
-  //                       ),
-  //                     ),
-  //                     Padding(
-  //                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-  //                       child: Row(
-  //                         children: [Text("Cashier: "), Text("Owner")],
-  //                       ),
-  //                     ),
-  //                     Padding(
-  //                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-  //                       child: Row(
-  //                         children: [Text("Pos: "), Text("Pos")],
-  //                       ),
-  //                     ),
-  //                     DottedLine(),
-  //                     Column(
-  //                       children: [
-  //                         for (final itm in Val.listorder.value.val)
-  //                           Padding(
-  //                             padding: const EdgeInsets.all(8.0),
-  //                             child: Column(
-  //                               crossAxisAlignment: CrossAxisAlignment.start,
-  //                               children: [
-  //                                 Row(
-  //                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                                   children: [
-  //                                     Text(
-  //                                       itm['name'].toString(),
-  //                                       style: TextStyle(
-  //                                         fontWeight: FontWeight.bold,
-  //                                       ),
-  //                                     ),
-  //                                     Text(
-  //                                       "Rp. " + itm['price'].toString(),
-  //                                       style: TextStyle(
-  //                                         fontWeight: FontWeight.bold,
-  //                                       ),
-  //                                     ),
-  //                                   ],
-  //                                 ),
-  //                                 Text(
-  //                                   "x" + itm['qty'].toString(),
-  //                                   style: TextStyle(
-  //                                     fontWeight: FontWeight.bold,
-  //                                   ),
-  //                                 ),
-  //                               ],
-  //                             ),
-  //                           ),
-  //                       ],
-  //                     ),
-  //                     DottedLine(),
-  //                     Padding(
-  //                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-  //                       child: Row(
-  //                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                         children: [
-  //                           Text("Subtotal: "),
-  //                           Text("Rp. "),
-  //                         ],
-  //                       ),
-  //                     ),
-  //                     Padding(
-  //                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-  //                       child: Row(
-  //                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                         children: [
-  //                           Text("Discount: "),
-  //                           Text("Rp. "),
-  //                         ],
-  //                       ),
-  //                     ),
-  //                     Padding(
-  //                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-  //                       child: Row(
-  //                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                         children: [
-  //                           Text("Tax: "),
-  //                           Text("Rp. "),
-  //                         ],
-  //                       ),
-  //                     ),
-  //                     Padding(
-  //                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-  //                       child: Row(
-  //                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                         children: [
-  //                           Text("Total: "),
-  //                           Text("Rp. "),
-  //                         ],
-  //                       ),
-  //                     ),
-  //                     DottedLine(),
-  //                     Padding(
-  //                       padding: const EdgeInsets.all(8),
-  //                       child: Row(
-  //                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                         children: [
-  //                           Text(
-  //                             "Payment: ",
-  //                             style: TextStyle(
-  //                               fontWeight: FontWeight.bold,
-  //                             ),
-  //                           ),
-  //                           Text(
-  //                             "Rp. ",
-  //                             style: TextStyle(
-  //                               fontWeight: FontWeight.bold,
-  //                             ),
-  //                           ),
-  //                         ],
-  //                       ),
-  //                     ),
-  //                     Padding(
-  //                       padding: const EdgeInsets.all(8),
-  //                       child: Row(
-  //                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                         children: [
-  //                           Text(
-  //                             "Change: ",
-  //                             style: TextStyle(
-  //                               fontWeight: FontWeight.bold,
-  //                             ),
-  //                           ),
-  //                           Text(
-  //                             "Rp. ",
-  //                             style: TextStyle(
-  //                               fontWeight: FontWeight.bold,
-  //                             ),
-  //                           ),
-  //                         ],
-  //                       ),
-  //                     ),
-  //                     DottedLine()
-  //                   ],
-  //                 ),
-  //               )
-  //             ],
-  //           ),
-  //         ),
-  //       ),
-  //     );
 
   Widget _calculator(SizingInformation media) => SizedBox(
         width: media.isMobile ? Get.width : 360,

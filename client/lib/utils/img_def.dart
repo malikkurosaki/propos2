@@ -4,12 +4,39 @@ import 'package:flutter/material.dart';
 
 class ImgDef {
 
+    static Widget cartEmpty({
+        double ? width,
+        double ? height,
+        BoxFit ? fit
+    }) {
+        return CachedNetworkImage(imageUrl: "${Conf.host}/img/def/cart_empty.png", width: width, height: height, fit: fit);
+    }
+
+
+    static Widget empty({
+        double ? width,
+        double ? height,
+        BoxFit ? fit
+    }) {
+        return CachedNetworkImage(imageUrl: "${Conf.host}/img/def/empty.png", width: width, height: height, fit: fit);
+    }
+
+
     static Widget forgotPasswordIllustration65141418({
         double ? width,
         double ? height,
         BoxFit ? fit
     }) {
         return CachedNetworkImage(imageUrl: "${Conf.host}/img/def/forgot-password-illustration_65141-418.png", width: width, height: height, fit: fit);
+    }
+
+
+    static Widget loading({
+        double ? width,
+        double ? height,
+        BoxFit ? fit
+    }) {
+        return CachedNetworkImage(imageUrl: "${Conf.host}/img/def/loading.png", width: width, height: height, fit: fit);
     }
 
 

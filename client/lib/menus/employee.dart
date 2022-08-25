@@ -44,7 +44,7 @@ class Employee extends StatelessWidget {
               child: Row(
                 children: [
                   Expanded(
-                    child: _listUser(),
+                    child: Card(child: _listUser()),
                   ),
                   Visibility(visible: media.isDesktop, child: Card(child: _createEmployee(media)))
                 ],
@@ -92,13 +92,12 @@ class Employee extends StatelessWidget {
                                               padding: const EdgeInsets.all(8.0),
                                               child: TextField(
                                                 decoration: InputDecoration(
-                                                  prefixIcon: Icon(Icons.search),
-                                                  suffixIcon: IconButton(icon: Icon(Icons.close), onPressed: () {}),
-                                                  border: OutlineInputBorder(borderSide: BorderSide.none),
-                                                  filled: true,
-                                                  hintText: "Search",
-                                                  isDense: true
-                                                ),
+                                                    prefixIcon: Icon(Icons.search),
+                                                    suffixIcon: IconButton(icon: Icon(Icons.close), onPressed: () {}),
+                                                    border: OutlineInputBorder(borderSide: BorderSide.none),
+                                                    filled: true,
+                                                    hintText: "Search",
+                                                    isDense: true),
                                               ),
                                             ),
                                           ),

@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:image/image.dart' as img;
 import 'package:propos/utils/val_def.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:propos/utils/vl.dart';
 
 class PrinterAndroid extends StatelessWidget {
   PrinterAndroid({
@@ -20,8 +21,6 @@ class PrinterAndroid extends StatelessWidget {
 
   Future<List<int>> testTicket() async {
 
-    // final List<int> bytes = [];
-    // Using default profile
     final profile = await CapabilityProfile.load();
     final generator = Generator(PaperSize.mm58, profile);
 
@@ -36,8 +35,8 @@ class PrinterAndroid extends StatelessWidget {
 
     List<int> bytes = [];
 
-    bytes += textCenter(ValDef.companyDefMap.value.val['name'].toString());
-    bytes += textCenter(ValDef.outletDefMap.value.val['name'].toString());
+    bytes += textCenter(Vl.defCompany.val['name'].toString());
+    bytes += textCenter(Vl.defOutlet.val['name'].toString());
     bytes += textCenter("Jalan Hasanudin No 38 Denpasar - Bali");
     bytes += textCenter("Telp: 089697338821");
     bytes += garis();
@@ -45,37 +44,6 @@ class PrinterAndroid extends StatelessWidget {
     bytes += textLeft("Kasir  : Owner");
     bytes += textLeft("Tgl:   : 22-01-2015 10:41");
     bytes += garis();
-
-    // generator.image(i);
-
-    // bytes += generator.text('Regular', styles: styleLeft);
-    // bytes += generator.image(i);
-    // bytes += generator.text('-------------------------------', styles: styleCenter);
-
-    // bytes += generator.text('Item');
-    // bytes += generator.text('Qty');
-    // bytes += generator.text('Price');
-    // bytes += generator.text(
-    //   '---------------------------',
-    // );
-
-    // bytes += generator.text('Special 1: àÀ èÈ éÉ ûÛ üÜ çÇ ôÔ',
-    //     styles: PosStyles(codeTable: PosCodeTable.westEur));
-    // bytes += generator.text('Special 2: blåbærgrød',
-    //     styles: PosStyles(codeTable: PosCodeTable.westEur));
-
-    // bytes += generator.text('Bold text', styles: PosStyles(bold: true));
-    // bytes += generator.text('Reverse text', styles: PosStyles(reverse: true));
-    // bytes += generator.text('Underlined text', styles: PosStyles(underline: true), linesAfter: 1);
-    // bytes += generator.text('Align left', styles: PosStyles(align: PosAlign.left));
-    // bytes += generator.text('Align center', styles: PosStyles(align: PosAlign.center));
-    // bytes += generator.text('Align right', styles: PosStyles(align: PosAlign.right), linesAfter: 1);
-
-    // bytes += generator.text('Text size 200%',
-    //     styles: PosStyles(
-    //       height: PosTextSize.size2,
-    //       width: PosTextSize.size2,
-    //     ));
 
     bytes += generator.feed(2);
     // bytes += generator.cut();

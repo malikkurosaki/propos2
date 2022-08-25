@@ -1,6 +1,7 @@
 const Bill = require('./con/bill');
 const Category = require('./con/category');
 const Company = require('./con/company');
+const Customer = require('./con/customer');
 const Device = require('./con/device');
 const DrawerHeader = require('./con/drawer_header');
 const Employee = require('./con/employee');
@@ -87,5 +88,9 @@ routerApi.delete('/employee-delete', Employee.deleteEmployee);
 routerApi.post('/create-employee', Employee.createEmployee);
 routerApi.put('/employee-update', Employee.upadteEmployee);
 routerApi.get('/employee-by-user', Employee.employeeByUser);
+
+// customer
+routerApi.post('/customer-create', Customer.create);
+routerApi.get('/custoemer-getList', Customer.getList);
 
 module.exports = routerApi

@@ -149,6 +149,12 @@ class RouterApi {
     RouterApi.employeeByUser({
         String ? query
     }): _uri = Uri.parse("${Conf.host}/api/employee-by-user?userId=${Vl.userId.val}&companyId=${Vl.companyId.val}&outletId=${Vl.outletId.val}&${query ?? ''}");
+    RouterApi.customerCreate({
+        String ? query
+    }): _uri = Uri.parse("${Conf.host}/api/customer-create?userId=${Vl.userId.val}&companyId=${Vl.companyId.val}&outletId=${Vl.outletId.val}&${query ?? ''}");
+    RouterApi.custoemerGetList({
+        String ? query
+    }): _uri = Uri.parse("${Conf.host}/api/custoemer-getList?userId=${Vl.userId.val}&companyId=${Vl.companyId.val}&outletId=${Vl.outletId.val}&${query ?? ''}");
     // end
 
     // Future < String > getData() async {

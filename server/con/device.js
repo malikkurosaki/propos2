@@ -41,7 +41,7 @@ const createDevice = expressAsyncHandler(async (req, res, next) => {
     } = req.body;
 
     if (userId == undefined) return res.status(401).send("user id tidak boleh kosong");
-    const generator = uuidInt(Number.parseInt(`${userId}${companyId}${outletId}`));
+    const generator = uuidInt(Math.floor(Math.random() * 500));
     const createDevice = await prisma.device.create({
         data: {
             deviceId: generator.uuid().toString(),
@@ -74,21 +74,21 @@ const deviceByUser = expressAsyncHandler(async (req, res, next) => {
             userId: userId
         },
         orderBy: {
-            idx: 'asc',
+            createdAt: 'asc',
         },
         select: {
             id: true,
             name: true,
             Outlet: {
                 orderBy: {
-                    idx: 'asc',
+                    createdAt: 'asc',
                 },
                 select: {
                     id: true,
                     name: true,
                     Device: {
                         orderBy: {
-                            idx: 'asc',
+                            createdAt: 'asc',
                         },
                         select: {
                             id: true,

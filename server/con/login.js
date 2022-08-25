@@ -18,20 +18,31 @@ const sekarang = expressAsyncHandler(async (req, res, next) => {
         },
         select: {
             id: true,
+            name: true,
             Company: {
                 where: {
-                    idx: 1
+                    id: {
+                        not: {
+                            equals: undefined
+                        }
+                    }
                 },
                 select: {
                     id: true,
-                    idx: true,
+                    name: true,
+                    createdAt: true,
                     Outlet: {
                         where: {
-                            idx: 1
+                            id: {
+                                not: {
+                                    equals: undefined
+                                }
+                            }
                         },
                         select: {
                             id: true,
-                            idx: true,
+                            name: true,
+                            createdAt: true,
                         }
                     }
                 }
@@ -46,6 +57,18 @@ const sekarang = expressAsyncHandler(async (req, res, next) => {
             "userId": getUser.id,
             "companyId": getUser.Company[0]["id"],
             "outletId": getUser.Company[0]["Outlet"][0]["id"],
+            "user": {
+                "id": getUser.id,
+                "name": getUser.name
+            },
+            "company": {
+                "id": getUser.Company[0].id,
+                "name": getUser.Company[0].name
+            },
+            "outlet": {
+                "id": getUser.Company[0]["Outlet"][0].id,
+                "name": getUser.Company[0]["Outlet"][0].name
+            }
         }
 
         res.status(200).json(result);
@@ -53,9 +76,32 @@ const sekarang = expressAsyncHandler(async (req, res, next) => {
         res.status(401).send("email atau password salah");
     }
 
-
-
 });
 
-const Login = { sekarang };
+const device = expressAsyncHandler(async (req, res) => {
+
+    const { deviceId } = req.body;
+    const data = await prisma.device.findUnique({
+        where: {
+            deviceId: deviceId
+        },
+        select: {
+            User: {
+                select: {
+                    Employee: {
+                        select: {
+                            id: true,
+                            name: true
+                        }
+                    }
+                }
+            }
+        }
+    })
+
+    res.status(data ? 200 : 403).json(data);
+});
+
+
+const Login = { sekarang, device };
 module.exports = Login;

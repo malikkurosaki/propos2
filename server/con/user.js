@@ -12,7 +12,7 @@ const getUserDataById = expressAsyncHandler(async (req, res, next) => {
         select: {
             Company: {
                 select: {
-                    idx: true,
+                    createdAt: true,
                     name: true,
                     DetailCompany: {
                         select: {

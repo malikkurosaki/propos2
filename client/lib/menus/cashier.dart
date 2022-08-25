@@ -7,11 +7,13 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:flutter_web_bluetooth/web/js/js_supported.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:propos/pages.dart';
 import 'package:propos/utils/conf.dart';
+import 'package:propos/utils/img_def.dart';
 import 'package:propos/utils/router_api.dart';
 import 'package:propos/utils/val.dart';
 import 'package:propos/utils/vl.dart';
@@ -24,6 +26,7 @@ class Cashier extends StatelessWidget {
   // final _listProduct = List.from(ValDef.productList.value.val).val('Cashier.listProduct').obs;
   final _listCategory = [].obs;
   final _listProduct = [].obs;
+  final isMultipleSelect = false.obs;
 
   // _loadCategory() async {
   //   final list = await RouterApi.listCategory().getData();
@@ -32,6 +35,7 @@ class Cashier extends StatelessWidget {
 
   _loadProduct() async {
     final list = await RouterApi.listProduct().getData();
+    debugPrint(list.body);
     if (list.statusCode == 200) _listProduct.assignAll(jsonDecode(list.body));
   }
 
@@ -51,13 +55,12 @@ class Cashier extends StatelessWidget {
             Flexible(
               child: Row(
                 children: [
-                  Expanded(
-                    child: Visibility(
-                      visible: !media.isMobile,
-                      child: _menu(media),
-                    ),
-                  ),
-                  _totalan(media)
+                  media.isMobile ? SizedBox.shrink() : Expanded(child: _listMenuItem(media)),
+                  media.isMobile
+                      ? Expanded(
+                          child: _totalan(media),
+                        )
+                      : SizedBox(width: 500, child: _totalan(media))
                 ],
               ),
             )
@@ -72,20 +75,26 @@ class Cashier extends StatelessWidget {
         child: ListTile(
           leading: Tooltip(
             message: "Select Sekaligus",
-            child: Checkbox(
-              value: lsTampungan.isNotEmpty && lsTampungan.length.isEqual(Val.listorder.value.val.length),
-              onChanged: lsTampungan.isEmpty? null: (value) {
-                if (value!) {
-                  lsTampungan.assignAll(Val.listorder.value.val.map((e) => e['id']));
-                } else {
-                  lsTampungan.clear();
-                }
-                Get.back();
-              },
-            ),
+            child: !isMultipleSelect.value
+                ? null
+                : Checkbox(
+                    value: Val.listorder.value.val.isNotEmpty &&
+                        lsTampungan.length.isEqual(Val.listorder.value.val.length),
+                    onChanged: Val.listorder.value.val.isEmpty
+                        ? null
+                        : (value) {
+                            if (value!) {
+                              lsTampungan.assignAll(Val.listorder.value.val.map((e) => e['id']));
+                            } else {
+                              lsTampungan.clear();
+                            }
+                            Get.back();
+                          },
+                  ),
           ),
           title: Wrap(
             crossAxisAlignment: WrapCrossAlignment.center,
+            alignment: WrapAlignment.start,
             children: [
               Tooltip(
                 message: "menyimpan order",
@@ -99,12 +108,14 @@ class Cashier extends StatelessWidget {
                             style: TextStyle(color: Colors.black),
                           ),
                           child: IconButton(
-                              onPressed: Val.listorder.value.val.isEmpty? null: () {
-                                _savedOrderDialog();
-                              },
+                              onPressed: Val.listorder.value.val.isEmpty
+                                  ? null
+                                  : () {
+                                      _savedOrderDialog();
+                                    },
                               icon: Icon(
                                 Icons.save,
-                                color: Val.listorder.value.val.isEmpty? Colors.grey: Colors.cyan,
+                                color: Val.listorder.value.val.isEmpty ? Colors.grey : Colors.cyan,
                               )),
                         )
                       : MaterialButton(
@@ -122,313 +133,361 @@ class Cashier extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: IconButton(
                   tooltip: "menghapus multiple",
-                  onPressed: lsTampungan.isEmpty? null: () {
-                    Get.dialog(AlertDialog(
-                      title: Text("Clean Order"),
-                      content: Text("Are you sure to delete order?"),
-                      actions: [
-                        MaterialButton(
-                          child: Text("Cancel"),
-                          onPressed: () {
-                            Get.back();
-                          },
-                        ),
-                        MaterialButton(
-                          child: Text("Delete"),
-                          onPressed: () {
-                            Val.listorder.value.val.removeWhere((element) => lsTampungan.contains(element['id']));
-                            Val.listorder.refresh();
-                            Get.back();
-                          },
-                        ),
-                      ],
-                    ));
-                  },
+                  onPressed: lsTampungan.isEmpty
+                      ? null
+                      : () {
+                          Get.dialog(AlertDialog(
+                            title: Text("Clean Order"),
+                            content: Text("Are you sure to delete order?"),
+                            actions: [
+                              MaterialButton(
+                                child: Text("Cancel"),
+                                onPressed: () {
+                                  Get.back();
+                                },
+                              ),
+                              MaterialButton(
+                                child: Text("Delete"),
+                                onPressed: () {
+                                  final lsTmp = List.from(Val.listorder.value.val);
+                                  lsTmp.removeWhere((element) => lsTampungan.contains(element['id']));
+                                  Val.listorder.value.val = lsTmp;
+                                  lsTampungan.clear();
+                                  Val.listorder.refresh();
+                                  Get.back();
+                                },
+                              ),
+                            ],
+                          ));
+                        },
                   icon: Icon(
                     Icons.delete_sweep_sharp,
-                    color: lsTampungan.isEmpty? Colors.grey: Colors.pink,
+                    color: lsTampungan.isEmpty ? Colors.grey : Colors.pink,
                   ),
                 ),
               ),
-              Visibility(
-                visible: media.isMobile,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: IconButton(
-                    onPressed: () {
-                      Get.dialog(Material(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                              BackButton(),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text("Select Item"),
-                              )
-                            ]),
-                            Flexible(child: _menu(media)),
-                          ],
-                        ),
-                      ));
-                    },
-                    icon: Icon(
-                      Icons.add_circle_outlined,
-                      color: Colors.cyan,
+            ],
+          ),
+          trailing: Visibility(
+            visible: media.isMobile,
+            child: IconButton(
+              tooltip: "tambah item order",
+              onPressed: () {
+                Get.dialog(Dialog(
+                  insetPadding: EdgeInsets.all(8),
+                  child: Material(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: BackButton(),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text("Select Item"),
+                          )
+                        ]),
+                        Flexible(child: _listMenuItem(media)),
+                      ],
                     ),
                   ),
-                ),
-              )
-            ],
+                ));
+              },
+              icon: Icon(
+                Icons.add_circle_outlined,
+                size: 36,
+                color: Colors.green,
+              ),
+            ),
           ),
         ),
       );
 
-  Widget _totalan(SizingInformation media) => Builder(builder: (context) {
-        final lsTampungan = [].obs;
-        return Obx(
-          () => SizedBox(
-            width: media.isMobile ? Get.width : 500,
-            child: Card(
-              child: Column(
-                children: [
-                  _headerTotalan(media, lsTampungan),
-                  // mulai list item
-                  Flexible(
-                    child: ListView(
-                      controller: ScrollController(),
-                      children: [
-                        for (final itm in Val.listorder.value.val)
-                          ListTile(
-                            leading: Checkbox(
-                              value: lsTampungan.contains(itm['id']),
-                              onChanged: (value) {
-                                if (value!) {
-                                  lsTampungan.add(itm['id']);
-                                } else {
-                                  lsTampungan.remove(itm['id']);
-                                }
-                                Get.back();
-                              },
-                            ),
-                            title: ListTile(
-                              onLongPress: () {
-                                Get.dialog(
-                                  AlertDialog(
-                                    title: Text('Delete'),
-                                    content: Text('Are you sure?'),
-                                    actions: [
-                                      MaterialButton(
-                                        child: Text('Cancel'),
-                                        onPressed: () => Get.back(),
-                                      ),
-                                      MaterialButton(
-                                        child: Text('Delete'),
-                                        onPressed: () {
-                                          final data = List.from(Val.listorder.value.val);
-                                          final idx = data.indexWhere((element) => element['id'] == itm['id']);
-                                          data.removeAt(idx);
-                                          Val.listorder.value.val = data;
-                                          Val.listorder.refresh();
-                                          Get.back();
+  Widget _totalan(SizingInformation media) {
+    return Scaffold(
+      body: Builder(
+        builder: (context) {
+          final lsTampungan = [].obs;
+          return Obx(() => SizedBox(
+                width: media.isMobile ? Get.width : 500,
+                child: Card(
+                  child: Column(
+                    children: [
+                      _headerTotalan(media, lsTampungan),
+                      // mulai list item
+                      Flexible(
+                        child: Val.listorder.value.val.isEmpty
+                            ? Center(
+                                child: ImgDef.cartEmpty(width: 200, fit: BoxFit.contain),
+                              )
+                            : ListView(
+                                controller: ScrollController(),
+                                children: [
+                                  for (final itm in Val.listorder.value.val)
+                                    ListTile(
+                                      leading: !isMultipleSelect.value
+                                          ? null
+                                          : Checkbox(
+                                              value: lsTampungan.contains(itm['id']),
+                                              onChanged: (value) {
+                                                if (value!) {
+                                                  lsTampungan.add(itm['id']);
+                                                } else {
+                                                  lsTampungan.remove(itm['id']);
+                                                }
+                                                Get.back();
+                                              },
+                                            ),
+                                      title: ListTile(
+                                        onLongPress: () {
+                                          isMultipleSelect.toggle();
                                         },
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                              onTap: () {
-                                final _conName = TextEditingController();
-                                // dialog add note
-                                Get.dialog(
-                                  AlertDialog(
-                                    title: Text("Note"),
-                                    content: TextField(
-                                      controller: _conName,
-                                      decoration: InputDecoration(
-                                        hintText: 'Note',
-                                        filled: true,
-                                        border: OutlineInputBorder(
-                                          borderSide: BorderSide.none,
+                                        onTap: () {
+                                          final _conName = TextEditingController();
+                                          // dialog add note
+                                          Get.dialog(
+                                            AlertDialog(
+                                              title: Text("Note"),
+                                              content: TextField(
+                                                controller: _conName,
+                                                decoration: InputDecoration(
+                                                  hintText: 'Note',
+                                                  filled: true,
+                                                  border: OutlineInputBorder(
+                                                    borderSide: BorderSide.none,
+                                                  ),
+                                                ),
+                                              ),
+                                              actions: [
+                                                MaterialButton(
+                                                  child: Text("Cancel"),
+                                                  onPressed: () {
+                                                    Get.back();
+                                                  },
+                                                ),
+                                                MaterialButton(
+                                                  child: Text("Ok"),
+                                                  onPressed: () {
+                                                    final data = List.from(Val.listorder.value.val);
+                                                    final idx =
+                                                        data.indexWhere((element) => element['id'] == itm['id']);
+                                                    data[idx]['note'] = _conName.text;
+                                                    Val.listorder.value.val = data;
+                                                    Val.listorder.refresh();
+                                                    Get.back();
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                        leading: InkWell(
+                                          child: Icon(
+                                            Icons.remove_circle,
+                                            color: Colors.pink,
+                                            size: 36,
+                                          ),
+                                          onTap: () {
+                                            final data = List.from(Val.listorder.value.val);
+                                            final idx = data.indexWhere((element) => element['id'] == itm['id']);
+                                            if (idx != -1) {
+                                              if (data[idx]['qty'] > 1) {
+                                                data[idx]['qty']--;
+                                                data[idx]['total'] = data[idx]['qty'] * data[idx]['price'];
+                                              } else {
+                                                Get.dialog(
+                                                  AlertDialog(
+                                                    title: Text("Warning"),
+                                                    content: Text("Are you sure want to delete this item?"),
+                                                    actions: [
+                                                      MaterialButton(
+                                                        child: Text("Yes"),
+                                                        onPressed: () {
+                                                          data.removeAt(idx);
+                                                          Val.listorder.value.val = data;
+                                                          Val.listorder.refresh();
+                                                          Get.back();
+                                                        },
+                                                      ),
+                                                      MaterialButton(
+                                                        child: Text("No"),
+                                                        onPressed: () {
+                                                          Get.back();
+                                                        },
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              }
+                                            }
+                                            Val.listorder.value.val = data;
+                                            Val.listorder.refresh();
+                                          },
                                         ),
+                                        title: Text(
+                                          itm['name'],
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        subtitle: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Row(
+                                                    children: [
+                                                      Text(itm['qty'].toString()),
+                                                      Text("x"),
+                                                      Text(NumberFormat.currency(
+                                                              locale: 'id_ID', symbol: 'Rp', decimalDigits: 0)
+                                                          .format(itm['price'])),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Text(NumberFormat.currency(
+                                                        locale: 'id_ID', symbol: 'Rp', decimalDigits: 0)
+                                                    .format(itm['total'])),
+                                              ],
+                                            ),
+                                            Text(itm['note']),
+                                          ],
+                                        ),
+                                        trailing: InkWell(
+                                            child: Icon(
+                                              Icons.add_circle,
+                                              color: Colors.cyan,
+                                              size: 36,
+                                            ),
+                                            onTap: () {
+                                              final data = List.from(Val.listorder.value.val);
+                                              final idx = data.indexWhere((element) => element['id'] == itm['id']);
+                                              if (idx != -1) {
+                                                data[idx]['qty']++;
+                                                itm['total'] = itm['qty'] * itm['price'];
+                                              } else {
+                                                itm['qty'] = 1;
+                                                itm['note'] = '';
+                                                itm['total'] = itm['qty'] * itm['price'];
+                                                data.add(itm);
+                                              }
+                                              Val.listorder.value.val = data;
+                                              Val.listorder.refresh();
+                                            }),
                                       ),
                                     ),
-                                    actions: [
-                                      MaterialButton(
-                                        child: Text("Cancel"),
-                                        onPressed: () {
-                                          Get.back();
-                                        },
-                                      ),
-                                      MaterialButton(
-                                        child: Text("Ok"),
-                                        onPressed: () {
-                                          final data = List.from(Val.listorder.value.val);
-                                          final idx = data.indexWhere((element) => element['id'] == itm['id']);
-                                          data[idx]['note'] = _conName.text;
-                                          Val.listorder.value.val = data;
-                                          Val.listorder.refresh();
-                                          Get.back();
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                              leading: InkWell(
-                                child: Icon(
-                                  Icons.remove_circle,
-                                  color: Colors.pink,
-                                  size: 36,
-                                ),
-                                onTap: () {
-                                  final data = List.from(Val.listorder.value.val);
-                                  final idx = data.indexWhere((element) => element['id'] == itm['id']);
-                                  if (idx != -1) {
-                                    if (data[idx]['qty'] > 1) {
-                                      data[idx]['qty']--;
-                                      data[idx]['total'] = data[idx]['qty'] * data[idx]['price'];
-                                    } else {
-                                      Get.dialog(
-                                        AlertDialog(
-                                          title: Text("Warning"),
-                                          content: Text("Are you sure want to delete this item?"),
-                                          actions: [
-                                            MaterialButton(
-                                              child: Text("Yes"),
-                                              onPressed: () {
-                                                data.removeAt(idx);
-                                                Val.listorder.value.val = data;
-                                                Val.listorder.refresh();
-                                                Get.back();
-                                              },
-                                            ),
-                                            MaterialButton(
-                                              child: Text("No"),
-                                              onPressed: () {
-                                                Get.back();
-                                              },
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    }
-                                  }
-                                  Val.listorder.value.val = data;
-                                  Val.listorder.refresh();
-                                },
-                              ),
-                              title: Text(itm['name']),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Row(
-                                          children: [
-                                            Text(itm['qty'].toString()),
-                                            Text("x"),
-                                            Text(NumberFormat.currency(locale: 'id_ID', symbol: 'Rp', decimalDigits: 0)
-                                                .format(itm['price'])),
-                                          ],
-                                        ),
-                                      ),
-                                      Text(NumberFormat.currency(locale: 'id_ID', symbol: 'Rp', decimalDigits: 0)
-                                          .format(itm['total'])),
-                                    ],
-                                  ),
-                                  Text(itm['note']),
                                 ],
                               ),
-                              trailing: InkWell(
-                                  child: Icon(
-                                    Icons.add_circle,
-                                    color: Colors.cyan,
-                                    size: 36,
-                                  ),
-                                  onTap: () {
-                                    final data = List.from(Val.listorder.value.val);
-                                    final idx = data.indexWhere((element) => element['id'] == itm['id']);
-                                    if (idx != -1) {
-                                      data[idx]['qty']++;
-                                      itm['total'] = itm['qty'] * itm['price'];
-                                    } else {
-                                      itm['qty'] = 1;
-                                      itm['note'] = '';
-                                      itm['total'] = itm['qty'] * itm['price'];
-                                      data.add(itm);
-                                    }
-                                    Val.listorder.value.val = data;
-                                    Val.listorder.refresh();
-                                  }),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    color: Colors.grey.shade100,
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            "Total: ${NumberFormat.currency(
-                              locale: 'id_ID',
-                              symbol: 'Rp',
-                              decimalDigits: 0,
-                            ).format(
-                              Val.listorder.value.val.fold(
-                                  0, (prev, element) => int.parse(prev.toString()) + element['qty'] * element['price']),
-                            )}",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        MaterialButton(
-                          color: Colors.cyan,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: const Text(
-                              "Checkout",
-                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
-                            ),
-                          ),
-                          onPressed: () {
-                            if (Val.listorder.value.val.isNotEmpty) {
-                              Get.toNamed(Pages.checkoutPage().route);
-                            } else {
-                              Get.dialog(
-                                AlertDialog(
-                                  title: Text("Warning"),
-                                  content: Text("Please add item to cart"),
-                                  actions: [
-                                    MaterialButton(
-                                      child: Text("Ok"),
-                                      onPressed: () {
-                                        Get.back();
-                                      },
+                      ),
+                      Container(
+                        color: Colors.grey.shade100,
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.keyboard_arrow_up_rounded),
+                              onPressed: () {
+                                showBottomSheet(
+                                  context: context,
+                                  builder: (c) => SizedBox(
+                                    height: 500,
+                                    child: Material(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Row(
+                                              children: [
+                                                BackButton(),
+                                              ],
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text("Discount"),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text("Tax"),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text("Customer"),
+                                          )
+                                        ],
+                                      ),
                                     ),
-                                  ],
+                                  ),
+                                );
+                              },
+                            ),
+                            Expanded(
+                              child: MaterialButton(
+                                color: Colors.cyan,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: const Text(
+                                    "Checkout",
+                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
+                                  ),
                                 ),
-                              );
-                            }
-                          },
+                                onPressed: () {
+                                  if (Val.listorder.value.val.isNotEmpty) {
+                                    Get.toNamed(Pages.checkoutPage().route);
+                                  } else {
+                                    Get.dialog(
+                                      AlertDialog(
+                                        title: Text("Warning"),
+                                        content: Text("Please add item to cart"),
+                                        actions: [
+                                          MaterialButton(
+                                            child: Text("Ok"),
+                                            onPressed: () {
+                                              Get.back();
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                "Total: ${NumberFormat.currency(
+                                  locale: 'id_ID',
+                                  symbol: 'Rp',
+                                  decimalDigits: 0,
+                                ).format(
+                                  Val.listorder.value.val.fold(
+                                      0,
+                                      (prev, element) =>
+                                          int.parse(prev.toString()) + element['qty'] * element['price']),
+                                )}",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-        );
-      });
+                      )
+                    ],
+                  ),
+                ),
+              ));
+        },
+      ),
+    );
+  }
 
-  Widget _menu(SizingInformation media) => Card(
+  Widget _listMenuItem(SizingInformation media) => Card(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -508,7 +567,7 @@ class Cashier extends StatelessWidget {
               child: Obx(
                 () => GridView.extent(
                   maxCrossAxisExtent: media.isMobile ? Get.width / 2 : 200,
-                  childAspectRatio: media.isMobile ? 1 : 0.8,
+                  childAspectRatio: media.isMobile ? 0.8 : 0.8,
                   children: [
                     for (final prod in _listProduct)
                       InkWell(
@@ -522,14 +581,13 @@ class Cashier extends StatelessWidget {
                             prod['note'] = '';
                             prod['total'] = prod['qty'] * prod['price'];
                             data.add(prod);
+                            SmartDialog.showToast("Added to cart", animationTime: Duration(milliseconds: 500));
                           } else {
                             data[idx]['qty']++;
                           }
 
                           Val.listorder.value.val = data;
                           Val.listorder.refresh();
-
-                          SmartDialog.showToast("Added to cart", animationTime: Duration(milliseconds: 500));
 
                           // if (media.isMobile) Get.back();
                         },
@@ -541,7 +599,7 @@ class Cashier extends StatelessWidget {
                                 child: CachedNetworkImage(
                                     imageUrl:
                                         "${Conf.host}/product-image/${(prod["ProductImage"]?['name'] ?? "null").toString()}",
-                                    fit: BoxFit.cover,
+                                    fit: BoxFit.contain,
                                     width: media.isMobile ? Get.width / 2 : 200),
                               ),
                               Padding(

@@ -80,21 +80,21 @@ const employeeByUser = expressAsyncHandler(async (req, res, next) => {
             userId: userId
         },
         orderBy: {
-            idx: 'asc',
+            createdAt: 'asc',
         },
         select: {
             id: true,
             name: true,
             Outlet: {
                 orderBy: {
-                    idx: 'asc',
+                    createdAt: 'asc',
                 },
                 select: {
                     id: true,
                     name: true,
                     Employee: {
                         orderBy: {
-                            idx: 'asc',
+                            createdAt: 'asc',
                         },
                         select: {
                             id: true,

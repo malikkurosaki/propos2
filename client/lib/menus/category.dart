@@ -3,6 +3,10 @@ import 'dart:convert';
 import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:propos/components/input.dart';
+import 'package:propos/components/search_view.dart';
+import 'package:propos/components/search_view_with_checkbox.dart';
+import 'package:propos/components/select_company.dart';
 import 'package:propos/utils/router_api.dart';
 import 'package:propos/utils/val_def.dart';
 import 'package:responsive_builder/responsive_builder.dart';
@@ -17,7 +21,7 @@ class Category extends StatelessWidget {
   // final _conOutletId = TextEditingController();
 
   final _propertiesComOut = [].obs;
-  final _listCategory = [].obs;
+  final _listCompany = [].obs;
 
   _loadProperty() async {
     final data = await RouterApi.propertiesCompanyOutlet().getData();
@@ -26,7 +30,7 @@ class Category extends StatelessWidget {
 
   _loadCategoryList() async {
     final data = await RouterApi.categoryGetByCompany().getData();
-    if (data.statusCode == 200) _listCategory.assignAll(jsonDecode(data.body));
+    if (data.statusCode == 200) _listCompany.assignAll(jsonDecode(data.body));
   }
 
   _loadData() async {
@@ -46,88 +50,7 @@ class Category extends StatelessWidget {
               child: Row(
                 children: [
                   Expanded(
-                    child: Card(
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    "List Category",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Visibility(
-                                visible: media.isMobile,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: IconButton(
-                                    onPressed: () {
-                                      Get.dialog(SimpleDialog(
-                                        children: [
-                                          _create(media),
-                                        ],
-                                      ));
-                                    },
-                                    icon: Icon(Icons.add_circle, color: Colors.cyan),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                          Flexible(
-                            child: Obx(
-                              () => _listCategory.isEmpty
-                                  ? Text("empty...")
-                                  : SizedBox(
-                                      width: double.infinity,
-                                      child: ContainedTabBarView(
-                                        tabs: [
-                                          ..._listCategory.map(
-                                            (e) => ListTile(
-                                              title: Text(e['name'].toString()),
-                                            ),
-                                          )
-                                        ],
-                                        views: [
-                                          ..._listCategory.map(
-                                            (e) => ListView(
-                                              children: [
-                                                ...e['Category'].map(
-                                                  (e) => ListTile(
-                                                    leading: Icon(Icons.category),
-                                                    title: Text(e['name'].toString()),
-                                                    trailing: PopupMenuButton(
-                                                      itemBuilder: (context) => [
-                                                        PopupMenuItem(
-                                                          child: Text("Edit"),
-                                                          value: () {},
-                                                        ),
-                                                        PopupMenuItem(
-                                                          child: Text("Delete"),
-                                                          value: () {},
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    child: _listDisplay(media),
                   ),
                   Visibility(visible: !media.isMobile, child: _create(media))
                 ],
@@ -137,6 +60,91 @@ class Category extends StatelessWidget {
         ),
       );
     });
+  }
+
+  Widget _listDisplay(SizingInformation media) {
+    return Scaffold(
+      floatingActionButton: !media.isMobile
+          ? null
+          : FloatingActionButton(
+              child: Icon(
+                Icons.add,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                Get.dialog(
+                  SimpleDialog(
+                    children: [_create(media)],
+                  ),
+                );
+              },
+            ),
+      body: Card(
+        child: Column(
+          children: [
+            Flexible(
+              child: Obx(
+                () => _listCompany.isEmpty
+                    ? Text("empty...")
+                    : SizedBox(
+                        width: double.infinity,
+                        child: ContainedTabBarView(
+                          tabs: [
+                            ..._listCompany.map(
+                              (e) => ListTile(
+                                title: Text(
+                                  e['name'].toString(),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            )
+                          ],
+                          views: [
+                            ..._listCompany.map(
+                              (e) => Builder(builder: (context) {
+                                final selectAll = false.obs;
+                                final lsCategory = (e['Category'] as List);
+                                return Column(
+                                  children: [
+                                    SearchViewWithCheckbox(
+                                        onChanged: (value) {}, checkValue: selectAll, onCheckChanged: (value) {}),
+                                    Flexible(
+                                      child: ListView(
+                                        children: [
+                                          ...lsCategory.map(
+                                            (e) => ListTile(
+                                              leading: Checkbox(value: false, onChanged: (value) {}),
+                                              title: Text(e['name'].toString()),
+                                              trailing: PopupMenuButton(
+                                                itemBuilder: (context) => [
+                                                  PopupMenuItem(
+                                                    child: Text("Edit"),
+                                                    value: () {},
+                                                  ),
+                                                  PopupMenuItem(
+                                                    child: Text("Delete"),
+                                                    value: () {},
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }),
+                            )
+                          ],
+                        ),
+                      ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _create(SizingInformation media) => Card(
@@ -160,97 +168,102 @@ class Category extends StatelessWidget {
                 child: Builder(
                   builder: (context) {
                     final conName = TextEditingController();
-                    return Obx(
-                      () => ListView(
-                        controller: ScrollController(),
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: DropdownButtonFormField(
-                              isDense: true,
-                              decoration: InputDecoration(
-                                isDense: true,
-                                labelText: "Company",
-                                hintText: "Select Company",
-                                border: OutlineInputBorder(borderSide: BorderSide.none),
-                              ),
-                              items: [
-                                for (final itm in _propertiesComOut)
-                                  DropdownMenuItem(
-                                    value: itm,
-                                    child: Text(itm['name']),
-                                  )
-                              ],
-                              onChanged: (value) {
-                                final data = (value as Map);
-                                _conCompanyId.text = data['id'].toString();
-                              },
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: TextFormField(
-                              controller: conName,
-                              decoration: InputDecoration(
-                                isDense: true,
-                                labelText: "Category Name",
-                                filled: true,
-                                border: OutlineInputBorder(
-                                  borderSide: BorderSide.none,
+                    return ListView(
+                      controller: ScrollController(),
+                      children: [
+                        SelectCompany(onSelectCompany: (companyId) {
+                          _conCompanyId.text = companyId;
+                        }),
+                        Input(
+                          controller: conName,
+                          label: "Category Name",
+                        ),
+                        // Padding(
+                        //   padding: const EdgeInsets.all(8.0),
+                        //   child: DropdownButtonFormField(
+                        //     isDense: true,
+                        //     decoration: InputDecoration(
+                        //       isDense: true,
+                        //       labelText: "Company",
+                        //       hintText: "Select Company",
+                        //       border: OutlineInputBorder(borderSide: BorderSide.none),
+                        //     ),
+                        //     items: [
+                        //       for (final itm in _propertiesComOut)
+                        //         DropdownMenuItem(
+                        //           value: itm,
+                        //           child: Text(itm['name']),
+                        //         )
+                        //     ],
+                        //     onChanged: (value) {
+                        //       final data = (value as Map);
+                        //       _conCompanyId.text = data['id'].toString();
+                        //     },
+                        //   ),
+                        // ),
+                        // Padding(
+                        //   padding: const EdgeInsets.all(8.0),
+                        //   child: TextFormField(
+                        //     controller: conName,
+                        //     decoration: InputDecoration(
+                        //       isDense: true,
+                        //       labelText: "Category Name",
+                        //       filled: true,
+                        //       border: OutlineInputBorder(
+                        //         borderSide: BorderSide.none,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: MaterialButton(
+                            color: Colors.cyan,
+                            onPressed: () async {
+                              final body = {"name": conName.text, 'companyId': _conCompanyId.text};
+
+                              if (body.values.contains("")) {
+                                SmartDialog.showToast("tidak bisa kosong");
+                                return;
+                              }
+
+                              debugPrint(body.toString());
+
+                              final cat = await RouterApi.createCategory().postData(body);
+                              if (cat.statusCode == 201) {
+                                SmartDialog.showToast("success");
+                                await _loadCategoryList();
+                              }
+
+                              conName.clear();
+                              if (media.isMobile) Get.back();
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Center(
+                                child: Text(
+                                  "Save",
+                                  style: TextStyle(color: Colors.white),
                                 ),
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: MaterialButton(
-                              color: Colors.cyan,
-                              onPressed: () async {
-                                final body = {"name": conName.text, 'companyId': _conCompanyId.text};
-
-                                if (body.values.contains("")) {
-                                  SmartDialog.showToast("tidak bisa kosong");
-                                  return;
-                                }
-
-                                debugPrint(body.toString());
-
-                                final cat = await RouterApi.createCategory().postData(body);
-                                if (cat.statusCode == 201) {
-                                  SmartDialog.showToast("success");
-                                  await _loadCategoryList();
-                                }
-
-                                conName.clear();
-                                if (media.isMobile) Get.back();
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Center(
-                                  child: Text(
-                                    "Save",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          )
-                          // Builder(
-                          //   builder: (context) {
-                          //     final bisaDiclick = true.obs;
-                          //     return Obx(
-                          //       () => Padding(
-                          //         padding: const EdgeInsets.all(8.0),
-                          //         child: !bisaDiclick.value
-                          //             ? Text("loading ...")
-                          //             :
-                          //             ,
-                          //       ),
-                          //     );
-                          //   },
-                          // )
-                        ],
-                      ),
+                        )
+                        // Builder(
+                        //   builder: (context) {
+                        //     final bisaDiclick = true.obs;
+                        //     return Obx(
+                        //       () => Padding(
+                        //         padding: const EdgeInsets.all(8.0),
+                        //         child: !bisaDiclick.value
+                        //             ? Text("loading ...")
+                        //             :
+                        //             ,
+                        //       ),
+                        //     );
+                        //   },
+                        // )
+                      ],
                     );
                   },
                 ),
