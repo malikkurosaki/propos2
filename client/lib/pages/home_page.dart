@@ -149,6 +149,7 @@ class HomePage extends StatelessWidget {
                       MaterialButton(
                         child: Text("Yes"),
                         onPressed: () {
+                          Vl.clear();
                           Val.clear();
                           ValDef.clear();
                           Get.offAllNamed(Pages.rootPage().route);

@@ -1,11 +1,12 @@
 import 'dart:convert';
+import 'package:clipboard/clipboard.dart';
 import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-import 'package:flutter_web_bluetooth/web/js/js_supported.dart';
+// import 'package:flutter_web_bluetooth/web/js/js_supported.dart';
 import 'package:get/get.dart';
+import 'package:propos/components/company_select.dart';
 import 'package:propos/components/search_view_with_checkbox.dart';
-import 'package:propos/components/select_company.dart';
 import 'package:propos/components/select_outlet_by_company.dart';
 import 'package:propos/utils/img_def.dart';
 import 'package:propos/utils/router_api.dart';
@@ -78,10 +79,12 @@ class Device extends StatelessWidget {
                                 (e) => Column(
                                   children: [
                                     SearchViewWithCheckbox(
-                                        onChanged: (searchValue) {},
-                                        checkValue: isCheckAll,
-                                        onCheckChanged: (value) {}),
-                                   
+                                      onChanged: (searchValue) {},
+                                      checkValue: isCheckAll,
+                                      onCheckChanged: (value) {
+                                        isCheckAll.toggle();
+                                      },
+                                    ),
                                     Flexible(
                                       child: Builder(builder: (context) {
                                         return ListView(
@@ -113,49 +116,57 @@ class Device extends StatelessWidget {
                                                             onPressed: () {},
                                                             icon: Icon(Icons.email, color: Colors.red)),
                                                         IconButton(
-                                                            tooltip: "share to barcode",
-                                                            onPressed: () {
-                                                              showBottomSheet(
-                                                                backgroundColor: Colors.transparent,
-                                                                enableDrag: true,
-                                                                context: context,
-                                                                builder: (c) => SizedBox(
-                                                                  width: double.infinity,
-                                                                  height: Get.height * 0.8,
-                                                                  child: Card(
-                                                                    margin: EdgeInsets.symmetric(horizontal: 32),
-                                                                    child: Column(
-                                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                                      children: [
-                                                                        Padding(
-                                                                          padding: const EdgeInsets.all(8.0),
-                                                                          child: Row(
-                                                                            children: [BackButton()],
-                                                                          ),
+                                                          tooltip: "share to barcode",
+                                                          onPressed: () {
+                                                            showBottomSheet(
+                                                              backgroundColor: Colors.transparent,
+                                                              enableDrag: true,
+                                                              context: context,
+                                                              builder: (c) => SizedBox(
+                                                                width: double.infinity,
+                                                                height: Get.height * 0.8,
+                                                                child: Card(
+                                                                  margin: EdgeInsets.symmetric(horizontal: 32),
+                                                                  child: Column(
+                                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                                    children: [
+                                                                      Padding(
+                                                                        padding: const EdgeInsets.all(8.0),
+                                                                        child: Row(
+                                                                          children: [BackButton()],
                                                                         ),
-                                                                        Center(
-                                                                          child: Column(
-                                                                            children: [
-                                                                              QrImage(
-                                                                                data: "1234567890",
-                                                                                version: QrVersions.auto,
-                                                                                size: 200.0,
-                                                                              ),
-                                                                              Text(e['deviceId'].toString(),
-                                                                                style: TextStyle(
-                                                                                  fontSize: 16
-                                                                                ),
-                                                                              )
-                                                                            ],
-                                                                          ),
+                                                                      ),
+                                                                      Center(
+                                                                        child: Column(
+                                                                          children: [
+                                                                            QrImage(
+                                                                              data: "1234567890",
+                                                                              version: QrVersions.auto,
+                                                                              size: 200.0,
+                                                                            ),
+                                                                            Text(
+                                                                              e['deviceId'].toString(),
+                                                                              style: TextStyle(fontSize: 16),
+                                                                            )
+                                                                          ],
                                                                         ),
-                                                                      ],
-                                                                    ),
+                                                                      ),
+                                                                    ],
                                                                   ),
                                                                 ),
-                                                              );
-                                                            },
-                                                            icon: Icon(Icons.qr_code, color: Colors.blue))
+                                                              ),
+                                                            );
+                                                          },
+                                                          icon: Icon(Icons.qr_code, color: Colors.blue),
+                                                        ),
+                                                        IconButton(
+                                                          tooltip: "copy",
+                                                          onPressed: (){
+                                                            FlutterClipboard.copy(e['deviceId'])
+                                                                  .then((value) => SmartDialog.showToast(e['deviceId']));
+                                                          }, 
+                                                          icon: Icon(Icons.copy)
+                                                        )
                                                       ],
                                                     )
                                                   ],
@@ -209,12 +220,12 @@ class Device extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Text('Create Device', style: TextStyle(fontSize: 24)),
               ),
-              SelectCompany(onSelectCompany: (value) {
+              CompanySelect(onSelectCompany: (value) {
                 selectedCompanyId.value = value;
                 body['companyId'] = value;
               }),
               Obx(
-                () => SelectOoutletByCompany(
+                () => OutletSelectByCompany(
                     companyId: selectedCompanyId.value,
                     onSelectOutlet: (value) {
                       body['outletId'] = value;

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
-class Tax extends StatelessWidget {
-    const Tax({
+class StoreOnline extends StatelessWidget {
+    const StoreOnline({
         Key ? key
     }): super(key: key);
 

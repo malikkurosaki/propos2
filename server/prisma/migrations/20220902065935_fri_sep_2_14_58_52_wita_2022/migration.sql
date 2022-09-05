@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `Product` ADD COLUMN `isImage` BOOLEAN NOT NULL DEFAULT false,
+    ADD COLUMN `isStock` BOOLEAN NOT NULL DEFAULT false;

@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 
 class Val {
   static final user = {}.val('Val.user').obs;
-  static final userId = "".val('Val.userId');
+  // static final userId = "".val('Val.userId');
   static final userIdTmp = "".val('Val.tmpUserId');
 
   static final listorder = [].val("Val.listorder").obs;
@@ -24,7 +24,7 @@ class Val {
 
   static clear() {
     Val.user.value.val = {};
-    Val.userId.val = "";
+    // Val.userId.val = "";
     Val.userIdTmp.val = "";
 
     Val.listorder.value.val = [];

@@ -12,4 +12,6 @@ class RouterAuth {
 
     static Future < http.Response > loginDevice(Map body) => http.post(Uri.parse("${Conf.host}/auth/login-device"), body: body);
 
+    static Future < http.Response > loginCashier(Map body) => http.post(Uri.parse("${Conf.host}/auth/login-cashier"), body: body);
+
 }

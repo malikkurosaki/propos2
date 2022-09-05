@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:propos/components/multi_select_outlet_bycompany.dart';
-import 'package:propos/components/select_company.dart';
+import 'package:propos/components/company_select.dart';
+import 'package:propos/components/outlet_multi_select_by_company.dart';
 import 'package:propos/utils/router_api.dart';
 import 'package:propos/utils/val.dart';
 import 'package:propos/utils/val_def.dart';
@@ -209,13 +209,13 @@ class PaymentMethod extends StatelessWidget {
                         final conName = TextEditingController();
                         return Column(
                           children: [
-                            SelectCompany(
+                            CompanySelect(
                               onSelectCompany: (value) {
                                 _companyId.value = value.toString();
                               },
                             ),
                             Obx(
-                              () => MultiSelectOutletBycompany(companyId: _companyId.value, onSelectOutlet: (value) {}),
+                              () => OutletMultiSelectByCompany(companyId: _companyId.value, onSelectOutlet: (value) {}),
                             ),
                             Padding(
                               padding: const EdgeInsets.all(8.0),

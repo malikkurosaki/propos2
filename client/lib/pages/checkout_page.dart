@@ -62,7 +62,11 @@ class CheckoutPage extends StatelessWidget {
                     children: [
                       BackButton(
                         onPressed: () {
-                          Get.toNamed(Pages.homePage().route);
+                          if (Vl.employeeId.val.isNotEmpty) {
+                            Get.toNamed(Pages.empHomePage().route);
+                          } else {
+                            Get.toNamed(Pages.homePage().route);
+                          }
                         },
                       ),
                       Visibility(
@@ -116,19 +120,45 @@ class CheckoutPage extends StatelessWidget {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           // bill id
-                                          Text(
-                                            "Bill ID: ",
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      "Bill ID: ",
+                                                    ),
+                                                    Text(
+                                                      Val.billId.value.val.toString(),
+                                                      overflow: TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                        fontWeight: FontWeight.bold,
+                                                        fontSize: 20,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                                  children: [
+                                                    Text("Bill No"),
+                                                    Text(
+                                                      "00001",
+                                                      style: TextStyle(
+                                                        fontSize: 20,
+                                                        fontWeight: FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                          Text(
-                                            Val.billId.value.val.toString(),
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 20,
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 16,
-                                          ),
+                                          // Divider(),
                                           Row(
                                             children: [
                                               Expanded(
@@ -170,14 +200,42 @@ class CheckoutPage extends StatelessWidget {
                                                     ),
                                                   ],
                                                 ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                                  children: [
+                                                    Text(
+                                                      "Change",
+                                                    ),
+                                                    Text(
+                                                      NumberFormat.currency(
+                                                        locale: 'id_ID',
+                                                        symbol: 'Rp. ',
+                                                        decimalDigits: 0,
+                                                      ).format(int.parse(_change().toString())).contains("-")
+                                                          ? "0"
+                                                          : NumberFormat.currency(
+                                                              locale: 'id_ID',
+                                                              symbol: 'Rp. ',
+                                                              decimalDigits: 0,
+                                                            ).format(int.parse(_change().toString())),
+                                                      style: TextStyle(
+                                                        fontSize: 20,
+                                                        fontWeight: FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                               )
                                             ],
                                           ),
-                                          Divider(),
+                                          // Divider(),
                                           // payment method
-                                          Text(
-                                            "Payment Method: ",
-                                          ),
+                                          // Text(
+                                          //   "Payment Method: ",
+                                          // ),
 
                                           Builder(
                                             builder: (context) {
@@ -321,7 +379,6 @@ class CheckoutPage extends StatelessWidget {
                                                       debugPrint(e.toString());
                                                       SmartDialog.showToast(e.toString());
                                                     }
-                                                    
                                                   },
                                                   child: Padding(
                                                     padding: const EdgeInsets.all(10.0),
@@ -376,34 +433,7 @@ class CheckoutPage extends StatelessWidget {
                       _toPay.value.val.toString(),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Change",
-                        ),
-                        Text(
-                          NumberFormat.currency(
-                            locale: 'id_ID',
-                            symbol: 'Rp. ',
-                            decimalDigits: 0,
-                          ).format(int.parse(_change().toString())).contains("-")
-                              ? "0"
-                              : NumberFormat.currency(
-                                  locale: 'id_ID',
-                                  symbol: 'Rp. ',
-                                  decimalDigits: 0,
-                                ).format(int.parse(_change().toString())),
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+
                   // Visibility(
                   //   visible: media.isMobile,
                   //   child: Obx(

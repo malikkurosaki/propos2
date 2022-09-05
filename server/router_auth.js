@@ -8,5 +8,6 @@ routerAuth.post('/login', Login.sekarang);
 routerAuth.post('/register-detail', RegisterDetail.sekarang);
 
 routerAuth.post('/login-device', Login.device)
+routerAuth.post('/login-cashier', Login.loginCashier)
 
 module.exports = routerAuth;

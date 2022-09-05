@@ -100,45 +100,100 @@ const getProductByCategory = expressAsyncHandler(async (req, res, next) => {
     res.status(getProductByCategory ? 200 : 401).json(getProductByCategory);
 });
 
+
+let ModelProduct = {
+    "name": null,
+    "price": null,
+    "listCustomPrice": undefined,
+    "productImageId": undefined,
+    "productImageName": undefined,
+    "stock": undefined,
+    "minStock": undefined,
+    "companyId": undefined,
+    "categoryId": undefined,
+    "listOutlet": undefined,
+    "des": undefined,
+    "modal": undefined,
+    "sku": undefined,
+    "barcodeId": undefined,
+    "berat": undefined,
+    "dimensi": undefined,
+    "isCustomPrice": undefined,
+    "isStock": undefined
+}
+
+
+const ModelProduct2 = {
+   "name": "dsdsdsds",
+   "price": 33334,
+   "listCustomPrice": [
+      {
+         "customPriceId": "3a6bf7d3-41f3-4c63-b9c1-46ccc2152b90",
+         "price": 23232
+      }
+   ],
+   "productImageId":"a4792846-dcad-4777-8c9f-3a1d10b2e329",
+   "productImageName":"c9a1d5a6-bd0a-496f-84b3-05b6e7c42d91_scaled_download-1.jpg.png",
+   "stock": 1,
+   "ninStock": 0,
+   "companyId":"314510a8-f2bb-4792-ab9a-f2a82821a9af",
+   "listOutlet": [
+      {
+         "outletId":"a37d306d-f5a5-43cf-9b92-282f23d40fc3",
+         "companyId":"314510a8-f2bb-4792-ab9a-f2a82821a9af",
+         "userId":"2081b6cd-8728-4a50-a1d7-6a24812d0309"
+      }
+   ],
+   "des": "dsdsds",
+   "modal": 3333,
+   "barcodeId": "dsdsdsds",
+   "sku": "dfssdss",
+   "berat": 333,
+   "categoryId":"f5539660-b852-4292-850f-db8afbdecf44",
+   "dimensi": "3,4,5",
+   "isImage": true,
+   "isStock": true,
+   "isDetail": true
+}
+
 // menambahkan product baru
 const createProduct = expressAsyncHandler(async (req, res, next) => {
-    const userId = req.query.userId;
-    const compId = req.query.companyId;
-    const {
-        name,
-        price,
-        description,
-        categoryId,
-        outletList,
-        companyId,
-        productImageId,
-    } = req.body;
+    const { userId, companyId, outletId } = req.query;
+    if (!userId || !companyId || !outletId) return res.status(401).send("401")
 
-    console.log(outletList)
+    let dataBody = JSON.parse(req.body.data);
 
-    // [{ "id": "235d21e5-fd30-4a83-a166-fdcfc9803f36", "name": "baru tiga" }, { "id": "2d1c6cec-b8ad-48f5-b8fb-f4b2314d7967", "name": "baru nih" }, { "id": "7b60b369-584f-4aaf-a7a9-7791b214212c", "name": "baru dua" }, { "id": "db2dce47-d655-4fe4-a4f0-96bb53d06b2f", "name": "usahaku" }]
+    console.log(dataBody);
+
+    /**@type {ModelProduct} */
+    const body = Object.assign(ModelProduct, dataBody);
+
+    console.log(body.listCustomPrice);
 
     const createProduct = await prisma.product.create({
         data: {
-            name: name,
-            price: Number(price),
-            categoryId: categoryId,
-            description: description,
+            name: body.name,
+            price: Number(body.price),
+            categoryId: body.categoryId,
+            description: body.des,
             userId: userId,
-            companyId: companyId,
-            productImageId: productImageId == "null" ? undefined : productImageId,
+            companyId: body.companyId,
+            productImageId: body.productImageId,
+            img: body.productImageName,
+            stock: body.stock,
+            minStock: body.minStock,
+            barcodeId: body.barcodeId,
+            isCustomPrice: body.isCustomPrice,
+            ProductCustomPrice: body.listCustomPrice == undefined? undefined: {
+                createMany: {
+                    data: body.listCustomPrice
+                }
+            },
             ProductOutlet: {
                 createMany: {
-                    data: JSON.parse(outletList).map(outlet => ({
-                        outletId: outlet,
-                        userId: userId,
-                        companyId: companyId,
-                    }
-                    ))
-
+                    data: body.listOutlet
                 }
             }
-
         }
     });
 
@@ -255,6 +310,11 @@ const productbyUserId = expressAsyncHandler(async (req, res, next) => {
                     name: true,
                     price: true,
                     description: true,
+                    stock: true,
+                    isStock: true,
+                    minStock: true,
+                    img: true,
+                    isImage: true,
                     ProductImage: {
                         select: {
                             url: true,

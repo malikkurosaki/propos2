@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue/gen/flutterblue.pb.dart';
 import 'package:propos/utils/struk_tiket.dart';
 import 'package:flutter_bluetooth_basic/flutter_bluetooth_basic.dart' as bt;
-import 'package:flutter_web_bluetooth/flutter_web_bluetooth.dart' as bw;
-import 'package:flutter_web_bluetooth/js_web_bluetooth.dart' as bwjs;
+// import 'package:flutter_web_bluetooth/flutter_web_bluetooth.dart' as bw;
+// import 'package:flutter_web_bluetooth/js_web_bluetooth.dart' as bwjs;
 import 'package:propos/utils/struk_tiket.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:get/get.dart';
@@ -13,8 +13,8 @@ import 'package:propos/utils/val.dart';
 
 class SelectPrinterWeb extends StatelessWidget {
   SelectPrinterWeb({Key? key}) : super(key: key);
-  final supported = bw.FlutterWebBluetooth.instance.isBluetoothApiSupported;
-  final available = bw.FlutterWebBluetooth.instance.isAvailable;
+  // final supported = bw.FlutterWebBluetooth.instance.isBluetoothApiSupported;
+  // final available = bw.FlutterWebBluetooth.instance.isAvailable;
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +23,9 @@ class SelectPrinterWeb extends StatelessWidget {
         MaterialButton(
           child: Text("Select Printer"),
           onPressed: () async {
-            final requestOptions = bw.RequestOptionsBuilder.acceptAllDevices(
-                optionalServices: [bw.BluetoothDefaultServiceUUIDS.DEVICE_INFORMATION.uuid]);
-            final device = await bw.FlutterWebBluetooth.instance.requestDevice(requestOptions);
+            // final requestOptions = bw.RequestOptionsBuilder.acceptAllDevices(
+            //     optionalServices: [bw.BluetoothDefaultServiceUUIDS.DEVICE_INFORMATION.uuid]);
+            // final device = await bw.FlutterWebBluetooth.instance.requestDevice(requestOptions);
             
             
 

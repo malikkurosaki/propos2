@@ -21,7 +21,6 @@ const storage = multer.diskStorage({
 // upload image with multer
 routerImg.post('/upload', multer({ storage: storage }).single('image'), expressAsyncHandler(async (req, res) => {
 
-
     let img = await prisma.productImage.create({
         data: {
             url: "/uploads/" + req.file.filename,

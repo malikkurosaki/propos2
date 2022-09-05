@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:propos/components/input.dart';
-import 'package:propos/components/multi_select_company.dart';
+import 'package:propos/components/company_multi_select.dart';
 import 'package:propos/components/save_button.dart';
 import 'package:propos/components/search_view.dart';
 import 'package:propos/utils/notif.dart';
@@ -167,7 +167,7 @@ class Customer extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        MultiSelectCompany(onSelectCompany: (value) {
+        CompanyMultiSelect(onSelectCompany: (value) {
           listCompanyId.assignAll(value);
         }),
         Input(text: body.val['name'], label: "Name", onChanged: (value) => body.val['name'] = value),

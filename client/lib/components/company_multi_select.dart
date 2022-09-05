@@ -4,8 +4,8 @@ import 'package:propos/utils/router_api.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
-class MultiSelectCompany extends StatelessWidget {
-  MultiSelectCompany({Key? key, required this.onSelectCompany}) : super(key: key);
+class CompanyMultiSelect extends StatelessWidget {
+  CompanyMultiSelect({Key? key, required this.onSelectCompany}) : super(key: key);
   final _listCompany = [].val("MultiSelectCompany._listCompany").obs;
   final _listSelected = [].obs;
   final Function(List value) onSelectCompany;
@@ -29,7 +29,7 @@ class MultiSelectCompany extends StatelessWidget {
             color: Colors.grey.shade100,
             child: CheckboxListTile(
               title: Text("Select Company"),
-              value: _listCompany.value.val.length.isEqual(_listSelected.length),
+              value: _listSelected.isNotEmpty && _listCompany.value.val.length.isEqual(_listSelected.length),
               onChanged: (value) {
                 if (value!) {
                   _listSelected.assignAll([..._listCompany.value.val.map((data) => data['id']).toList()]);

@@ -2,7 +2,10 @@ const Bill = require('./con/bill');
 const Category = require('./con/category');
 const Company = require('./con/company');
 const Customer = require('./con/customer');
+const CustomPrice = require('./con/custom_price');
+const DefaultPref = require('./con/default_pref');
 const Device = require('./con/device');
+const Discount = require('./con/discount');
 const DrawerHeader = require('./con/drawer_header');
 const Employee = require('./con/employee');
 const Outlet = require('./con/outlet');
@@ -81,6 +84,7 @@ routerApi.get('/properties-category-with-outlet-or-null', Properties.getAllCateg
 
 // drawe header
 routerApi.get('/drawer-header', DrawerHeader.getName);
+routerApi.get('/drawer-header-employee', DrawerHeader.drawerHeaderEmployee)
 
 // employee
 routerApi.get('/list-employee', Employee.getEmployeeByuserId);
@@ -92,5 +96,20 @@ routerApi.get('/employee-by-user', Employee.employeeByUser);
 // customer
 routerApi.post('/customer-create', Customer.create);
 routerApi.get('/custoemer-getList', Customer.getList);
+
+// discount 
+routerApi.get('/discount-list', Discount.getList);
+routerApi.post('/discount-crete', Discount.create);
+
+// default pref
+routerApi.post('/default-pref-user-post', DefaultPref.userCreate);
+routerApi.post('/default-pref-employee-post', DefaultPref.employeeCreate);
+routerApi.get('/default-pref-user-get', DefaultPref.getDefaultUser);
+routerApi.get('/default-pref-employee-get', DefaultPref.getDefaultEmployee);
+
+// custom price
+routerApi.post('/custom-price-create', CustomPrice.create);
+routerApi.get('/custom-price-get-list', CustomPrice.getList);
+routerApi.get('/custom-price-get-data-select', CustomPrice.getDataSelect);
 
 module.exports = routerApi

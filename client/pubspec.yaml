@@ -42,7 +42,7 @@ dependencies:
   cached_network_image: ^3.2.1
   intl: ^0.17.0
   badges: ^2.0.3
-  flutter_web_bluetooth: ^0.0.8
+  # flutter_web_bluetooth: ^0.0.8
   esc_pos_bluetooth: ^0.4.1
   blue_thermal_printer: ^1.2.3
   esc_pos_printer: ^4.1.0
@@ -59,9 +59,10 @@ dependencies:
   contained_tab_bar_view: ^0.8.0
   firebase_core_dart: ^1.0.1
   messaging_service: ^1.0.3
-  firebase_messaging: ^12.0.3
+  # firebase_messaging: ^12.0.3
   firebase_dart: ^1.0.0-dev.37
   qr_flutter: ^4.0.0
+  dropdown_search: ^5.0.2
   # blue_print_pos: ^0.0.14
 
 

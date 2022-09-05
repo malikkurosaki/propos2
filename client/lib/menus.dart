@@ -4,12 +4,14 @@ import 'package:propos/menus/cashier.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:get/get.dart';
 import 'package:propos/menus/company.dart';
+import 'package:propos/menus/custom_price.dart';
 import 'package:propos/menus/customer.dart';
 import 'package:propos/menus/device.dart';
 import 'package:propos/components/test_print.dart';
 import 'package:propos/menus/discount.dart';
 import 'package:propos/menus/report.dart';
-import 'package:propos/menus/tax.dart';
+import 'package:propos/menus/store%20online.dart';
+import 'package:propos/menus/tax_and_service.dart';
 import 'package:propos/menus/work%20shift.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'menus/category.dart';
@@ -62,8 +64,8 @@ class Menus {
             "icon": Icons.pix_rounded,
         },
         {
-            "title": "Tax",
-            "display": Tax(),
+            "title": "Tax And Service",
+            "display": TaxAndService(),
             "icon": Icons.pix_rounded,
         },
         {
@@ -90,12 +92,22 @@ class Menus {
             "title": "WorkShift",
             "display": WorkShift(),
             "icon": Icons.timer,
-        }, 
+        },
         {
             "title": "Customer",
             "display": Customer(),
             "icon": Icons.pix_rounded,
         },
+        {
+            "title": "StoreOnline",
+            "display": StoreOnline(),
+            "icon": Icons.pix_rounded,
+        }, 
+        {
+            "title": "CustomPrice",
+            "display": CustomPrice(),
+            "icon": Icons.pix_rounded,
+        }
     ];
 
     static Widget display() => Obx(

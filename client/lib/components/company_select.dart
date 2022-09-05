@@ -6,9 +6,10 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:get/get.dart';
 import 'package:propos/utils/router_api.dart';
 
-class SelectCompany extends StatelessWidget {
-  SelectCompany({Key? key, required this.onSelectCompany}) : super(key: key);
+class CompanySelect extends StatelessWidget {
+  CompanySelect({Key? key, required this.onSelectCompany}) : super(key: key);
   final _lsCompany = [].obs;
+  /// ## hasil nya adalah string id
   final Function(String id) onSelectCompany;
 
   _onLoad() async {
@@ -26,9 +27,7 @@ class SelectCompany extends StatelessWidget {
         child: DropdownButtonFormField(
           decoration: InputDecoration(
             labelText: "Pilih Company",
-            border: OutlineInputBorder(
-              borderSide: BorderSide.none
-            ),
+            border: OutlineInputBorder(borderSide: BorderSide.none),
             filled: true,
             isDense: true,
           ),

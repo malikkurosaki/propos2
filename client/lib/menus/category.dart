@@ -3,16 +3,12 @@ import 'dart:convert';
 import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-import 'package:propos/components/input.dart';
-import 'package:propos/components/search_view.dart';
-import 'package:propos/components/search_view_with_checkbox.dart';
-import 'package:propos/components/select_company.dart';
-import 'package:propos/utils/router_api.dart';
-import 'package:propos/utils/val_def.dart';
-import 'package:responsive_builder/responsive_builder.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
-import 'package:http/http.dart' as http;
+import 'package:propos/components/company_select.dart';
+import 'package:propos/components/input.dart';
+import 'package:propos/components/search_view_with_checkbox.dart';
+import 'package:propos/utils/router_api.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 
 class Category extends StatelessWidget {
   Category({Key? key}) : super(key: key);
@@ -171,7 +167,7 @@ class Category extends StatelessWidget {
                     return ListView(
                       controller: ScrollController(),
                       children: [
-                        SelectCompany(onSelectCompany: (companyId) {
+                        CompanySelect(onSelectCompany: (companyId) {
                           _conCompanyId.text = companyId;
                         }),
                         Input(

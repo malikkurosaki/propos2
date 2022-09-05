@@ -15,14 +15,15 @@ class SearchViewWithCheckbox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Obx(() => Tooltip(
-        message: "Select All",
-        child: Checkbox(
-          
-              value: checkValue.value,
-              onChanged: onCheckChanged,
-            ),
-      )),
+      leading: Obx(
+        () => Tooltip(
+          message: "Select All",
+          child: Checkbox(
+            value: checkValue.value,
+            onChanged: onCheckChanged,
+          ),
+        ),
+      ),
       title: SearchView(
         onChanged: onChanged,
       ),

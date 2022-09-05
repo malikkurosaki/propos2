@@ -9,6 +9,7 @@ import './pages/payment_success_page.dart';
 import './pages/register_page.dart';
 import './pages/registration_detail_page.dart';
 import './pages/root_page.dart';
+import './pages/store_page.dart';
 import './pages/test_page.dart';
 
 import './pages/business_detail_page.dart';
@@ -21,6 +22,7 @@ import './pages/payment_success_page.dart';
 import './pages/register_page.dart';
 import './pages/registration_detail_page.dart';
 import './pages/root_page.dart';
+import './pages/store_page.dart';
 import './pages/test_page.dart';
 class Pages {
   late String route;
@@ -35,6 +37,7 @@ class Pages {
   Pages.registerPage(): route = "/register_page";
   Pages.registrationDetailPage(): route = "/registration_detail_page";
   Pages.rootPage(): route = "/";
+  Pages.storePage(): route = "/store_page";
   Pages.testPage(): route = "/test_page";
 
   static final listPage = < GetPage > [
@@ -77,6 +80,10 @@ class Pages {
     GetPage(
       name: "/",
       page: () => RootPage(),
+    ),
+    GetPage(
+      name: "/store",
+      page: () => StorePage(),
     ),
     GetPage(
       name: "/test_page",

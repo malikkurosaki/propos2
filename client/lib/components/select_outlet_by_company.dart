@@ -6,8 +6,8 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:get/get.dart';
 import 'package:propos/utils/router_api.dart';
 
-class SelectOoutletByCompany extends StatelessWidget {
-  SelectOoutletByCompany({Key? key, required this.onSelectOutlet, required this.companyId}) : super(key: key);
+class OutletSelectByCompany extends StatelessWidget {
+  OutletSelectByCompany({Key? key, required this.onSelectOutlet, required this.companyId}) : super(key: key);
   final _lsOutlet = [].obs;
   final Function(String) onSelectOutlet;
   final String companyId;
@@ -27,7 +27,7 @@ class SelectOoutletByCompany extends StatelessWidget {
               color: Colors.grey.shade100,
               child: ListTile(
                   title: Text("Select Outlet"),
-                  leading: Icon(Icons.dangerous,)
+                  // leading: Icon(Icons.dangerous,)
                 ),
             )
             : DropdownButtonFormField(

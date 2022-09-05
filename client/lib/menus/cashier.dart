@@ -3,14 +3,11 @@ import 'dart:convert';
 import 'package:badges/badges.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-import 'package:flutter_web_bluetooth/web/js/js_supported.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
+import 'package:propos/components/select_customer.dart';
 import 'package:propos/pages.dart';
 import 'package:propos/utils/conf.dart';
 import 'package:propos/utils/img_def.dart';
@@ -26,7 +23,8 @@ class Cashier extends StatelessWidget {
   // final _listProduct = List.from(ValDef.productList.value.val).val('Cashier.listProduct').obs;
   final _listCategory = [].obs;
   final _listProduct = [].obs;
-  final isMultipleSelect = false.obs;
+  final _isMultipleSelect = false.obs;
+  final _lsTampungan = [].obs;
 
   // _loadCategory() async {
   //   final list = await RouterApi.listCategory().getData();
@@ -35,7 +33,6 @@ class Cashier extends StatelessWidget {
 
   _loadProduct() async {
     final list = await RouterApi.listProduct().getData();
-    debugPrint(list.body);
     if (list.statusCode == 200) _listProduct.assignAll(jsonDecode(list.body));
   }
 
@@ -75,22 +72,19 @@ class Cashier extends StatelessWidget {
         child: ListTile(
           leading: Tooltip(
             message: "Select Sekaligus",
-            child: !isMultipleSelect.value
-                ? null
-                : Checkbox(
-                    value: Val.listorder.value.val.isNotEmpty &&
-                        lsTampungan.length.isEqual(Val.listorder.value.val.length),
-                    onChanged: Val.listorder.value.val.isEmpty
-                        ? null
-                        : (value) {
-                            if (value!) {
-                              lsTampungan.assignAll(Val.listorder.value.val.map((e) => e['id']));
-                            } else {
-                              lsTampungan.clear();
-                            }
-                            Get.back();
-                          },
-                  ),
+            child: Checkbox(
+              value: Val.listorder.value.val.isNotEmpty && lsTampungan.length.isEqual(Val.listorder.value.val.length),
+              onChanged: Val.listorder.value.val.isEmpty
+                  ? null
+                  : (value) {
+                      if (value!) {
+                        lsTampungan.assignAll(Val.listorder.value.val.map((e) => e['id']));
+                      } else {
+                        lsTampungan.clear();
+                      }
+                      Get.back();
+                    },
+            ),
           ),
           title: Wrap(
             crossAxisAlignment: WrapCrossAlignment.center,
@@ -173,27 +167,32 @@ class Cashier extends StatelessWidget {
             child: IconButton(
               tooltip: "tambah item order",
               onPressed: () {
-                Get.dialog(Dialog(
-                  insetPadding: EdgeInsets.all(8),
-                  child: Material(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: BackButton(),
+                Get.dialog(
+                  Dialog(
+                    insetPadding: EdgeInsets.all(8),
+                    child: Material(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: BackButton(),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text("Select Item"),
+                              )
+                            ],
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text("Select Item"),
-                          )
-                        ]),
-                        Flexible(child: _listMenuItem(media)),
-                      ],
+                          Flexible(child: _listMenuItem(media)),
+                        ],
+                      ),
                     ),
                   ),
-                ));
+                );
               },
               icon: Icon(
                 Icons.add_circle_outlined,
@@ -209,13 +208,12 @@ class Cashier extends StatelessWidget {
     return Scaffold(
       body: Builder(
         builder: (context) {
-          final lsTampungan = [].obs;
           return Obx(() => SizedBox(
                 width: media.isMobile ? Get.width : 500,
                 child: Card(
                   child: Column(
                     children: [
-                      _headerTotalan(media, lsTampungan),
+                      _headerTotalan(media, _lsTampungan),
                       // mulai list item
                       Flexible(
                         child: Val.listorder.value.val.isEmpty
@@ -227,22 +225,23 @@ class Cashier extends StatelessWidget {
                                 children: [
                                   for (final itm in Val.listorder.value.val)
                                     ListTile(
-                                      leading: !isMultipleSelect.value
+                                      // leading: !isMultipleSelect.value
+                                      leading: _lsTampungan.isEmpty
                                           ? null
                                           : Checkbox(
-                                              value: lsTampungan.contains(itm['id']),
+                                              value: _lsTampungan.contains(itm['id']),
                                               onChanged: (value) {
                                                 if (value!) {
-                                                  lsTampungan.add(itm['id']);
+                                                  _lsTampungan.add(itm['id']);
                                                 } else {
-                                                  lsTampungan.remove(itm['id']);
+                                                  _lsTampungan.remove(itm['id']);
                                                 }
                                                 Get.back();
                                               },
                                             ),
                                       title: ListTile(
                                         onLongPress: () {
-                                          isMultipleSelect.toggle();
+                                          _isMultipleSelect.toggle();
                                         },
                                         onTap: () {
                                           final _conName = TextEditingController();
@@ -386,43 +385,51 @@ class Cashier extends StatelessWidget {
                         padding: const EdgeInsets.all(8.0),
                         child: Row(
                           children: [
-                            IconButton(
-                              icon: Icon(Icons.keyboard_arrow_up_rounded),
-                              onPressed: () {
-                                showBottomSheet(
-                                  context: context,
-                                  builder: (c) => SizedBox(
-                                    height: 500,
-                                    child: Material(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Row(
-                                              children: [
-                                                BackButton(),
-                                              ],
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              child: IconButton(
+                                icon: Icon(Icons.keyboard_arrow_up_rounded),
+                                onPressed: () {
+                                  showBottomSheet(
+                                    backgroundColor: Colors.transparent,
+                                    context: context,
+                                    builder: (c) => SizedBox(
+                                      height: 500,
+                                      child: Card(
+                                        elevation: 8,
+                                        margin: const EdgeInsets.symmetric(horizontal: 16),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Ink(
+                                              color: Colors.blueGrey.shade100,
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: Row(
+                                                  children: [BackButton(), Text("Additional")],
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text("Discount"),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text("Tax"),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text("Customer"),
-                                          )
-                                        ],
+                                            SelectCustomer(
+                                              onChanged: (id) {
+                                                debugPrint(id);
+                                              },
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Text("Discount"),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Text("Tax"),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                );
-                              },
+                                  );
+                                },
+                              ),
                             ),
                             Expanded(
                               child: MaterialButton(
@@ -487,145 +494,142 @@ class Cashier extends StatelessWidget {
     );
   }
 
-  Widget _listMenuItem(SizingInformation media) => Card(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(2.0),
-                child: TextField(
-                  onChanged: (value) async {
-                    final data = await RouterApi.productSearch(query: "search=$value").getData();
-                    if (data.statusCode == 200) _listProduct.assignAll(jsonDecode(data.body));
-                  },
-                  controller: _conSearch,
-                  decoration: InputDecoration(
-                    hintText: 'Search',
-                    prefixIcon: Icon(Icons.search),
-                    filled: true,
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                    ),
+  Widget _listMenuItem(SizingInformation media) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(2.0),
+              child: TextField(
+                onChanged: (value) async {
+                  final data = await RouterApi.productSearch(query: "search=$value").getData();
+                  if (data.statusCode == 200) _listProduct.assignAll(jsonDecode(data.body));
+                },
+                controller: _conSearch,
+                decoration: InputDecoration(
+                  hintText: 'Search',
+                  prefixIcon: Icon(Icons.search),
+                  filled: true,
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide.none,
                   ),
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Builder(builder: (context) {
-                final listCat = [].obs;
-                RouterApi.categoryByCompanyId(query: "cusCompanyId=${Vl.companyId.val}").getData().then((data) {
-                  if (data.statusCode == 200) {
-                    listCat.assignAll(jsonDecode(data.body));
-                  }
-                });
-                return Obx(() => SingleChildScrollView(
-                      controller: ScrollController(),
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Builder(builder: (context) {
+              final listCat = [].obs;
+              RouterApi.categoryByCompanyId(query: "cusCompanyId=${Vl.companyId.val}").getData().then((data) {
+                if (data.statusCode == 200) {
+                  listCat.assignAll(jsonDecode(data.body));
+                }
+              });
+              return Obx(() => SingleChildScrollView(
+                    controller: ScrollController(),
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: MaterialButton(
+                            color: Colors.green,
+                            onPressed: () async {
+                              final list = await RouterApi.productList().getData();
+                              if (list.statusCode == 200) _listProduct.assignAll(jsonDecode(list.body));
+                            },
+                            child: Text(
+                              "All",
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                        for (final cat in listCat)
                           Padding(
                             padding: const EdgeInsets.all(4.0),
                             child: MaterialButton(
                               color: Colors.green,
                               onPressed: () async {
-                                final list = await RouterApi.productList().getData();
-                                if (list.statusCode == 200) _listProduct.assignAll(jsonDecode(list.body));
+                                final data =
+                                    await RouterApi.productGetByCategory(query: "categoryId=${cat['id']}").getData();
+                                if (data.statusCode == 200) _listProduct.assignAll(jsonDecode(data.body));
                               },
                               child: Text(
-                                "All",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                ),
+                                cat['name'].toString(),
+                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),
-                          for (final cat in listCat)
+                      ],
+                    ),
+                  ));
+            }),
+          ),
+          Flexible(
+            child: Obx(
+              () => GridView.extent(
+                maxCrossAxisExtent: media.isMobile ? Get.width / 2 : 200,
+                childAspectRatio: media.isMobile ? 0.8 : 0.8,
+                children: [
+                  for (final prod in _listProduct)
+                    InkWell(
+                      onTap: () {
+                        // Val.listorder.value.val = [];
+                        final data = List.from(Val.listorder.value.val);
+                        final idx = data.indexWhere((element) => element['id'] == prod['id']);
+
+                        if (idx == -1) {
+                          prod['qty'] = 1;
+                          prod['note'] = '';
+                          prod['total'] = prod['qty'] * prod['price'];
+                          data.add(prod);
+                          SmartDialog.showToast("Added to cart", animationTime: Duration(milliseconds: 500));
+                        } else {
+                          data[idx]['qty']++;
+                        }
+
+                        Val.listorder.value.val = data;
+                        Val.listorder.refresh();
+
+                      },
+                      child: Card(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: CachedNetworkImage(
+                                  imageUrl:
+                                      "${Conf.host}/product-image/${(prod["ProductImage"]?['name'] ?? "null").toString()}",
+                                  fit: BoxFit.contain,
+                                  width: media.isMobile ? Get.width / 2 : 200),
+                            ),
                             Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: MaterialButton(
-                                color: Colors.green,
-                                onPressed: () async {
-                                  final data =
-                                      await RouterApi.productGetByCategory(query: "categoryId=${cat['id']}").getData();
-                                  if (data.statusCode == 200) _listProduct.assignAll(jsonDecode(data.body));
-                                },
-                                child: Text(
-                                  cat['name'].toString(),
-                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                                ),
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                prod['name'].toString(),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                               ),
                             ),
-                        ],
-                      ),
-                    ));
-              }),
-            ),
-            Flexible(
-              child: Obx(
-                () => GridView.extent(
-                  maxCrossAxisExtent: media.isMobile ? Get.width / 2 : 200,
-                  childAspectRatio: media.isMobile ? 0.8 : 0.8,
-                  children: [
-                    for (final prod in _listProduct)
-                      InkWell(
-                        onTap: () {
-                          // Val.listorder.value.val = [];
-                          final data = List.from(Val.listorder.value.val);
-                          final idx = data.indexWhere((element) => element['id'] == prod['id']);
-
-                          if (idx == -1) {
-                            prod['qty'] = 1;
-                            prod['note'] = '';
-                            prod['total'] = prod['qty'] * prod['price'];
-                            data.add(prod);
-                            SmartDialog.showToast("Added to cart", animationTime: Duration(milliseconds: 500));
-                          } else {
-                            data[idx]['qty']++;
-                          }
-
-                          Val.listorder.value.val = data;
-                          Val.listorder.refresh();
-
-                          // if (media.isMobile) Get.back();
-                        },
-                        child: Card(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: CachedNetworkImage(
-                                    imageUrl:
-                                        "${Conf.host}/product-image/${(prod["ProductImage"]?['name'] ?? "null").toString()}",
-                                    fit: BoxFit.contain,
-                                    width: media.isMobile ? Get.width / 2 : 200),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  prod['name'].toString(),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0)
-                                    .format(prod['price'])),
-                              ),
-                            ],
-                          ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0)
+                                  .format(prod['price'])),
+                            ),
+                          ],
                         ),
                       ),
-                  ],
-                ),
+                    ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       );
 
   void _savedOrderDialog() {

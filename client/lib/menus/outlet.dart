@@ -47,19 +47,21 @@ class Outlet extends StatelessWidget {
 
   Widget _listDisplay(SizingInformation media) {
     return Scaffold(
-      floatingActionButton: !media.isMobile? null: FloatingActionButton(
-        child: Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
-        onPressed: () {
-          Get.dialog(
-            SimpleDialog(
-              children: [_create(media)],
+      floatingActionButton: !media.isMobile
+          ? null
+          : FloatingActionButton(
+              child: Icon(
+                Icons.add,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                Get.dialog(
+                  SimpleDialog(
+                    children: [_create(media)],
+                  ),
+                );
+              },
             ),
-          );
-        },
-      ),
       body: Card(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,33 +111,27 @@ class Outlet extends StatelessWidget {
                                 child: ListView(
                                   children: [
                                     ListTile(
-                                      leading: Checkbox(value: false, onChanged: (value){}),
-                                      title: TextField(
-                                        decoration: InputDecoration(
-                                          isDense: true,
-                                          filled: true,
-                                          hintText: 'Search',
-                                          prefixIcon: Icon(Icons.search),
-                                          suffixIcon: IconButton(
-                                            icon: Icon(Icons.clear),
-                                            onPressed: () {
-                                             
-                                            },
-                                          ),
-                                          border: OutlineInputBorder(
-                                            borderSide: BorderSide.none,
-                                          )
-                                        ),
-                                      )
-                                    ),
+                                        leading: Checkbox(value: false, onChanged: (value) {}),
+                                        title: TextField(
+                                          decoration: InputDecoration(
+                                              isDense: true,
+                                              filled: true,
+                                              hintText: 'Search',
+                                              prefixIcon: Icon(Icons.search),
+                                              suffixIcon: IconButton(
+                                                icon: Icon(Icons.clear),
+                                                onPressed: () {},
+                                              ),
+                                              border: OutlineInputBorder(
+                                                borderSide: BorderSide.none,
+                                              )),
+                                        )),
                                     ...(e['Outlet'] as List).map(
                                       (e) {
                                         return ListTile(
                                           leading: Checkbox(
                                             value: false,
-                                            onChanged: (v) {
-                                              
-                                            },
+                                            onChanged: (v) {},
                                           ),
                                           title: Text(e['name']),
                                           trailing: PopupMenuButton(
@@ -247,13 +243,17 @@ class Outlet extends StatelessWidget {
                   return;
                 }
 
-                await RouterApi.outletCreate().postData(body);
+                final res = await RouterApi.outletCreate().postData(body);
 
-                await _loadOutlet();
-                conName.clear();
+                if (res.statusCode == 201) {
+                  await _loadOutlet();
+                  conName.clear();
 
-                if (media.isMobile) {
-                  Get.back();
+                  if (media.isMobile) {
+                    Get.back();
+                  }
+                } else {
+                  SmartDialog.showToast(res.body);
                 }
               },
             ),

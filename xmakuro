@@ -1,0 +1,18 @@
+#!/usr/bin/env node
+const fs = require('fs');
+const path = require('path');
+const dir = fs.readdirSync(path.join(__dirname, "/xcon"));
+require('prompts')({
+    type: "autocomplete",
+    name: "menu",
+    message: "pilih menu",
+    choices: dir.map(e => {
+        return {
+            title: e.split(".")[0].replace(/_/g, " "),
+            value: e
+        }
+    })
+}).then(({ menu }) => {
+    if (!menu) return console.log("ok dah....");
+    require(path.join(__dirname, "./xcon/" + menu))
+})

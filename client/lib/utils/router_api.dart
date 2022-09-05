@@ -134,6 +134,9 @@ class RouterApi {
     RouterApi.drawerHeader({
         String ? query
     }): _uri = Uri.parse("${Conf.host}/api/drawer-header?userId=${Vl.userId.val}&companyId=${Vl.companyId.val}&outletId=${Vl.outletId.val}&${query ?? ''}");
+    RouterApi.drawerHeaderEmployee({
+        String ? query
+    }): _uri = Uri.parse("${Conf.host}/api/drawer-header-employee?userId=${Vl.userId.val}&companyId=${Vl.companyId.val}&outletId=${Vl.outletId.val}&${query ?? ''}");
     RouterApi.listEmployee({
         String ? query
     }): _uri = Uri.parse("${Conf.host}/api/list-employee?userId=${Vl.userId.val}&companyId=${Vl.companyId.val}&outletId=${Vl.outletId.val}&${query ?? ''}");
@@ -155,6 +158,33 @@ class RouterApi {
     RouterApi.custoemerGetList({
         String ? query
     }): _uri = Uri.parse("${Conf.host}/api/custoemer-getList?userId=${Vl.userId.val}&companyId=${Vl.companyId.val}&outletId=${Vl.outletId.val}&${query ?? ''}");
+    RouterApi.discountList({
+        String ? query
+    }): _uri = Uri.parse("${Conf.host}/api/discount-list?userId=${Vl.userId.val}&companyId=${Vl.companyId.val}&outletId=${Vl.outletId.val}&${query ?? ''}");
+    RouterApi.discountCrete({
+        String ? query
+    }): _uri = Uri.parse("${Conf.host}/api/discount-crete?userId=${Vl.userId.val}&companyId=${Vl.companyId.val}&outletId=${Vl.outletId.val}&${query ?? ''}");
+    RouterApi.defaultPrefUserPost({
+        String ? query
+    }): _uri = Uri.parse("${Conf.host}/api/default-pref-user-post?userId=${Vl.userId.val}&companyId=${Vl.companyId.val}&outletId=${Vl.outletId.val}&${query ?? ''}");
+    RouterApi.defaultPrefEmployeePost({
+        String ? query
+    }): _uri = Uri.parse("${Conf.host}/api/default-pref-employee-post?userId=${Vl.userId.val}&companyId=${Vl.companyId.val}&outletId=${Vl.outletId.val}&${query ?? ''}");
+    RouterApi.defaultPrefUserGet({
+        String ? query
+    }): _uri = Uri.parse("${Conf.host}/api/default-pref-user-get?userId=${Vl.userId.val}&companyId=${Vl.companyId.val}&outletId=${Vl.outletId.val}&${query ?? ''}");
+    RouterApi.defaultPrefEmployeeGet({
+        String ? query
+    }): _uri = Uri.parse("${Conf.host}/api/default-pref-employee-get?userId=${Vl.userId.val}&companyId=${Vl.companyId.val}&outletId=${Vl.outletId.val}&${query ?? ''}");
+    RouterApi.customPriceCreate({
+        String ? query
+    }): _uri = Uri.parse("${Conf.host}/api/custom-price-create?userId=${Vl.userId.val}&companyId=${Vl.companyId.val}&outletId=${Vl.outletId.val}&${query ?? ''}");
+    RouterApi.customPriceGetList({
+        String ? query
+    }): _uri = Uri.parse("${Conf.host}/api/custom-price-get-list?userId=${Vl.userId.val}&companyId=${Vl.companyId.val}&outletId=${Vl.outletId.val}&${query ?? ''}");
+    RouterApi.customPriceGetDataSelect({
+        String ? query
+    }): _uri = Uri.parse("${Conf.host}/api/custom-price-get-data-select?userId=${Vl.userId.val}&companyId=${Vl.companyId.val}&outletId=${Vl.outletId.val}&${query ?? ''}");
     // end
 
     // Future < String > getData() async {
