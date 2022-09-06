@@ -1,21 +1,13 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-// import 'package:flutter_web_bluetooth/web/js/js_supported.dart';
-import 'package:propos/components/input.dart';
-import 'package:propos/components/save_button.dart';
+import 'package:get/get.dart';
 import 'package:propos/pages.dart';
-import 'package:propos/utils/notif.dart';
-import 'package:propos/utils/router_api.dart';
-import 'package:propos/utils/router_auth.dart';
 import 'package:propos/utils/img_def.dart';
-import 'package:propos/utils/val.dart';
-import 'package:propos/utils/val_def.dart';
+import 'package:propos/utils/notif.dart';
+import 'package:propos/utils/router_auth.dart';
 import 'package:propos/utils/vl.dart';
 import 'package:responsive_builder/responsive_builder.dart';
-import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 
 class LoginPage extends StatelessWidget {
   LoginPage({Key? key}) : super(key: key);
@@ -43,23 +35,33 @@ class LoginPage extends StatelessWidget {
         return SafeArea(
           child: Material(
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
                   child: Visibility(
                     visible: media.isDesktop,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    child: Stack(
                       children: [
-                        Center(
-                          child: ImgDef.probusSystem(),
+                        ImgDef.bgLogin(height: Get.height, fit: BoxFit.cover),
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: SizedBox(
+                            height: 70,
+                            width: 150,
+                            child: Card(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ImgDef.probusSystem(fit: BoxFit.contain),
+                              ),
+                            ),
+                          ),
                         ),
                       ],
                     ),
                   ),
                 ),
                 SizedBox(
-                  width: 360,
+                  width: 430,
                   height: Get.height,
                   child: _loginOwner(media),
                 )

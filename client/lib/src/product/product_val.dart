@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:propos/src/product/product_model.dart';
 import 'package:propos/utils/router_api.dart';
+import 'package:get_storage/get_storage.dart';
 
 class ProductVal {
   static final keyForm = GlobalKey<FormState>();
@@ -28,19 +29,53 @@ class ProductVal {
   static final isShowChecked = false.obs;
   static final company = {};
 
+  static final listCompany = [].val("ProductVal.listCompany").obs;
+  static final selectedCompany = {}.val("ProductVal.selectedCompany2").obs;
+  static final listProduct = [].obs;
 
-  static loadProduct() async {
-    final data = await RouterApi.productByUserId().getData();
-    if (data.statusCode == 200) {
-      ProductVal.listCompanyProduct.value = jsonDecode(data.body);
-    }
+  static loadCompanyProductDisplay() {
+    RouterApi.listCompany().getData().then(
+      (res) {
+        debugPrint(res.body);
+
+        if (res.statusCode == 200) {
+          final lsData = List.from(jsonDecode(res.body));
+          listCompany.value.val = lsData;
+          listCompany.refresh();
+
+          if (!listCompany.value.val.contains(selectedCompany.value.val)) {
+            selectedCompany.value.val = listCompany.value.val[0];
+            selectedCompany.refresh();
+          }
+
+          if (selectedCompany.value.val.isNotEmpty) {
+            loadProductByCompanyId();
+          }
+        }
+      },
+    );
   }
 
-  static onLoad() async {
-    loadProduct();
-    // final data = await RouterApi.productMenuGetPropertyByCompany().getData();
-    // if (data.statusCode == 200) _listPropertyCreate.assignAll(jsonDecode(data.body));
+  static loadProductByCompanyId() {
+    RouterApi.productGetByCompanyId(query: "cusCompanyId=${ProductVal.selectedCompany.value.val['id']}").getData().then(
+      (res) {
+        if (res.statusCode == 200) {
+          listProduct.assignAll(jsonDecode(res.body));
+        }
+      },
+    );
   }
 
+  // static loadProduct() async {
+  //   final data = await RouterApi.productByUserId().getData();
+  //   if (data.statusCode == 200) {
+  //     ProductVal.listCompanyProduct.value = jsonDecode(data.body);
+  //   }
+  // }
 
+  // static onLoad() async {
+  //   loadProduct();
+  //   // final data = await RouterApi.productMenuGetPropertyByCompany().getData();
+  //   // if (data.statusCode == 200) _listPropertyCreate.assignAll(jsonDecode(data.body));
+  // }
 }

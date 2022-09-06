@@ -98,18 +98,23 @@ class ProductCreateSubmit extends StatelessWidget {
                       body['stock'] = int.parse(ProductVal.dataStock.stock.text);
                     }
                     if (ProductVal.dataStock.minStock.text.isNotEmpty) {
-                      body['ninStock'] = int.parse(ProductVal.dataStock.minStock.text);
+                      body['minStock'] = int.parse(ProductVal.dataStock.minStock.text);
                     }
 
                     if (ProductVal.dataDetail.isInclude.value) {
                       if (ProductVal.dataDetail.companyId.value.isNotEmpty) {
                         body['companyId'] = ProductVal.dataDetail.companyId.value;
+                      } else {
+                        Notif.error(message: "Company Tidak Boleh Kosong");
+                        return;
                       }
+
                       if (ProductVal.dataDetail.listoutlet.isNotEmpty) {
                         body['listOutlet'] = ProductVal.dataDetail.listoutlet;
                       }
+
                       if (ProductVal.dataDetail.des.text.isNotEmpty) body['des'] = ProductVal.dataDetail.des.text;
-                      
+
                       if (ProductVal.dataDetail.modal.text.isNotEmpty) {
                         body['modal'] = int.parse(ProductVal.dataDetail.modal.text);
                       }
@@ -155,12 +160,14 @@ class ProductCreateSubmit extends StatelessWidget {
 
                     final kirim = await RouterApi.productCreate().postData({"data": jsonEncode(body)});
                     if (kirim.statusCode == 201) {
-                      await ProductVal.onLoad();
+                      await ProductVal.loadProductByCompanyId();
 
                       if (media.isMobile) {
                         Get.back();
                       }
                       SmartDialog.showToast("success");
+                    } else {
+                      Notif.error(message: kirim.body);
                     }
                   },
                   child: const Padding(

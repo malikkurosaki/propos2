@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:propos/menus.dart';
 import 'package:propos/pages.dart';
+import 'package:propos/utils/img_def.dart';
 import 'package:propos/utils/router_api.dart';
 import 'package:propos/utils/val.dart';
 import 'package:propos/utils/val_def.dart';
@@ -100,36 +102,65 @@ class HomePage extends StatelessWidget {
             controller: ScrollController(),
             children: [
               DrawerHeader(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.end,
+                padding: EdgeInsets.zero,
+                child: Stack(
                   children: [
-                    Text(
-                      Vl.defCompany.val['name'].toString(),
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+                    Container(
+                      width: double.infinity,
+                      child: ImgDef.homeHeader(
+                        fit: BoxFit.cover,
+                        width: double.infinity
                       ),
                     ),
-                    Text(
-                      Vl.defOutlet.val['name'].toString(),
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                    // BackdropFilter(
+                    //   filter: ImageFilter.blur(sigmaX: 2,sigmaY: 2),
+                    //   child: Container(
+                    //     color: Colors.white30,
+                    //   ),
+                    // ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            Vl.defCompany.val['name'].toString(),
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              backgroundColor: Colors.white
+                            ),
+                          ),
+                          Text(
+                            Vl.defOutlet.val['name'].toString(),
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              backgroundColor: Colors.white
+                            ),
+                          ),
+                          // Text('Probus System', style: TextStyle(
+                          //   backgroundColor: Colors.white
+                          // ),),
+                          // Text('Version 1.0.0',
+                          //   style: TextStyle(
+                          //     backgroundColor: Colors.white
+                          //   ),
+                          // ),
+                          // Text(Val.userId.val),
+                          // Align(
+                          //   alignment: Alignment.bottomRight,
+                          //   child: TextButton(
+                          //       onPressed: () {
+                          //         Get.toNamed(Pages.businessDetailPage().route, arguments: _userData);
+                          //       },
+                          //       child: Text("Detail")),
+                          // )
+                        ],
                       ),
                     ),
-                    Text('Probus System'),
-                    Text('Version 1.0.0'),
-                    // Text(Val.userId.val),
-                    Align(
-                      alignment: Alignment.bottomRight,
-                      child: TextButton(
-                          onPressed: () {
-                            Get.toNamed(Pages.businessDetailPage().route, arguments: _userData);
-                          },
-                          child: Text("Detail")),
-                    )
                   ],
                 ),
               ),

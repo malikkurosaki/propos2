@@ -62,98 +62,96 @@ class Outlet extends StatelessWidget {
                 );
               },
             ),
-      body: Card(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Row(
-            //   children: [
-            //     Visibility(
-            //       visible: media.isMobile,
-            //       child: Padding(
-            //         padding: const EdgeInsets.all(8.0),
-            //         child: IconButton(
-            //           icon: Icon(
-            //             Icons.add_circle,
-            //             color: Colors.cyan,
-            //           ),
-            //           onPressed: () {
-            //             Get.dialog(
-            //               SimpleDialog(
-            //                 children: [_create(media)],
-            //               ),
-            //             );
-            //           },
-            //         ),
-            //       ),
-            //     ),
-            //   ],
-            // ),
-            Flexible(
-              child: Obx(() => _listCompany.isEmpty
-                  ? Text("empty")
-                  : SizedBox(
-                      width: double.infinity,
-                      child: ContainedTabBarView(
-                        tabs: [
-                          ..._listCompany.map(
-                            (e) {
-                              return Tab(
-                                child: Text(e['name'].toString()),
-                              );
-                            },
-                          ),
-                        ],
-                        views: [
-                          ..._listCompany.map(
-                            (e) {
-                              return Container(
-                                child: ListView(
-                                  children: [
-                                    ListTile(
-                                        leading: Checkbox(value: false, onChanged: (value) {}),
-                                        title: TextField(
-                                          decoration: InputDecoration(
-                                              isDense: true,
-                                              filled: true,
-                                              hintText: 'Search',
-                                              prefixIcon: Icon(Icons.search),
-                                              suffixIcon: IconButton(
-                                                icon: Icon(Icons.clear),
-                                                onPressed: () {},
-                                              ),
-                                              border: OutlineInputBorder(
-                                                borderSide: BorderSide.none,
-                                              )),
-                                        )),
-                                    ...(e['Outlet'] as List).map(
-                                      (e) {
-                                        return ListTile(
-                                          leading: Checkbox(
-                                            value: false,
-                                            onChanged: (v) {},
-                                          ),
-                                          title: Text(e['name']),
-                                          trailing: PopupMenuButton(
-                                            itemBuilder: (context) => [
-                                              PopupMenuItem(child: Text('Edit'), value: 'edit'),
-                                              PopupMenuItem(child: Text('Delete'), value: 'delete'),
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                    ).toList(),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    )),
-            )
-          ],
-        ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Row(
+          //   children: [
+          //     Visibility(
+          //       visible: media.isMobile,
+          //       child: Padding(
+          //         padding: const EdgeInsets.all(8.0),
+          //         child: IconButton(
+          //           icon: Icon(
+          //             Icons.add_circle,
+          //             color: Colors.cyan,
+          //           ),
+          //           onPressed: () {
+          //             Get.dialog(
+          //               SimpleDialog(
+          //                 children: [_create(media)],
+          //               ),
+          //             );
+          //           },
+          //         ),
+          //       ),
+          //     ),
+          //   ],
+          // ),
+          Flexible(
+            child: Obx(() => _listCompany.isEmpty
+                ? Text("empty")
+                : SizedBox(
+                    width: double.infinity,
+                    child: ContainedTabBarView(
+                      tabs: [
+                        ..._listCompany.map(
+                          (e) {
+                            return Tab(
+                              child: Text(e['name'].toString()),
+                            );
+                          },
+                        ),
+                      ],
+                      views: [
+                        ..._listCompany.map(
+                          (e) {
+                            return Container(
+                              child: ListView(
+                                children: [
+                                  ListTile(
+                                      leading: Checkbox(value: false, onChanged: (value) {}),
+                                      title: TextField(
+                                        decoration: InputDecoration(
+                                            isDense: true,
+                                            filled: true,
+                                            hintText: 'Search',
+                                            prefixIcon: Icon(Icons.search),
+                                            suffixIcon: IconButton(
+                                              icon: Icon(Icons.clear),
+                                              onPressed: () {},
+                                            ),
+                                            border: OutlineInputBorder(
+                                              borderSide: BorderSide.none,
+                                            )),
+                                      )),
+                                  ...(e['Outlet'] as List).map(
+                                    (e) {
+                                      return ListTile(
+                                        leading: Checkbox(
+                                          value: false,
+                                          onChanged: (v) {},
+                                        ),
+                                        title: Text(e['name']),
+                                        trailing: PopupMenuButton(
+                                          itemBuilder: (context) => [
+                                            PopupMenuItem(child: Text('Edit'), value: 'edit'),
+                                            PopupMenuItem(child: Text('Delete'), value: 'delete'),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ).toList(),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  )),
+          )
+        ],
       ),
     );
   }

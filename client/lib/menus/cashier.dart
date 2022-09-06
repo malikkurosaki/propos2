@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:propos/components/select_customer.dart';
+import 'package:propos/menus.dart';
 import 'package:propos/pages.dart';
 import 'package:propos/utils/conf.dart';
 import 'package:propos/utils/img_def.dart';
@@ -517,119 +518,140 @@ class Cashier extends StatelessWidget {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Builder(builder: (context) {
-              final listCat = [].obs;
-              RouterApi.categoryByCompanyId(query: "cusCompanyId=${Vl.companyId.val}").getData().then((data) {
-                if (data.statusCode == 200) {
-                  listCat.assignAll(jsonDecode(data.body));
-                }
-              });
-              return Obx(() => SingleChildScrollView(
-                    controller: ScrollController(),
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: MaterialButton(
-                            color: Colors.green,
-                            onPressed: () async {
-                              final list = await RouterApi.productList().getData();
-                              if (list.statusCode == 200) _listProduct.assignAll(jsonDecode(list.body));
-                            },
-                            child: Text(
-                              "All",
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
+          _categoryView(),
+          Flexible(
+            child: Obx(
+              () => _listProduct.isEmpty
+                  ? Center(
+                      child: MaterialButton(
+                        color: Colors.blue,
+                        child: Text(
+                          "Create Product",
+                          style: TextStyle(color: Colors.white),
                         ),
-                        for (final cat in listCat)
-                          Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: MaterialButton(
-                              color: Colors.green,
-                              onPressed: () async {
-                                final data =
-                                    await RouterApi.productGetByCategory(query: "categoryId=${cat['id']}").getData();
-                                if (data.statusCode == 200) _listProduct.assignAll(jsonDecode(data.body));
-                              },
-                              child: Text(
-                                cat['name'].toString(),
-                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                        onPressed: () {
+                          Menus.visible.value.val = "Product";
+                          Menus.visible.refresh();
+                        },
+                      ),
+                    )
+                  : GridView.extent(
+                      maxCrossAxisExtent: media.isMobile ? Get.width / 2 : 200,
+                      childAspectRatio: media.isMobile ? 0.8 : 0.8,
+                      children: [
+                        for (final prod in _listProduct)
+                          InkWell(
+                            onTap: () {
+                              // Val.listorder.value.val = [];
+                              final data = List.from(Val.listorder.value.val);
+                              final idx = data.indexWhere((element) => element['id'] == prod['id']);
+
+                              if (idx == -1) {
+                                prod['qty'] = 1;
+                                prod['note'] = '';
+                                prod['total'] = prod['qty'] * prod['price'];
+                                data.add(prod);
+                                SmartDialog.showToast("Added to cart", animationTime: Duration(milliseconds: 500));
+                              } else {
+                                data[idx]['qty']++;
+                              }
+
+                              Val.listorder.value.val = data;
+                              Val.listorder.refresh();
+                            },
+                            child: Card(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: CachedNetworkImage(
+                                        imageUrl:
+                                            "${Conf.host}/product-image/${(prod["ProductImage"]?['name'] ?? "null").toString()}",
+                                        fit: BoxFit.contain,
+                                        width: media.isMobile ? Get.width / 2 : 200),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      prod['name'].toString(),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0)
+                                        .format(prod['price'])),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
                       ],
                     ),
-                  ));
-            }),
-          ),
-          Flexible(
-            child: Obx(
-              () => GridView.extent(
-                maxCrossAxisExtent: media.isMobile ? Get.width / 2 : 200,
-                childAspectRatio: media.isMobile ? 0.8 : 0.8,
-                children: [
-                  for (final prod in _listProduct)
-                    InkWell(
-                      onTap: () {
-                        // Val.listorder.value.val = [];
-                        final data = List.from(Val.listorder.value.val);
-                        final idx = data.indexWhere((element) => element['id'] == prod['id']);
-
-                        if (idx == -1) {
-                          prod['qty'] = 1;
-                          prod['note'] = '';
-                          prod['total'] = prod['qty'] * prod['price'];
-                          data.add(prod);
-                          SmartDialog.showToast("Added to cart", animationTime: Duration(milliseconds: 500));
-                        } else {
-                          data[idx]['qty']++;
-                        }
-
-                        Val.listorder.value.val = data;
-                        Val.listorder.refresh();
-
-                      },
-                      child: Card(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: CachedNetworkImage(
-                                  imageUrl:
-                                      "${Conf.host}/product-image/${(prod["ProductImage"]?['name'] ?? "null").toString()}",
-                                  fit: BoxFit.contain,
-                                  width: media.isMobile ? Get.width / 2 : 200),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                prod['name'].toString(),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0)
-                                  .format(prod['price'])),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                ],
-              ),
             ),
           ),
         ],
+      );
+
+  Widget _categoryView() => Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Builder(
+          builder: (context) {
+            final listCat = [].obs;
+            RouterApi.categoryByCompanyId(query: "cusCompanyId=${Vl.companyId.val}").getData().then(
+              (data) {
+                if (data.statusCode == 200) {
+                  listCat.assignAll(jsonDecode(data.body));
+                }
+              },
+            );
+            return Obx(
+              () => SingleChildScrollView(
+                controller: ScrollController(),
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: MaterialButton(
+                        color: Colors.green,
+                        onPressed: () async {
+                          final list = await RouterApi.productList().getData();
+                          if (list.statusCode == 200) _listProduct.assignAll(jsonDecode(list.body));
+                        },
+                        child: Text(
+                          "All",
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                    for (final cat in listCat)
+                      Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: MaterialButton(
+                          color: Colors.green,
+                          onPressed: () async {
+                            final data =
+                                await RouterApi.productGetByCategory(query: "categoryId=${cat['id']}").getData();
+                            if (data.statusCode == 200) _listProduct.assignAll(jsonDecode(data.body));
+                          },
+                          child: Text(
+                            cat['name'].toString(),
+                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
       );
 
   void _savedOrderDialog() {

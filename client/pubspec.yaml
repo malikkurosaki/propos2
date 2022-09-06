@@ -63,6 +63,9 @@ dependencies:
   firebase_dart: ^1.0.0-dev.37
   qr_flutter: ^4.0.0
   dropdown_search: ^5.0.2
+  table_sticky_headers: ^2.0.4
+  json_table: ^2.0.1
+  recase: ^4.0.0
   # blue_print_pos: ^0.0.14
 
 

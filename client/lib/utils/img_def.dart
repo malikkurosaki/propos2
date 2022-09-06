@@ -4,6 +4,15 @@ import 'package:flutter/material.dart';
 
 class ImgDef {
 
+    static Widget bgLogin({
+        double ? width,
+        double ? height,
+        BoxFit ? fit
+    }) {
+        return CachedNetworkImage(imageUrl: "${Conf.host}/img/def/bg_login.jpeg", width: width, height: height, fit: fit);
+    }
+
+
     static Widget cartEmpty({
         double ? width,
         double ? height,
@@ -28,6 +37,15 @@ class ImgDef {
         BoxFit ? fit
     }) {
         return CachedNetworkImage(imageUrl: "${Conf.host}/img/def/forgot-password-illustration_65141-418.png", width: width, height: height, fit: fit);
+    }
+
+
+    static Widget homeHeader({
+        double ? width,
+        double ? height,
+        BoxFit ? fit
+    }) {
+        return CachedNetworkImage(imageUrl: "${Conf.host}/img/def/home_header.png", width: width, height: height, fit: fit);
     }
 
 

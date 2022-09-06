@@ -50,7 +50,7 @@ class ProductCreate extends StatelessWidget {
     _onLoad();
     return ResponsiveBuilder(builder: (context, media) {
       return SizedBox(
-        width: media.isMobile ? Get.width : 360,
+        width: media.isMobile ? Get.width : 430,
         // height: Get.height * 0.8,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

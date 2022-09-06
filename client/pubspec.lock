@@ -534,6 +534,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.6.0"
+  json_table:
+    dependency: "direct main"
+    description:
+      name: json_table
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.1"
   lints:
     dependency: transitive
     description:
@@ -716,6 +723,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.1.0"
+  recase:
+    dependency: "direct main"
+    description:
+      name: recase
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.0.0"
   responsive_builder:
     dependency: "direct main"
     description:
@@ -798,6 +812,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.0+2"
+  table_sticky_headers:
+    dependency: "direct main"
+    description:
+      name: table_sticky_headers
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.4"
   term_glyph:
     dependency: transitive
     description:

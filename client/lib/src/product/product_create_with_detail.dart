@@ -25,6 +25,8 @@ import 'package:propos/utils/vl.dart';
 // }
 
 class ProductCreateWithDetail extends StatelessWidget {
+  const ProductCreateWithDetail({Key? key}) : super(key: key);
+
   // ProductCreateWithDetail({Key? key, required this.lsCategory}) : super(key: key);
 
   // final dataDetail = _ProductDetail();
