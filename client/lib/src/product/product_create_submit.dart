@@ -105,12 +105,19 @@ class ProductCreateSubmit extends StatelessWidget {
                       if (ProductVal.dataDetail.companyId.value.isNotEmpty) {
                         body['companyId'] = ProductVal.dataDetail.companyId.value;
                       } else {
-                        Notif.error(message: "Company Tidak Boleh Kosong");
-                        return;
+                        body['companyId'] = Vl.companyId.val;
                       }
 
                       if (ProductVal.dataDetail.listoutlet.isNotEmpty) {
                         body['listOutlet'] = ProductVal.dataDetail.listoutlet;
+                      } else {
+                        body['listOutlet'] = [
+                          {
+                            "outletId": Vl.outletId.val,
+                            "companyId": Vl.companyId.val,
+                            "userId": Vl.userId.val,
+                          }
+                        ];
                       }
 
                       if (ProductVal.dataDetail.des.text.isNotEmpty) body['des'] = ProductVal.dataDetail.des.text;

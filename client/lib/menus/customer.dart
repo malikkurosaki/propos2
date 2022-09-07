@@ -89,6 +89,8 @@ class Customer extends StatelessWidget {
 
   _loadCustomer() async {
     RouterApi.custoemerGetList().getData().then((value) {
+      // debugPrint(value.toString());
+
       if (value.statusCode == 200) {
         _listCustomer.assignAll(jsonDecode(value.body));
       }

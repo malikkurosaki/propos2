@@ -57,18 +57,20 @@ const getProduct = expressAsyncHandler(async (req, res, next) => {
 // menyediakan produk saat catagory di pilih
 const getProductByCategory = expressAsyncHandler(async (req, res, next) => {
     const { categoryId, userId, companyId, outletId } = req.query;
+    // console.log(categoryId == "");
+
     const getProductByCategory = await prisma.product.findMany({
         where: {
             categoryId: categoryId ?? undefined,
             userId: userId,
             companyId: companyId,
-            ProductOutlet: {
-                every: {
-                    outletId: {
-                        equals: outletId
-                    }
-                }
-            }
+            // ProductOutlet: {
+            //     every: {
+            //         outletId: {
+            //             equals: outletId
+            //         }
+            //     }
+            // }
         },
         select: {
             id: true,
@@ -136,7 +138,7 @@ let ModelProduct = {
 //     "productImageId": "a4792846-dcad-4777-8c9f-3a1d10b2e329",
 //     "productImageName": "c9a1d5a6-bd0a-496f-84b3-05b6e7c42d91_scaled_download-1.jpg.png",
 //     "stock": 1,
-//     "ninStock": 0,
+//     "ninStock": sear0,
 //     "companyId": "314510a8-f2bb-4792-ab9a-f2a82821a9af",
 //     "listOutlet": [
 //         {
@@ -259,9 +261,9 @@ const search = expressAsyncHandler(async (req, res, next) => {
             companyId: {
                 equals: companyId
             },
-            outletId: {
-                equals: outletId
-            }
+            // outletId: {
+            //     equals: outletId
+            // }
         },
     });
 
@@ -356,11 +358,12 @@ const productbyUserId = expressAsyncHandler(async (req, res, next) => {
 
 const productCashier = expressAsyncHandler(async (req, res, next) => {
     const { userId, companyId, outletId } = req.query;
+    if (!userId || !companyId || !outletId) return res.status(401).send("bad request");
     const data = await prisma.product.findMany({
         where: {
             userId: userId,
             companyId: companyId,
-            outletId: outletId
+            // outletId: outletId
         },
         select: {
             id: true,
@@ -406,7 +409,16 @@ const productGetByCompanyId = expressAsyncHandler(async (req, res) => {
             productWeight: true,
             stock: true,
             isCustomPrice: true,
-            
+            ProductOutlet: {
+                select: {
+                    Outlet: {
+                        select: {
+                            name: true
+                        }
+                    }
+                }
+            }
+
         }
     })
 
@@ -423,6 +435,7 @@ const Product = {
     search,
     productCreateSelect,
     productbyUserId,
-    productGetByCompanyId
+    productGetByCompanyId,
+    productCashier
 };
 module.exports = Product;

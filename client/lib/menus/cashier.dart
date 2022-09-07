@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:propos/components/select_customer.dart';
 import 'package:propos/menus.dart';
 import 'package:propos/pages.dart';
+import 'package:propos/src/cashier/casier_val.dart';
 import 'package:propos/utils/conf.dart';
 import 'package:propos/utils/img_def.dart';
 import 'package:propos/utils/router_api.dart';
@@ -18,28 +19,11 @@ import 'package:propos/utils/vl.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
 class Cashier extends StatelessWidget {
-  Cashier({Key? key}) : super(key: key);
-  final _conSearch = TextEditingController();
-  final _restoreOrderName = "".val('Cashier.restoreOrderName').obs;
-  // final _listProduct = List.from(ValDef.productList.value.val).val('Cashier.listProduct').obs;
-  final _listCategory = [].obs;
-  final _listProduct = [].obs;
-  final _isMultipleSelect = false.obs;
-  final _lsTampungan = [].obs;
-
-  // _loadCategory() async {
-  //   final list = await RouterApi.listCategory().getData();
-  //   if (list.statusCode == 200) _listCategory.assignAll(jsonDecode(list.body));
-  // }
-
-  _loadProduct() async {
-    final list = await RouterApi.listProduct().getData();
-    if (list.statusCode == 200) _listProduct.assignAll(jsonDecode(list.body));
-  }
+  const Cashier({Key? key}) : super(key: key);
 
   _onLoad() async {
     // _loadCategory();
-    _loadProduct();
+    CashierVal.loadProduct();
   }
 
   @override
@@ -68,142 +52,193 @@ class Cashier extends StatelessWidget {
     );
   }
 
-  Widget _headerTotalan(SizingInformation media, RxList lsTampungan) => Ink(
-        color: Colors.grey.shade200,
-        child: ListTile(
-          leading: Tooltip(
-            message: "Select Sekaligus",
-            child: Checkbox(
-              value: Val.listorder.value.val.isNotEmpty && lsTampungan.length.isEqual(Val.listorder.value.val.length),
-              onChanged: Val.listorder.value.val.isEmpty
-                  ? null
-                  : (value) {
-                      if (value!) {
-                        lsTampungan.assignAll(Val.listorder.value.val.map((e) => e['id']));
-                      } else {
-                        lsTampungan.clear();
-                      }
-                      Get.back();
-                    },
-            ),
-          ),
-          title: Wrap(
-            crossAxisAlignment: WrapCrossAlignment.center,
-            alignment: WrapAlignment.start,
-            children: [
-              Tooltip(
-                message: "menyimpan order",
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: _restoreOrderName.value.val.isEmpty
-                      ? Badge(
-                          badgeColor: Colors.grey.shade100,
-                          badgeContent: Text(
-                            Val.listSavedOrder.value.val.length.toString(),
-                            style: TextStyle(color: Colors.black),
-                          ),
-                          child: IconButton(
-                              onPressed: Val.listorder.value.val.isEmpty
-                                  ? null
-                                  : () {
-                                      _savedOrderDialog();
-                                    },
-                              icon: Icon(
-                                Icons.save,
-                                color: Val.listorder.value.val.isEmpty ? Colors.grey : Colors.cyan,
-                              )),
-                        )
-                      : MaterialButton(
-                          child: Text(
-                            _restoreOrderName.value.val.toString(),
-                            style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                          onPressed: () {
-                            _savedOrderDialog();
-                          },
-                        ),
-                ),
+  Widget _headerTotalan(SizingInformation media, RxList lsTampungan) => Builder(builder: (context) {
+        return 
+        Ink(
+          color: Colors.grey.shade200,
+          child: ListTile(
+            leading: Tooltip(
+              message: "Select Sekaligus",
+              child: Checkbox(
+                value: Val.listorder.value.val.isNotEmpty && lsTampungan.length.isEqual(Val.listorder.value.val.length),
+                onChanged: Val.listorder.value.val.isEmpty
+                    ? null
+                    : (value) {
+                        if (value!) {
+                          lsTampungan.assignAll(Val.listorder.value.val.map((e) => e['id']));
+                        } else {
+                          lsTampungan.clear();
+                        }
+                        Get.back();
+                      },
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: IconButton(
-                  tooltip: "menghapus multiple",
-                  onPressed: lsTampungan.isEmpty
-                      ? null
-                      : () {
-                          Get.dialog(AlertDialog(
-                            title: Text("Clean Order"),
-                            content: Text("Are you sure to delete order?"),
-                            actions: [
-                              MaterialButton(
-                                child: Text("Cancel"),
-                                onPressed: () {
-                                  Get.back();
-                                },
-                              ),
-                              MaterialButton(
-                                child: Text("Delete"),
-                                onPressed: () {
-                                  final lsTmp = List.from(Val.listorder.value.val);
-                                  lsTmp.removeWhere((element) => lsTampungan.contains(element['id']));
-                                  Val.listorder.value.val = lsTmp;
-                                  lsTampungan.clear();
-                                  Val.listorder.refresh();
-                                  Get.back();
-                                },
-                              ),
-                            ],
-                          ));
-                        },
-                  icon: Icon(
-                    Icons.delete_sweep_sharp,
-                    color: lsTampungan.isEmpty ? Colors.grey : Colors.pink,
+            ),
+            title: Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              alignment: WrapAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: IconButton(
+                    tooltip: "menghapus multiple",
+                    onPressed: lsTampungan.isEmpty
+                        ? null
+                        : () {
+                            Get.dialog(AlertDialog(
+                              title: Text("Clean Order"),
+                              content: Text("Are you sure to delete order?"),
+                              actions: [
+                                MaterialButton(
+                                  child: Text("Cancel"),
+                                  onPressed: () {
+                                    Get.back();
+                                  },
+                                ),
+                                MaterialButton(
+                                  child: Text("Delete"),
+                                  onPressed: () {
+                                    final lsTmp = List.from(Val.listorder.value.val);
+                                    lsTmp.removeWhere((element) => lsTampungan.contains(element['id']));
+                                    Val.listorder.value.val = lsTmp;
+                                    lsTampungan.clear();
+                                    Val.listorder.refresh();
+                                    Get.back();
+                                  },
+                                ),
+                              ],
+                            ));
+                          },
+                    icon: Icon(
+                      Icons.delete_sweep_sharp,
+                      color: lsTampungan.isEmpty ? Colors.grey : Colors.pink,
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          trailing: Visibility(
-            visible: media.isMobile,
-            child: IconButton(
-              tooltip: "tambah item order",
-              onPressed: () {
-                Get.dialog(
-                  Dialog(
-                    insetPadding: EdgeInsets.all(8),
-                    child: Material(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                MaterialButton(
+                  color: Colors.orange,
+                  onPressed: () {
+                    showBottomSheet(
+                      context: context,
+                      builder: (c) {
+                        return Material(
+                          child: Column(
                             children: [
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: BackButton(),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text("Select Item"),
+                                child: Row(
+                                  children: [BackButton(), Text("Manual Order")],
+                                ),
                               )
                             ],
                           ),
-                          Flexible(child: _listMenuItem(media)),
-                        ],
+                        );
+                      },
+                    );
+                  },
+                  child: Text(
+                    "Manual Order",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: MaterialButton(
+                    color: Colors.green,
+                    child: Text(
+                      "Additional",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    // icon: Icon(Icons.keyboard_arrow_up_rounded),
+                    onPressed: () {
+                      showBottomSheet(
+                        context: context,
+                        builder: (c) => Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [BackButton(), Text("Additional")],
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: SelectCustomer(
+                                    onChanged: (id) {
+                                      debugPrint(id);
+                                    },
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: IconButton(
+                                      onPressed: () {},
+                                      icon: Icon(
+                                        Icons.add_box,
+                                        color: Colors.cyan,
+                                      )),
+                                )
+                              ],
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text("Discount"),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text("Tax"),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                )
+              ],
+            ),
+            trailing: Visibility(
+              visible: media.isMobile,
+              child: IconButton(
+                tooltip: "tambah item order",
+                onPressed: () {
+                  Get.dialog(
+                    Dialog(
+                      insetPadding: EdgeInsets.all(8),
+                      child: Material(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: BackButton(),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text("Select Item"),
+                                )
+                              ],
+                            ),
+                            Flexible(child: _listMenuItem(media)),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
-              icon: Icon(
-                Icons.add_circle_outlined,
-                size: 36,
-                color: Colors.green,
+                  );
+                },
+                icon: Icon(
+                  Icons.add_circle_outlined,
+                  size: 36,
+                  color: Colors.green,
+                ),
               ),
             ),
           ),
-        ),
-      );
+        );
+      });
 
   Widget _totalan(SizingInformation media) {
     return Scaffold(
@@ -214,7 +249,7 @@ class Cashier extends StatelessWidget {
                 child: Card(
                   child: Column(
                     children: [
-                      _headerTotalan(media, _lsTampungan),
+                      _headerTotalan(media, CashierVal.lsTampungan),
                       // mulai list item
                       Flexible(
                         child: Val.listorder.value.val.isEmpty
@@ -227,22 +262,22 @@ class Cashier extends StatelessWidget {
                                   for (final itm in Val.listorder.value.val)
                                     ListTile(
                                       // leading: !isMultipleSelect.value
-                                      leading: _lsTampungan.isEmpty
+                                      leading: CashierVal.lsTampungan.isEmpty
                                           ? null
                                           : Checkbox(
-                                              value: _lsTampungan.contains(itm['id']),
+                                              value: CashierVal.lsTampungan.contains(itm['id']),
                                               onChanged: (value) {
                                                 if (value!) {
-                                                  _lsTampungan.add(itm['id']);
+                                                  CashierVal.lsTampungan.add(itm['id']);
                                                 } else {
-                                                  _lsTampungan.remove(itm['id']);
+                                                  CashierVal.lsTampungan.remove(itm['id']);
                                                 }
                                                 Get.back();
                                               },
                                             ),
                                       title: ListTile(
                                         onLongPress: () {
-                                          _isMultipleSelect.toggle();
+                                          CashierVal.isMultipleSelect.toggle();
                                         },
                                         onTap: () {
                                           final _conName = TextEditingController();
@@ -339,8 +374,11 @@ class Cashier extends StatelessWidget {
                                                 Expanded(
                                                   child: Row(
                                                     children: [
-                                                      Text(itm['qty'].toString()),
-                                                      Text("x"),
+                                                      Text(
+                                                        itm['qty'].toString(),
+                                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                                                      ),
+                                                      Text(" x "),
                                                       Text(NumberFormat.currency(
                                                               locale: 'id_ID', symbol: 'Rp', decimalDigits: 0)
                                                           .format(itm['price'])),
@@ -381,55 +419,58 @@ class Cashier extends StatelessWidget {
                                 ],
                               ),
                       ),
+                      // save order
                       Container(
                         color: Colors.grey.shade100,
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(16.0),
                         child: Row(
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
-                              child: IconButton(
-                                icon: Icon(Icons.keyboard_arrow_up_rounded),
-                                onPressed: () {
-                                  showBottomSheet(
-                                    backgroundColor: Colors.transparent,
-                                    context: context,
-                                    builder: (c) => SizedBox(
-                                      height: 500,
-                                      child: Card(
-                                        elevation: 8,
-                                        margin: const EdgeInsets.symmetric(horizontal: 16),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Ink(
-                                              color: Colors.blueGrey.shade100,
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(8.0),
-                                                child: Row(
-                                                  children: [BackButton(), Text("Additional")],
-                                                ),
-                                              ),
-                                            ),
-                                            SelectCustomer(
-                                              onChanged: (id) {
-                                                debugPrint(id);
-                                              },
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.all(8.0),
-                                              child: Text("Discount"),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.all(8.0),
-                                              child: Text("Tax"),
-                                            ),
-                                          ],
+                            Tooltip(
+                              message: "menyimpan order",
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                child: CashierVal.restoreOrderName.value.val.isEmpty
+                                    ? Badge(
+                                        badgeColor: Colors.grey.shade100,
+                                        badgeContent: Text(
+                                          Val.listSavedOrder.value.val.length.toString(),
+                                          style: TextStyle(color: Colors.black),
                                         ),
+                                        child: MaterialButton(
+                                          color: Colors.blue,
+                                          onPressed: Val.listorder.value.val.isEmpty
+                                              ? null
+                                              : () {
+                                                  _savedOrderDialog(context);
+                                                },
+                                          // icon: Icon(
+                                          //   Icons.save,
+                                          //   color: Val.listorder.value.val.isEmpty ? Colors.grey : Colors.cyan,
+                                          // ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              "Save",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    : MaterialButton(
+                                        color: Colors.orange,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            CashierVal.restoreOrderName.value.val.toString(),
+                                            style: TextStyle(
+                                                color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          _savedOrderDialog(context);
+                                        },
                                       ),
-                                    ),
-                                  );
-                                },
                               ),
                             ),
                             Expanded(
@@ -467,7 +508,7 @@ class Cashier extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                "Total: ${NumberFormat.currency(
+                                "${NumberFormat.currency(
                                   locale: 'id_ID',
                                   symbol: 'Rp',
                                   decimalDigits: 0,
@@ -495,33 +536,40 @@ class Cashier extends StatelessWidget {
     );
   }
 
-  Widget _listMenuItem(SizingInformation media) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(2.0),
-              child: TextField(
-                onChanged: (value) async {
-                  final data = await RouterApi.productSearch(query: "search=$value").getData();
-                  if (data.statusCode == 200) _listProduct.assignAll(jsonDecode(data.body));
-                },
-                controller: _conSearch,
-                decoration: InputDecoration(
-                  hintText: 'Search',
-                  prefixIcon: Icon(Icons.search),
-                  filled: true,
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                  ),
-                ),
+  Widget _searchBox() => Card(
+        child: Padding(
+          padding: const EdgeInsets.all(2.0),
+          child: TextField(
+            onChanged: (value) async {
+              final data = await RouterApi.productSearch(query: "search=$value").getData();
+              if (data.statusCode == 200) {
+                final dataSearch = jsonDecode(data.body);
+                CashierVal.listProduct.value.val = dataSearch;
+                CashierVal.listProduct.refresh();
+              }
+              ;
+            },
+            controller: CashierVal.conSearch,
+            decoration: InputDecoration(
+              hintText: 'Search',
+              prefixIcon: Icon(Icons.search),
+              filled: true,
+              border: OutlineInputBorder(
+                borderSide: BorderSide.none,
               ),
             ),
           ),
+        ),
+      );
+
+  Widget _listMenuItem(SizingInformation media) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _searchBox(),
           _categoryView(),
           Flexible(
             child: Obx(
-              () => _listProduct.isEmpty
+              () => CashierVal.listProduct.value.val.isEmpty
                   ? Center(
                       child: MaterialButton(
                         color: Colors.blue,
@@ -539,7 +587,7 @@ class Cashier extends StatelessWidget {
                       maxCrossAxisExtent: media.isMobile ? Get.width / 2 : 200,
                       childAspectRatio: media.isMobile ? 0.8 : 0.8,
                       children: [
-                        for (final prod in _listProduct)
+                        for (final prod in CashierVal.listProduct.value.val)
                           InkWell(
                             onTap: () {
                               // Val.listorder.value.val = [];
@@ -619,8 +667,14 @@ class Cashier extends StatelessWidget {
                       child: MaterialButton(
                         color: Colors.green,
                         onPressed: () async {
-                          final list = await RouterApi.productList().getData();
-                          if (list.statusCode == 200) _listProduct.assignAll(jsonDecode(list.body));
+                          CashierVal.listProduct.value.val = CashierVal.tmpListProduct.value.val;
+                          CashierVal.listProduct.refresh();
+                          // final list = await RouterApi.productList().getData();
+                          // if (list.statusCode == 200) {
+                          //   final lsData = jsonDecode(list.body);
+                          //   _listProduct.value.val = lsData;
+                          //   _listProduct.refresh();
+                          // }
                         },
                         child: Text(
                           "All",
@@ -638,7 +692,11 @@ class Cashier extends StatelessWidget {
                           onPressed: () async {
                             final data =
                                 await RouterApi.productGetByCategory(query: "categoryId=${cat['id']}").getData();
-                            if (data.statusCode == 200) _listProduct.assignAll(jsonDecode(data.body));
+                            if (data.statusCode == 200) {
+                              final lsData = jsonDecode(data.body);
+                              CashierVal.listProduct.value.val = lsData;
+                              CashierVal.listProduct.refresh();
+                            }
                           },
                           child: Text(
                             cat['name'].toString(),
@@ -654,23 +712,30 @@ class Cashier extends StatelessWidget {
         ),
       );
 
-  void _savedOrderDialog() {
-    final conName = TextEditingController(text: _restoreOrderName.value.val.isEmpty ? '' : _restoreOrderName.value.val);
+  void _savedOrderDialog(BuildContext context) {
+    final conName = TextEditingController(text: CashierVal.restoreOrderName.value.val.isEmpty ? '' : CashierVal.restoreOrderName.value.val);
     if (Val.listorder.value.val.isEmpty) {
       SmartDialog.showToast("Cart is empty", animationTime: Duration(milliseconds: 500));
       return;
     }
-    Get.dialog(
-      SimpleDialog(
+
+    showBottomSheet(
+      context: context,
+      builder: (c) => Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text(
-              "Save Order",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+            child: Row(
+              children: [
+                BackButton(),
+                Text(
+                  "Save Order",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
           ),
           Padding(
@@ -726,12 +791,13 @@ class Cashier extends StatelessWidget {
                       data[idx]['order'] = Val.listorder.value.val;
                     }
 
-                    if (conName.text != _restoreOrderName.value.val) {
-                      _restoreOrderName.value.val = "";
-                      _restoreOrderName.refresh();
+                    if (conName.text != CashierVal.restoreOrderName.value.val) {
+                      CashierVal.restoreOrderName.value.val = "";
+                      CashierVal.restoreOrderName.refresh();
                     }
 
                     Val.listSavedOrder.value.val = data;
+                    Val.listorder.value.val = [];
                     Val.listSavedOrder.refresh();
 
                     Get.back();
@@ -764,7 +830,7 @@ class Cashier extends StatelessWidget {
                         onTap: () {
                           Val.listorder.value.val = prod['order'];
                           Val.listorder.refresh();
-                          _restoreOrderName.value.val = prod['name'];
+                          CashierVal.restoreOrderName.value.val = prod['name'];
                           Get.back();
                         },
                         child: Chip(
@@ -804,5 +870,151 @@ class Cashier extends StatelessWidget {
         ],
       ),
     );
+
+    // Get.dialog(
+    //   SimpleDialog(
+    //     children: [
+    //       Padding(
+    //         padding: const EdgeInsets.all(8.0),
+    //         child: Text(
+    //           "Save Order",
+    //           style: TextStyle(
+    //             fontSize: 20,
+    //             fontWeight: FontWeight.bold,
+    //           ),
+    //         ),
+    //       ),
+    //       Padding(
+    //         padding: const EdgeInsets.all(8.0),
+    //         child: TextFormField(
+    //           decoration: InputDecoration(
+    //             labelText: 'Name',
+    //             filled: true,
+    //             border: OutlineInputBorder(
+    //               borderSide: BorderSide.none,
+    //             ),
+    //           ),
+    //           controller: conName,
+    //         ),
+    //       ),
+    //       Padding(
+    //         padding: const EdgeInsets.all(8.0),
+    //         child: Wrap(
+    //           crossAxisAlignment: WrapCrossAlignment.start,
+    //           children: [
+    //             for (final prod in Val.listSavedOrder.value.val)
+    //               TextButton(
+    //                 onPressed: () {
+    //                   conName.text = prod['name'];
+    //                 },
+    //                 child: Text(prod['name'].toString()),
+    //               )
+    //           ],
+    //         ),
+    //       ),
+    //       Padding(
+    //         padding: const EdgeInsets.all(8.0),
+    //         child: Row(
+    //           mainAxisAlignment: MainAxisAlignment.end,
+    //           children: [
+    //             MaterialButton(
+    //               child: Text('Cancel'),
+    //               onPressed: () {
+    //                 Get.back();
+    //               },
+    //             ),
+    //             MaterialButton(
+    //               child: Text('Save'),
+    //               onPressed: () {
+    //                 final data = List.from(Val.listSavedOrder.value.val);
+    //                 final idx = data.indexWhere((element) => element['name'] == conName.text);
+    //                 if (idx == -1) {
+    //                   data.add({
+    //                     'name': conName.text,
+    //                     'order': Val.listorder.value.val,
+    //                   });
+    //                 } else {
+    //                   data[idx]['order'] = Val.listorder.value.val;
+    //                 }
+
+    //                 if (conName.text != _restoreOrderName.value.val) {
+    //                   _restoreOrderName.value.val = "";
+    //                   _restoreOrderName.refresh();
+    //                 }
+
+    //                 Val.listSavedOrder.value.val = data;
+    //                 Val.listorder.value.val = [];
+    //                 Val.listSavedOrder.refresh();
+
+    //                 Get.back();
+    //               },
+    //             ),
+    //           ],
+    //         ),
+    //       ),
+    //       Divider(),
+    //       Padding(
+    //         padding: const EdgeInsets.all(8.0),
+    //         child: Text(
+    //           "Restore Order",
+    //           style: TextStyle(
+    //             fontSize: 20,
+    //             fontWeight: FontWeight.bold,
+    //           ),
+    //         ),
+    //       ),
+    //       Padding(
+    //         padding: const EdgeInsets.all(8.0),
+    //         child: Obx(
+    //           () => Wrap(
+    //             crossAxisAlignment: WrapCrossAlignment.start,
+    //             children: [
+    //               for (final prod in Val.listSavedOrder.value.val)
+    //                 Padding(
+    //                   padding: const EdgeInsets.all(4.0),
+    //                   child: InkWell(
+    //                     onTap: () {
+    //                       Val.listorder.value.val = prod['order'];
+    //                       Val.listorder.refresh();
+    //                       _restoreOrderName.value.val = prod['name'];
+    //                       Get.back();
+    //                     },
+    //                     child: Chip(
+    //                       backgroundColor: Colors.cyan,
+    //                       label: Text(
+    //                         prod['name'].toString(),
+    //                         style: TextStyle(
+    //                           color: Colors.white,
+    //                         ),
+    //                       ),
+    //                       onDeleted: () {
+    //                         final data = List.from(Val.listSavedOrder.value.val);
+    //                         final idx = data.indexWhere((element) => element['name'] == prod['name']);
+    //                         if (idx != -1) {
+    //                           data.removeAt(idx);
+    //                         }
+    //                         Val.listSavedOrder.value.val = data;
+    //                         Val.listSavedOrder.refresh();
+    //                       },
+    //                       deleteIconColor: Colors.white,
+    //                     ),
+    //                   ),
+    //                 )
+    //               // TextButton(
+    //               //   onPressed: () {
+    //               //     Val.listorder.value.val = prod['order'];
+    //               //     Val.listorder.refresh();
+    //               //     _restoreOrderName.value.val = prod['name'];
+    //               //     Get.back();
+    //               //   },
+    //               //   child: Text(prod['name'].toString()),
+    //               // )
+    //             ],
+    //           ),
+    //         ),
+    //       ),
+    //     ],
+    //   ),
+    // );
   }
 }

@@ -57,6 +57,7 @@ routerApi.get('/product-create-select', Product.productCreateSelect)
 routerApi.get('/product-by-user-id', Product.productbyUserId);
 routerApi.get('/list-product', Product.getListProduct);
 routerApi.get('/product-get-by-company-id', Product.productGetByCompanyId)
+routerApi.get('/product-cashier', Product.productCashier)
 
 // payment method
 routerApi.get('/payment-method-list', PaymentMethod.getListPaymentMethod);

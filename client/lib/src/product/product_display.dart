@@ -63,7 +63,7 @@ class ProductDisplay extends StatelessWidget {
                             isDense: true,
                             hintText: "Search",
                             prefixIcon: Icon(Icons.search),
-                            suffixIcon: IconButton(onPressed: (){}, icon: Icon(Icons.close)),
+                            suffixIcon: IconButton(onPressed: () {}, icon: Icon(Icons.close)),
                             border: OutlineInputBorder(borderSide: BorderSide.none),
                           ),
                         ),
@@ -85,11 +85,19 @@ class ProductDisplay extends StatelessWidget {
                                       ProductVal.listProduct,
                                       columns: [
                                         ...(ProductVal.listProduct[0] as Map).keys.map(
-                                              (element) => JsonTableColumn(element.toString(),
-                                                  defaultValue: "",
-                                                  label: element.toString().titleCase,
-                                                  valueBuilder: (c) =>
-                                                      jsonEncode({"field": element.toString(), "value": c.toString()})),
+                                              (element) => JsonTableColumn(
+                                                element.toString(),
+                                                defaultValue: "",
+                                                label: element.toString().titleCase,
+                                                valueBuilder: (c) {
+                                                  return jsonEncode(
+                                                    {
+                                                      "field": element.toString(),
+                                                      "value": jsonEncode(c),
+                                                    },
+                                                  );
+                                                },
+                                              ),
                                             )
                                       ],
                                       tableHeaderBuilder: (value) {
@@ -104,7 +112,7 @@ class ProductDisplay extends StatelessWidget {
                                       tableCellBuilder: (val) {
                                         final datanya = jsonDecode(val);
                                         final field = datanya['field'];
-                                        final value = datanya['value'];
+                                        final value = jsonDecode(datanya['value']);
                                         return Column(
                                           children: [
                                             Container(
@@ -155,19 +163,19 @@ class ProductDisplay extends StatelessWidget {
                                                     );
                                                   }
 
-                                                  if (value == "true") {
-                                                    return Icon(
-                                                      Icons.check_box,
-                                                      color: Colors.green,
-                                                    );
-                                                  }
+                                                  // if (value == "true") {
+                                                  //   return Icon(
+                                                  //     Icons.check_box,
+                                                  //     color: Colors.green,
+                                                  //   );
+                                                  // }
 
-                                                  if (value == "false") {
-                                                    return Icon(
-                                                      Icons.close,
-                                                      color: Colors.orange,
-                                                    );
-                                                  }
+                                                  // if (value == "false") {
+                                                  //   return Icon(
+                                                  //     Icons.close,
+                                                  //     color: Colors.orange,
+                                                  //   );
+                                                  // }
 
                                                   if (field == "id") return Text("...");
 
@@ -180,7 +188,12 @@ class ProductDisplay extends StatelessWidget {
                                                     return Text(DateFormat('EEE, M/d/y').format(DateTime.parse(value)));
                                                   }
 
-                                                  return Text(value);
+                                                  if(field == "ProductOutlet") {
+                                                    final dataOutlet = [...value];
+                                                    return Text(dataOutlet.map((e) => e['Outlet']['name']).toList().join(",").toString());
+                                                  }
+
+                                                  return Text(value.toString());
                                                 },
                                               ),
                                             ),

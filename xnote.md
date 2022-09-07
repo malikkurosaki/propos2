@@ -1,0 +1,23 @@
+# Xpropos
+
+- pendaftaran mudah cukup menggunakan email
+- support login owner dan pegawai, jadi pegawai tidak harus menggunakan akun dari owner
+- support banyak pegawai
+- support banyak jenis usaha
+- support banyak geray dan outlet
+- semuanya cukup hanya dengan satu user tidak perlu pindah user
+- support banyak device ( mobile, tablet, dektop)
+- support banyak platform device android, ios, osx, linux, windows, web
+- support login menggunakan barcode
+- product support gambar, sku, barcode, stock , custom price
+- support printer bluetooth
+- support custom category
+- kemudahan pengelolaan pegawai banyak jenis usaha ataupun outlet
+- support report dan detail penjualan harian bulanan dan tahunan
+- support schedule employee
+- support custom payment methid
+- support online store ( toko online)
+- tampilan ui moderen material ui
+- support inden order ( save order)
+- menambah customer secara langsung
+- manual order

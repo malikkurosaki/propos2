@@ -98,6 +98,9 @@ class RouterApi {
     RouterApi.productGetByCompanyId({
         String ? query
     }): _uri = Uri.parse("${Conf.host}/api/product-get-by-company-id?userId=${Vl.userId.val}&companyId=${Vl.companyId.val}&outletId=${Vl.outletId.val}&${query ?? ''}");
+    RouterApi.productCashier({
+        String ? query
+    }): _uri = Uri.parse("${Conf.host}/api/product-cashier?userId=${Vl.userId.val}&companyId=${Vl.companyId.val}&outletId=${Vl.outletId.val}&${query ?? ''}");
     RouterApi.paymentMethodList({
         String ? query
     }): _uri = Uri.parse("${Conf.host}/api/payment-method-list?userId=${Vl.userId.val}&companyId=${Vl.companyId.val}&outletId=${Vl.outletId.val}&${query ?? ''}");
