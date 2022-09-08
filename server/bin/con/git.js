@@ -8,6 +8,6 @@ const _ = require('lodash');
 
 
 const ini = exec(`git branch`).toString().split("\n").find((e) => e.indexOf('*') === 0).toString().split(' ')[1].trim();
-exec(`git add . && git commit -m "update && git push origin ${ini}"`);
+exec(`git add . && git commit -m "update && git push origin ${ini}"`, { stdio: "inherit", cwd: path.resolve(__dirname, '../') });
 console.log("git push completed");
 
