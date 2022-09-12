@@ -39,6 +39,11 @@ model User {
   CustomPrice           CustomPrice[]
   // ProductStock          ProductStock[]
   StockHistory          StockHistory[]
+  OrderTemList          OrderTemList[]
+  OrderTemp             OrderTemp[]
+  ProductStock          ProductStock[]
+  Favorite              Favorite[]
+  DefaultPreference     DefaultPreference[]
 }
 
 model Company {
@@ -71,6 +76,11 @@ model Company {
   CustomPrice           CustomPrice[]
   // ProductStock          ProductStock[]
   StockHistory          StockHistory[]
+  OrderTemList          OrderTemList[]
+  OrderTemp             OrderTemp[]
+  ProductStock          ProductStock[]
+  Favorite              Favorite[]
+  DefaultPreference     DefaultPreference[]
 }
 
 model DetailCompany {
@@ -91,19 +101,35 @@ model DetailCompany {
 }
 
 model Device {
-  id        String     @id @default(uuid())
-  deviceId  String     @unique
-  name      String
-  User      User?      @relation(fields: [userId], references: [id])
+  id                String              @id @default(uuid())
+  deviceId          String              @unique
+  name              String
+  User              User?               @relation(fields: [userId], references: [id])
+  userId            String?
+  Outlet            Outlet?             @relation(fields: [outletId], references: [id])
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  outletId          String?
+  Company           Company?            @relation(fields: [companyId], references: [id])
+  Employee          Employee[]
+  companyId         String?
+  Bill              Bill[]
+  isActive          Boolean?            @default(true)
+  DefaultPreference DefaultPreference[]
+}
+
+model DefaultPreference {
+  // id        String   @id @default(uuid())
+  Device    Device?  @relation(fields: [deviceId], references: [id])
+  deviceId  String   @id
+  User      User?    @relation(fields: [userId], references: [id])
+  Company   Company? @relation(fields: [companyId], references: [id])
+  Outlet    Outlet?  @relation(fields: [outletId], references: [id])
   userId    String?
-  Outlet    Outlet?    @relation(fields: [outletId], references: [id])
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  outletId  String?
-  Company   Company?   @relation(fields: [companyId], references: [id])
-  Employee  Employee[]
   companyId String?
-  Bill      Bill[]
+  outletId  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Outlet {
@@ -130,6 +156,13 @@ model Outlet {
   Discount              Discount[]
   DefaultPrefByUser     DefaultPrefByUser[]
   DefaultPrefByEmployee DefaultPrefByEmployee[]
+  OrderTemList          OrderTemList[]
+  OrderTemp             OrderTemp[]
+  ProductStock          ProductStock[]
+  CustomPrice           CustomPrice[]
+  isActive              Boolean?                @default(true)
+  Favorite              Favorite[]
+  DefaultPreference     DefaultPreference[]
 }
 
 model Product {
@@ -170,6 +203,9 @@ model Product {
   // ProductStock       ProductStock[]
   StockHistory       StockHistory[]
   img                String?
+  OrderTemList       OrderTemList[]
+  ProductStock       ProductStock[]
+  isActive           Boolean?             @default(true)
 }
 
 model Discount {
@@ -193,6 +229,7 @@ model Discount {
   outletId     String?
   Product      Product[]
   Bill         Bill[]
+  isActive     Boolean?  @default(true)
 }
 
 model ProductCustomPrice {
@@ -202,6 +239,9 @@ model ProductCustomPrice {
   CustomPrice   CustomPrice? @relation(fields: [customPriceId], references: [id])
   customPriceId String?
   price         Int?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  isActive      Boolean?     @default(true)
 }
 
 model ProductImage {
@@ -214,6 +254,7 @@ model ProductImage {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   userId    String?
+  isActive  Boolean?  @default(true)
 }
 
 model ProductOutlet {
@@ -228,22 +269,25 @@ model ProductOutlet {
   companyId String?
   productId String?
   outletId  String?
+  isActive  Boolean? @default(true)
 }
 
-// model ProductStock {
-//   id        String   @id @default(uuid())
-//   stock     Int?
-//   minStock  Int?
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-//   Product   Product? @relation(fields: [productId], references: [id])
-//   note      String?
-//   productId String?
-//   User      User?    @relation(fields: [userId], references: [id])
-//   userId    String?
-//   Company   Company? @relation(fields: [companyId], references: [id])
-//   companyId String?
-// }
+model ProductStock {
+  id        String   @id @default(uuid())
+  stock     Int?
+  minStock  Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  User      User?    @relation(fields: [userId], references: [id])
+  Company   Company? @relation(fields: [companyId], references: [id])
+  Outlet    Outlet?  @relation(fields: [outletId], references: [id])
+  Product   Product? @relation(fields: [productId], references: [id])
+  userId    String?
+  companyId String?
+  outletId  String?
+  productId String?
+  isActive  Boolean? @default(true)
+}
 
 model StockHistory {
   id        String   @id @default(uuid())
@@ -264,11 +308,15 @@ model StockHistory {
 model CustomPrice {
   id                 String               @id @default(uuid())
   name               String?
+  des                String?
   User               User?                @relation(fields: [userId], references: [id])
   userId             String?
   Company            Company?             @relation(fields: [companyId], references: [id])
   companyId          String?
+  Outlte             Outlet?              @relation(fields: [outletId], references: [id])
   ProductCustomPrice ProductCustomPrice[]
+  outletId           String?
+  isActive           Boolean?             @default(true)
 }
 
 model Category {
@@ -283,6 +331,7 @@ model Category {
   companyId String?
   userId    String?
   outletId  String?
+  isActive  Boolean?  @default(true)
 }
 
 model Favorite {
@@ -292,6 +341,11 @@ model Favorite {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   Product   Product  @relation(fields: [productId], references: [id])
+  User      User?    @relation(fields: [userId], references: [id])
+  Company   Company? @relation(fields: [companyId], references: [id])
+  Outlet    Outlet?  @relation(fields: [outletId], references: [id])
+  companyId String?
+  outletId  String?
 }
 
 model Bill {
@@ -321,6 +375,10 @@ model Bill {
   deviceId   String?
   Discount   Discount? @relation(fields: [discountId], references: [id])
   discountId String?
+  // @status
+  // 1 paid
+  // 2 void
+  status     Int?      @default(1)
 }
 
 model Order {
@@ -348,6 +406,37 @@ model OrderHistory {
   updatedAt DateTime @updatedAt
 }
 
+model OrderTemp {
+  id           String         @id @default(uuid())
+  name         String
+  des          String?
+  OrderTemList OrderTemList[]
+  User         User?          @relation(fields: [userId], references: [id])
+  Company      Company?       @relation(fields: [companyId], references: [id])
+  Outlet       Outlet?        @relation(fields: [outletId], references: [id])
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  userId       String?
+  companyId    String?
+  outletId     String?
+}
+
+model OrderTemList {
+  id          String     @id @default(uuid())
+  User        User?      @relation(fields: [userId], references: [id])
+  Company     Company?   @relation(fields: [companyId], references: [id])
+  Outlet      Outlet?    @relation(fields: [outletId], references: [id])
+  Product     Product?   @relation(fields: [productId], references: [id])
+  OrderTemp   OrderTemp? @relation(fields: [orderTempId], references: [id])
+  userId      String?
+  companyId   String?
+  outletId    String?
+  productId   String?
+  orderTempId String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
 model Customer {
   id              String            @id @default(uuid())
   userId          String
@@ -363,6 +452,7 @@ model Customer {
   whatsapp        String?
   phone           String?
   CustomerCompany CustomerCompany[]
+  isActive        Boolean?          @default(true)
 }
 
 model CustomerCompany {
@@ -394,6 +484,7 @@ model Employee {
   deviceId              String?
   companyId             String?
   DefaultPrefByEmployee DefaultPrefByEmployee[]
+  isActive              Boolean?                @default(true)
 }
 
 model Cashier {
@@ -404,6 +495,7 @@ model Cashier {
   isOwner    Boolean   @default(false)
   employeeId String?
   Bill       Bill[]
+  isActive   Boolean?  @default(true)
 }
 
 model PaymentMethod {
@@ -416,6 +508,7 @@ model PaymentMethod {
   userId      String?
   Company     Company? @relation(fields: [companyId], references: [id])
   companyId   String?
+  isActive    Boolean? @default(true)
 }
 
 model PaymentMethodOutlet {

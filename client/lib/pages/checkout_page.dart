@@ -1,54 +1,41 @@
 import 'dart:convert';
-import 'dart:typed_data';
-import 'dart:ui';
-
-import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-
 import 'package:flutter_grid_button/flutter_grid_button.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:propos/components/struk.dart';
-import 'package:propos/controllers/printer_android.dart';
 import 'package:propos/pages.dart';
-import 'package:propos/utils/load_data.dart';
+import 'package:propos/src/checkout/checkout_val.dart';
 import 'package:propos/utils/router_api.dart';
 import 'package:propos/utils/val.dart';
-import 'package:propos/utils/val_def.dart';
 import 'package:propos/utils/vl.dart';
 import 'package:responsive_builder/responsive_builder.dart';
-import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
-import 'package:short_uuids/short_uuids.dart';
-import 'package:image/image.dart' as Im;
 
 class CheckoutPage extends StatelessWidget {
-  CheckoutPage({Key? key}) : super(key: key);
-  final _toPay = "0".val("CheckoutPage.haveToPay2").obs;
-  // final _uuid = ShortUuid().generate();
-  // final _paymentMethod = "cash".val("CheckoutPage.paymentMethod").obs;
-  final _listHotKey = ["1000", "5000", "10000", "20000", "50000", "100000", "uang pas"];
-  final _totalPrice = Val.listorder.value.val
-      .fold(0, (prev, element) => int.parse(prev.toString()) + element['qty'] * element['price']);
-  final _totalQty = Val.listorder.value.val.fold(0, (prev, element) => int.parse(prev.toString()) + element['qty']);
-  final GlobalKey globalKey = GlobalKey();
-  final _gambarStruk = <Uint8List>[].obs;
-  String Function() get _change =>
-      () => (int.parse(_toPay.value.val.toString()) - int.parse(_totalPrice.toString())).toString();
+  const CheckoutPage({Key? key}) : super(key: key);
 
-  final _paymentMethod = {}.obs;
+  // final _toPay = "0".val("CheckoutPage.haveToPay2").obs;
+  // final _listHotKey = ["1000", "5000", "10000", "20000", "50000", "100000", "uang pas"];
+  // final _totalPrice = Val.listorder.value.val
+  //     .fold(0, (prev, element) => int.parse(prev.toString()) + element['qty'] * element['price']);
+  // final _totalQty = Val.listorder.value.val.fold(0, (prev, element) => int.parse(prev.toString()) + element['qty']);
+  // final GlobalKey globalKey = GlobalKey();
+  // final _gambarStruk = <Uint8List>[].obs;
+  // String Function() get _change =>
+  //     () => (int.parse(_toPay.value.val.toString()) - int.parse(_totalPrice.toString())).toString();
+  // final _paymentMethod = {}.obs;
 
-  _onload() async {
-    Val.billId.value.val = const ShortUuid().generate();
-    Val.billId.refresh();
+  // _onload() async {
+  //   Val.billId.value.val = const ShortUuid().generate();
+  //   Val.billId.refresh();
 
-    // await LoadData().paymentMethod();
-  }
+  //   // await LoadData().paymentMethod();
+  // }
 
   @override
   Widget build(BuildContext context) {
-    _onload();
+    CheckoutVal.onload();
     return ResponsiveBuilder(
       builder: (context, media) {
         return SafeArea(
@@ -95,7 +82,7 @@ class CheckoutPage extends StatelessWidget {
                                 ),
                               );
                             },
-                            icon: Icon(Icons.feed_outlined)),
+                            icon: const Icon(Icons.feed_outlined)),
                       )
                     ],
                   ),
@@ -126,13 +113,13 @@ class CheckoutPage extends StatelessWidget {
                                                 child: Column(
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
-                                                    Text(
+                                                    const Text(
                                                       "Bill ID: ",
                                                     ),
                                                     Text(
                                                       Val.billId.value.val.toString(),
                                                       overflow: TextOverflow.ellipsis,
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                         fontWeight: FontWeight.bold,
                                                         fontSize: 20,
                                                       ),
@@ -145,8 +132,8 @@ class CheckoutPage extends StatelessWidget {
                                                 child: Column(
                                                   crossAxisAlignment: CrossAxisAlignment.end,
                                                   children: [
-                                                    Text("Bill No"),
-                                                    Text(
+                                                    const Text("Bill No"),
+                                                    const Text(
                                                       "00001",
                                                       style: TextStyle(
                                                         fontSize: 20,
@@ -165,14 +152,14 @@ class CheckoutPage extends StatelessWidget {
                                                 child: Column(
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
-                                                    Text("Total Tagihan: "),
+                                                    const Text("Total Tagihan: "),
                                                     Text(
                                                       NumberFormat.currency(
                                                         locale: 'id_ID',
                                                         symbol: 'Rp',
                                                         decimalDigits: 0,
-                                                      ).format(_totalPrice),
-                                                      style: TextStyle(
+                                                      ).format(CheckoutVal.totalPrice),
+                                                      style: const TextStyle(
                                                         fontSize: 20,
                                                         fontWeight: FontWeight.bold,
                                                       ),
@@ -184,15 +171,15 @@ class CheckoutPage extends StatelessWidget {
                                                 child: Column(
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
-                                                    Text("Amount Value: "),
+                                                    const Text("Amount Value: "),
                                                     Obx(
                                                       () => Text(
                                                         NumberFormat.currency(
                                                           locale: 'id_ID',
                                                           symbol: 'Rp',
                                                           decimalDigits: 0,
-                                                        ).format(int.parse(_toPay.value.val)),
-                                                        style: TextStyle(
+                                                        ).format(int.parse(CheckoutVal.toPay.value.val)),
+                                                        style: const TextStyle(
                                                           fontSize: 20,
                                                           fontWeight: FontWeight.bold,
                                                         ),
@@ -206,7 +193,7 @@ class CheckoutPage extends StatelessWidget {
                                                 child: Column(
                                                   crossAxisAlignment: CrossAxisAlignment.end,
                                                   children: [
-                                                    Text(
+                                                    const Text(
                                                       "Change",
                                                     ),
                                                     Text(
@@ -214,14 +201,14 @@ class CheckoutPage extends StatelessWidget {
                                                         locale: 'id_ID',
                                                         symbol: 'Rp. ',
                                                         decimalDigits: 0,
-                                                      ).format(int.parse(_change().toString())).contains("-")
+                                                      ).format(int.parse(CheckoutVal.change().toString())).contains("-")
                                                           ? "0"
                                                           : NumberFormat.currency(
                                                               locale: 'id_ID',
                                                               symbol: 'Rp. ',
                                                               decimalDigits: 0,
-                                                            ).format(int.parse(_change().toString())),
-                                                      style: TextStyle(
+                                                            ).format(int.parse(CheckoutVal.change().toString())),
+                                                      style: const TextStyle(
                                                         fontSize: 20,
                                                         fontWeight: FontWeight.bold,
                                                       ),
@@ -249,7 +236,7 @@ class CheckoutPage extends StatelessWidget {
                                                   validator: (value) => (value.toString() == "null")
                                                       ? "payment method is required"
                                                       : null,
-                                                  decoration: InputDecoration(
+                                                  decoration: const InputDecoration(
                                                     hintText: "Select Payment Method",
                                                     filled: true,
                                                     border: OutlineInputBorder(
@@ -265,7 +252,7 @@ class CheckoutPage extends StatelessWidget {
                                                   ],
                                                   onChanged: (value) {
                                                     debugPrint(value.toString());
-                                                    _paymentMethod.assignAll(value as Map);
+                                                    CheckoutVal.paymentMethod.assignAll(value as Map);
                                                   },
                                                 ),
                                               );
@@ -278,7 +265,7 @@ class CheckoutPage extends StatelessWidget {
                                       padding: const EdgeInsets.all(8.0),
                                       child: Wrap(
                                         children: [
-                                          for (final itm in _listHotKey)
+                                          for (final itm in CheckoutVal.listHotKey)
                                             Padding(
                                               padding: const EdgeInsets.all(2.0),
                                               child: MaterialButton(
@@ -291,16 +278,16 @@ class CheckoutPage extends StatelessWidget {
                                                           symbol: '',
                                                           decimalDigits: 0,
                                                         ).format(int.parse(itm)),
-                                                  style: TextStyle(
+                                                  style: const TextStyle(
                                                       fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
                                                 ),
                                                 onPressed: () {
                                                   if (itm == "uang pas") {
-                                                    _toPay.value.val = _totalPrice.toString();
-                                                    _toPay.refresh();
+                                                    CheckoutVal.toPay.value.val = CheckoutVal.totalPrice.toString();
+                                                    CheckoutVal.toPay.refresh();
                                                   } else {
-                                                    _toPay.value.val = itm;
-                                                    _toPay.refresh();
+                                                    CheckoutVal.toPay.value.val = itm;
+                                                    CheckoutVal.toPay.refresh();
                                                   }
                                                 },
                                               ),
@@ -321,19 +308,19 @@ class CheckoutPage extends StatelessWidget {
                                   () => Column(
                                     children: [
                                       Visibility(
-                                        visible: int.parse(_toPay.value.val) >= _totalPrice,
+                                        visible: int.parse(CheckoutVal.toPay.value.val) >= CheckoutVal.totalPrice,
                                         child: Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: loading.value
-                                              ? Text("loading ...")
+                                              ? const Text("loading ...")
                                               : MaterialButton(
                                                   color: Colors.cyan,
                                                   onPressed: () async {
                                                     loading.value = true;
                                                     final bill = <String, String>{
                                                       "id": Val.billId.value.val.toString(),
-                                                      "totalQty": _totalQty.toString(),
-                                                      "totalPrice": _totalPrice.toString(),
+                                                      "totalQty": CheckoutVal.totalQty.toString(),
+                                                      "totalPrice": CheckoutVal.totalPrice.toString(),
                                                       "userId": Vl.userId.val.toString(),
                                                       "companyId": Vl.companyId.val.toString(),
                                                       "outletId": Vl.outletId.val.toString(),
@@ -341,8 +328,8 @@ class CheckoutPage extends StatelessWidget {
                                                       // "cashierId": "",
                                                       // "discount": "",
                                                       // "tax": "",
-                                                      "payment": _toPay.value.val,
-                                                      "change": _change(),
+                                                      "payment": CheckoutVal.toPay.value.val,
+                                                      "change": CheckoutVal.change(),
                                                       // "customerId": ""
                                                     };
 
@@ -369,7 +356,7 @@ class CheckoutPage extends StatelessWidget {
                                                     try {
                                                       final pay = await RouterApi.billCreate().postData(body);
                                                       await SmartDialog.showToast("Payment Success");
-                                                      Val.change.value.val = _change();
+                                                      Val.change.value.val = CheckoutVal.change();
                                                       // Val.billId.value.val = Val.billId.value.val;
 
                                                       // Val.struk.value.val = _struk(media).toString();
@@ -380,12 +367,12 @@ class CheckoutPage extends StatelessWidget {
                                                       SmartDialog.showToast(e.toString());
                                                     }
                                                   },
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.all(10.0),
+                                                  child: const Padding(
+                                                    padding: EdgeInsets.all(10.0),
                                                     child: Center(
                                                       child: Text(
                                                         "Pay",
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                           fontSize: 20,
                                                           fontWeight: FontWeight.bold,
                                                           color: Colors.white,
@@ -430,50 +417,34 @@ class CheckoutPage extends StatelessWidget {
                   Visibility(
                     visible: false,
                     child: Text(
-                      _toPay.value.val.toString(),
+                      CheckoutVal.toPay.value.val.toString(),
                     ),
                   ),
-
-                  // Visibility(
-                  //   visible: media.isMobile,
-                  //   child: Obx(
-                  //     () => Padding(
-                  //       padding: const EdgeInsets.all(8.0),
-                  //       child: SizedBox(
-                  //         child: Text(
-                  //           NumberFormat.currency(locale: 'id', symbol: 'Rp. ', decimalDigits: 0)
-                  //               .format(int.tryParse(_toPay.value.val)),
-                  //           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32, color: Colors.grey.shade700),
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
                   Flexible(
                     child: GridButton(
                       borderColor: Colors.transparent,
                       onPressed: (data) {
                         if (data == "del") {
-                          final ini = _toPay.value.val.split("");
+                          final ini = CheckoutVal.toPay.value.val.split("");
                           ini.removeLast();
-                          _toPay.value.val = ini.join();
-                          if (_toPay.value.val == "") {
-                            _toPay.value.val = "0";
+                          CheckoutVal.toPay.value.val = ini.join();
+                          if (CheckoutVal.toPay.value.val == "") {
+                            CheckoutVal.toPay.value.val = "0";
                           }
-                          _toPay.refresh();
+                          CheckoutVal.toPay.refresh();
                         } else if (data == "c") {
-                          _toPay.value.val = "0";
-                          _toPay.refresh();
+                          CheckoutVal.toPay.value.val = "0";
+                          CheckoutVal.toPay.refresh();
                         } else if (data == "") {
                         } else {
-                          final ini = _toPay.value.val.split("");
+                          final ini = CheckoutVal.toPay.value.val.split("");
                           if (ini.first == "0") {
                             ini.removeAt(0);
                           }
                           String jadinya = ini.join();
                           jadinya += data;
-                          _toPay.value.val = jadinya;
-                          _toPay.refresh();
+                          CheckoutVal.toPay.value.val = jadinya;
+                          CheckoutVal.toPay.refresh();
                         }
                       },
                       items: [
@@ -496,7 +467,7 @@ class CheckoutPage extends StatelessWidget {
                           _pad(text: "0"),
                           _pad(
                             text: "del",
-                            child: Icon(
+                            child: const Icon(
                               Icons.backspace,
                               color: Colors.white,
                               size: 30,
@@ -516,6 +487,6 @@ class CheckoutPage extends StatelessWidget {
       title: text,
       child: child,
       color: Colors.cyan,
-      shape: BorderSide(color: Colors.white, width: 2),
-      textStyle: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold));
+      shape: const BorderSide(color: Colors.white, width: 2),
+      textStyle: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold));
 }

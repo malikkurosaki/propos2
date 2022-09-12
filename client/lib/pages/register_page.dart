@@ -6,6 +6,7 @@ import 'package:propos/pages.dart';
 import 'package:propos/utils/router_auth.dart';
 import 'package:propos/utils/img_def.dart';
 import 'package:propos/utils/val.dart';
+import 'package:propos/utils/vl.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:get/get.dart';
 
@@ -155,7 +156,10 @@ class RegisterPage extends StatelessWidget {
 
                                 final reg = await RouterAuth.register(body);
                                 if (reg.statusCode == 201) {
-                                  Val.userIdTmp.val = jsonDecode(reg.body)['id'];
+                                  final data = jsonDecode(reg.body);
+                                  // Val.userIdTmp.val = data['id'];
+                                  Vl.deviceId.val = data['deviceId'];
+
                                   await SmartDialog.showToast("Registered Successfully");
                                   Get.offAllNamed(Pages.loginPage().route);
                                 } else {

@@ -21,3 +21,28 @@
 - support inden order ( save order)
 - menambah customer secara langsung
 - manual order
+
+
+### alpaha3
+
+- [ ] harga rata kanan
+- [ ] new stock => initial stock
+- [ ] minimal stock => minimum stock
+- [ ] outlet-product-stock [tambah tablel]
+- [ ] typee paymen mnuncul di bill
+- [ ] tax dihilagkan di bill
+- [ ] kembalian muncul di bill
+- [ ] payment method di checkout
+- [ ] pax dan customer di bill
+- [ ] type payment di bill
+- [ ] type pyment harus diisi
+- [ ] open , paid , void (status transaksi)
+- [ ] penyesuaian item display
+- [ ] muntul hasil additional detai
+- [ ] banyak type payment
+- [ ] total tahihan => total bill
+- [ ] amount value => total payment
+
+
+
+[x] ini dimana

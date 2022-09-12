@@ -5,6 +5,7 @@ class Vl {
   static final companyId = "".val('Vl.companyId');
   static final outletId = "".val('Vl.outletId');
   static final employeeId = "".val("Vl.employeeId");
+  static final deviceId = "".val("Vl.deviceId");
 
   static final defUser = {}.val('Vl.defUser');
   static final defCompany = {}.val('Vl.defCompany');
@@ -12,6 +13,8 @@ class Vl {
 
   static final listPrinter = [].val("Vl.listPrinter");
   static final selectedPrinter = {}.val("Vl.selectedPrinter");
+
+  static final headers = {'userId': Vl.userId.val, 'companyId': companyId.val, 'outletId': outletId.val};
 
   static void clear() {
     userId.val = "";
@@ -23,6 +26,4 @@ class Vl {
     defCompany.val = {};
     defOutlet.val = {};
   }
-
-  
 }

@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:propos/components/app_bar_image.dart';
+import 'package:propos/utils/img_def.dart';
 import 'package:propos/utils/router_api.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:get/get.dart';
@@ -47,9 +49,7 @@ class Company extends StatelessWidget {
                     Expanded(
                       child: _listDisplay(media),
                     ),
-                    Visibility(
-                      visible: !media.isMobile,
-                      child: _create(media))
+                    Visibility(visible: !media.isMobile, child: _create(media))
                   ],
                 ),
               ),
@@ -138,20 +138,24 @@ class Company extends StatelessWidget {
 
   Widget _listDisplay(SizingInformation media) {
     return Scaffold(
-      floatingActionButton:! media.isMobile? null: FloatingActionButton(
-        onPressed: () {
-          Get.dialog(
-            Dialog(
-              child: _create(media),
-            )
-          );
-        },
-        child: Icon(Icons.add, color: Colors.white,),
-      ),
+      floatingActionButton: !media.isMobile
+          ? null
+          : FloatingActionButton(
+              onPressed: () {
+                Get.dialog(Dialog(
+                  child: _create(media),
+                ));
+              },
+              child: Icon(
+                Icons.add,
+                color: Colors.white,
+              ),
+            ),
       body: Card(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            AppBarImage(),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(

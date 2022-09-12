@@ -8,6 +8,7 @@ const routerApi = require('./router_api');
 const routerMaster = require('./router_master');
 const routerAuth = require('./router_auth');
 const routerGambar = require('./router_gambar');
+const routers = require('./routers');
 
 app.use(cors());
 app.use(express.json());
@@ -19,6 +20,9 @@ app.use('/img', routerImg);
 app.use('/api', routerApi);
 app.use('/master', routerMaster)
 app.use(routerGambar);
+
+// new custom router beta
+app.use(routers);
 
 app.listen(port, () => {
     console.log(`server berjalan di port ${port}`.yellow);

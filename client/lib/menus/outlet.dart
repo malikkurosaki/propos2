@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:propos/components/app_bar_image.dart';
 import 'package:propos/utils/router_api.dart';
 import 'package:propos/utils/val_def.dart';
 import 'package:responsive_builder/responsive_builder.dart';
@@ -62,96 +63,99 @@ class Outlet extends StatelessWidget {
                 );
               },
             ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Row(
-          //   children: [
-          //     Visibility(
-          //       visible: media.isMobile,
-          //       child: Padding(
-          //         padding: const EdgeInsets.all(8.0),
-          //         child: IconButton(
-          //           icon: Icon(
-          //             Icons.add_circle,
-          //             color: Colors.cyan,
-          //           ),
-          //           onPressed: () {
-          //             Get.dialog(
-          //               SimpleDialog(
-          //                 children: [_create(media)],
-          //               ),
-          //             );
-          //           },
-          //         ),
-          //       ),
-          //     ),
-          //   ],
-          // ),
-          Flexible(
-            child: Obx(() => _listCompany.isEmpty
-                ? Text("empty")
-                : SizedBox(
-                    width: double.infinity,
-                    child: ContainedTabBarView(
-                      tabs: [
-                        ..._listCompany.map(
-                          (e) {
-                            return Tab(
-                              child: Text(e['name'].toString()),
-                            );
-                          },
-                        ),
-                      ],
-                      views: [
-                        ..._listCompany.map(
-                          (e) {
-                            return Container(
-                              child: ListView(
-                                children: [
-                                  ListTile(
-                                      leading: Checkbox(value: false, onChanged: (value) {}),
-                                      title: TextField(
-                                        decoration: InputDecoration(
-                                            isDense: true,
-                                            filled: true,
-                                            hintText: 'Search',
-                                            prefixIcon: Icon(Icons.search),
-                                            suffixIcon: IconButton(
-                                              icon: Icon(Icons.clear),
-                                              onPressed: () {},
-                                            ),
-                                            border: OutlineInputBorder(
-                                              borderSide: BorderSide.none,
-                                            )),
-                                      )),
-                                  ...(e['Outlet'] as List).map(
-                                    (e) {
-                                      return ListTile(
-                                        leading: Checkbox(
-                                          value: false,
-                                          onChanged: (v) {},
-                                        ),
-                                        title: Text(e['name']),
-                                        trailing: PopupMenuButton(
-                                          itemBuilder: (context) => [
-                                            PopupMenuItem(child: Text('Edit'), value: 'edit'),
-                                            PopupMenuItem(child: Text('Delete'), value: 'delete'),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  ).toList(),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  )),
-          )
-        ],
+      body: Card(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AppBarImage(),
+            // Row(
+            //   children: [
+            //     Visibility(
+            //       visible: media.isMobile,
+            //       child: Padding(
+            //         padding: const EdgeInsets.all(8.0),
+            //         child: IconButton(
+            //           icon: Icon(
+            //             Icons.add_circle,
+            //             color: Colors.cyan,
+            //           ),
+            //           onPressed: () {
+            //             Get.dialog(
+            //               SimpleDialog(
+            //                 children: [_create(media)],
+            //               ),
+            //             );
+            //           },
+            //         ),
+            //       ),
+            //     ),
+            //   ],
+            // ),
+            Flexible(
+              child: Obx(() => _listCompany.isEmpty
+                  ? Text("empty")
+                  : SizedBox(
+                      width: double.infinity,
+                      child: ContainedTabBarView(
+                        tabs: [
+                          ..._listCompany.map(
+                            (e) {
+                              return Tab(
+                                child: Text(e['name'].toString()),
+                              );
+                            },
+                          ),
+                        ],
+                        views: [
+                          ..._listCompany.map(
+                            (e) {
+                              return Container(
+                                child: ListView(
+                                  children: [
+                                    ListTile(
+                                        leading: Checkbox(value: false, onChanged: (value) {}),
+                                        title: TextField(
+                                          decoration: InputDecoration(
+                                              isDense: true,
+                                              filled: true,
+                                              hintText: 'Search',
+                                              prefixIcon: Icon(Icons.search),
+                                              suffixIcon: IconButton(
+                                                icon: Icon(Icons.clear),
+                                                onPressed: () {},
+                                              ),
+                                              border: OutlineInputBorder(
+                                                borderSide: BorderSide.none,
+                                              )),
+                                        )),
+                                    ...(e['Outlet'] as List).map(
+                                      (e) {
+                                        return ListTile(
+                                          leading: Checkbox(
+                                            value: false,
+                                            onChanged: (v) {},
+                                          ),
+                                          title: Text(e['name']),
+                                          trailing: PopupMenuButton(
+                                            itemBuilder: (context) => [
+                                              PopupMenuItem(child: Text('Edit'), value: 'edit'),
+                                              PopupMenuItem(child: Text('Delete'), value: 'delete'),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ).toList(),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    )),
+            )
+          ],
+        ),
       ),
     );
   }

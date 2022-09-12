@@ -8,8 +8,8 @@ import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:propos/src/product/product_val.dart';
-import 'package:propos/utils/conf.dart';
 import 'package:http/http.dart' as http;
+import 'package:propos/utils/config.dart';
 import 'package:propos/utils/vl.dart';
 
 // class _ProductImage {
@@ -52,7 +52,7 @@ class ProductCreateWithImage extends StatelessWidget {
                     child: CachedNetworkImage(
                         errorWidget: (context, url, error) => const Center(child: Icon(Icons.error)),
                         placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
-                        imageUrl: "${Conf.host}/product-image/${ProductVal.productImage['name']}")),
+                        imageUrl: "${Config.host}/product-image/${ProductVal.productImage['name']}")),
                 onTap: () async {
                   await _uploadImage();
                 },
@@ -68,7 +68,7 @@ class ProductCreateWithImage extends StatelessWidget {
   _uploadImage() async {
     final upload = http.MultipartRequest(
       'POST',
-      Uri.parse("${Conf.host}/img/upload?userId=${Vl.userId.val}"),
+      Uri.parse("${Config.host}/img/upload?userId=${Vl.userId.val}"),
     );
     final image = await ImagePicker().pickImage(maxHeight: 500, maxWidth: 500, source: ImageSource.gallery);
     if (image != null) {

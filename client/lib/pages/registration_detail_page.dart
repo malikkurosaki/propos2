@@ -74,10 +74,10 @@ class RegistrationDetailPage extends StatelessWidget {
                         DrawerHeader(
                           child: ImgDef.registrationDetail(),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(Val.userIdTmp.val),
-                        ),
+                        // Padding(
+                        //   padding: const EdgeInsets.all(8.0),
+                        //   child: Text(Val.userIdTmp.val),
+                        // ),
                         // dropdown jenis usaha
                         Obx(
                           () => Padding(
@@ -211,7 +211,7 @@ class RegistrationDetailPage extends StatelessWidget {
                                 "phone": _conNoTelp.text,
                                 "numberEmployees": _conJumlahKaryawan.text,
                                 "mJenisUsahaId": _conJenisUsahaId.text,
-                                "userId": Val.userIdTmp.val,
+                                // "userId": Val.userIdTmp.val,
                               };
 
                               // debugPrint(body.toString());

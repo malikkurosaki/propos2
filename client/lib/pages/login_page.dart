@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
 import 'package:propos/pages.dart';
+import 'package:propos/rot.dart';
+import 'package:propos/src/login/login_dialog_select.dart';
+import 'package:propos/src/login/login_select_company.dart';
+import 'package:propos/src/login/login_val.dart';
 import 'package:propos/utils/img_def.dart';
 import 'package:propos/utils/notif.dart';
 import 'package:propos/utils/router_auth.dart';
@@ -134,29 +138,27 @@ class LoginPage extends StatelessWidget {
                       ),
                     ),
                     Obx(
-                      () => !_bisaClick.value
-                          ? MaterialButton(
-                              onPressed: null,
-                              child: Text("loading ..."),
-                            )
-                          : Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: MaterialButton(
-                                color: Colors.blue,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: Center(
-                                    child: Text(
-                                      "Login",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 18,
-                                      ),
-                                    ),
-                                  ),
+                      () => Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: MaterialButton(
+                          color: Colors.blue,
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Center(
+                              child: Text(
+                                "Login",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
                                 ),
-                                onPressed: () async {
+                              ),
+                            ),
+                          ),
+                          onPressed: !_bisaClick.value
+                              ? null
+                              : () async {
                                   _bisaClick.value = false;
+                                  Future.delayed(Duration(seconds: 3), () => _bisaClick.value = true);
                                   final body = {
                                     "email": _conEmail.text,
                                     "password": _conPassword.text,
@@ -169,48 +171,35 @@ class LoginPage extends StatelessWidget {
 
                                   final login = await RouterAuth.login(body);
                                   if (login.statusCode == 200) {
-                                    final data = jsonDecode(login.body);
-                                    Vl.userId.val = data['userId'];
+                                    final userId = login.body;
+                                    final companyRes = await Rot.loginListCompanyByUserIdGet(query: "userId=$userId");
+                                    if (companyRes.statusCode == 200) {
+                                      final listData = List<Map>.from(jsonDecode(companyRes.body));
+                                      LoginVal.listCompany.assignAll(listData);
+                                      LoginVal.selectedCompany.assignAll(LoginVal.listCompany[0]);
 
-                                    // final getDefaultPref = await RouterApi.defaultPrefUserGet().getData();
-                                    // if(getDefaultPref.statusCode == 200){
-                                    //   final dataPref = jsonDecode(getDefaultPref.body);
-                                    // }else{
+                                      debugPrint((LoginVal.listCompany[0]['id'] == LoginVal.selectedCompany['id']).toString());
+                                    }
 
-                                    //   final bodyPref = {
-                                    //     "userId": data['userId'],
-                                    //     "companyId": data['companyId'],
-                                    //     "outletId": data['outletId']
-                                    //   };
+                                    // Vl.userId.val = data['userId'];
 
-                                    //   final setDefault = await RouterApi.defaultPrefUserPost().postData(bodyPref);
-                                    //   debugPrint(setDefault.body);
+                                    // debugPrint(Vl.deviceId.val.toString());
 
-                                    //   Vl.companyId.val = data['companyId'];
-                                    //   Vl.outletId.val = data['outletId'];
+                                    // Vl.companyId.val = data['companyId'];
+                                    // Vl.outletId.val = data['outletId'];
 
-                                    //   // Vl.defUser.val = data['user'];
-                                    //   // Vl.defCompany.val = data['company'];
-                                    //   // Vl.defOutlet.val = data['outlet'];
-                                    //   Get.offAllNamed(Pages.homePage().route);
-
-                                    // }
-
-                                    Vl.companyId.val = data['companyId'];
-                                    Vl.outletId.val = data['outletId'];
-
-                                    Vl.defUser.val = data['user'];
-                                    Vl.defCompany.val = data['company'];
-                                    Vl.defOutlet.val = data['outlet'];
-                                    Get.offAllNamed(Pages.homePage().route);
+                                    // Vl.defUser.val = data['user'];
+                                    // Vl.defCompany.val = data['company'];
+                                    // Vl.defOutlet.val = data['outlet'];
+                                    // Get.offAllNamed(Pages.homePage().route);
                                   } else {
                                     SmartDialog.showToast(login.body);
                                   }
 
                                   _bisaClick.value = true;
                                 },
-                              ),
-                            ),
+                        ),
+                      ),
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

@@ -54,25 +54,25 @@ const sekarang = expressAsyncHandler(async (req, res, next) => {
 
     if (getUser) {
 
-        const result = {
-            "userId": getUser.id,
-            "companyId": getUser.Company[0]["id"],
-            "outletId": getUser.Company[0]["Outlet"][0]["id"],
-            "user": {
-                "id": getUser.id,
-                "name": getUser.name
-            },
-            "company": {
-                "id": getUser.Company[0].id,
-                "name": getUser.Company[0].name
-            },
-            "outlet": {
-                "id": getUser.Company[0]["Outlet"][0].id,
-                "name": getUser.Company[0]["Outlet"][0].name
-            }
-        }
+        // const result = {
+        //     "userId": getUser.id,
+        //     "companyId": getUser.Company[0]["id"],
+        //     "outletId": getUser.Company[0]["Outlet"][0]["id"],
+        //     "user": {
+        //         "id": getUser.id,
+        //         "name": getUser.name
+        //     },
+        //     "company": {
+        //         "id": getUser.Company[0].id,
+        //         "name": getUser.Company[0].name
+        //     },
+        //     "outlet": {
+        //         "id": getUser.Company[0]["Outlet"][0].id,
+        //         "name": getUser.Company[0]["Outlet"][0].name
+        //     }
+        // }
 
-        res.status(200).json(result);
+        res.status(200).send(getUser.id);
     } else {
         res.status(401).send("email atau password salah");
     }

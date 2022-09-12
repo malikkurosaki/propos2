@@ -1,9 +1,11 @@
 const PrismaClient = require('@prisma/client').PrismaClient;
 const prisma = new PrismaClient();
 const expressAsyncHandler = require('express-async-handler');
+const uuidInt = require('uuid-int');
 
 const sekarang = expressAsyncHandler(async (req, res, next) => {
     const { name, email, password, namaUsaha } = req.body;
+    const generator = uuidInt(Math.floor(Math.random() * 500));
 
     try {
         const daftar = await prisma.user.create({
@@ -17,10 +19,16 @@ const sekarang = expressAsyncHandler(async (req, res, next) => {
                         Outlet: {
                             create: {
                                 name: namaUsaha,
+                                Device: {
+                                    create: {
+                                        name: namaUsaha,
+                                        deviceId: generator.uuid().toString(),
+                                    }
+                                }
                             }
                         }
                     }
-                }
+                },
             },
             select: {
                 id: true,
@@ -30,16 +38,39 @@ const sekarang = expressAsyncHandler(async (req, res, next) => {
                         Outlet: {
                             select: {
                                 id: true,
-                            }
+                                Device: {
+                                    select: {
+                                        id: true
+                                    }
+                                }
+                            },
+
                         }
                     }
                 }
             }
         });
 
-        res.status(201).json(daftar);
+        const dataDaftar = {
+            "userId": daftar.id,
+            "companyId": daftar.Company[0].id,
+            "outletId": daftar.Company[0].Outlet[0].id,
+            "deviceId": daftar.Company[0].Outlet[0].Device[0].id,
+        }
+
+        let dataDefault =  await prisma.defaultPreference.create({
+            data: {
+                deviceId: dataDaftar.deviceId,
+                userId: dataDaftar.userId,
+                companyId: dataDaftar.companyId,
+                outletId: dataDaftar.outletId
+            }
+        },)
+
+        res.status(201).json(dataDefault);
     } catch (error) {
-        res.status(401).send(error);
+        console.log(error);
+        res.status(401).send("Email Has Been Used");
     }
 
     // const getUser = await prisma.user.findUnique({

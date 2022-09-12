@@ -167,7 +167,7 @@ class ProductCreateSubmit extends StatelessWidget {
 
                     final kirim = await RouterApi.productCreate().postData({"data": jsonEncode(body)});
                     if (kirim.statusCode == 201) {
-                      await ProductVal.loadProductByCompanyId();
+                      // await ProductVal.loadProductByCompanyId();
 
                       if (media.isMobile) {
                         Get.back();

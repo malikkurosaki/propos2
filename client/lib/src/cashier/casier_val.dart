@@ -16,6 +16,8 @@ class CashierVal {
   static final isMultipleSelect = false.obs;
   static final lsTampungan = [].obs;
 
+  static final listManualProduct = [].val("CashierVal.listManualProduct").obs;
+
   static loadProduct() async {
     // final list = await RouterApi.listProduct().getData();
     final listPro = await RouterApi.productCashier().getData();

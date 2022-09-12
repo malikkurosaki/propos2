@@ -105,11 +105,13 @@ class HomePage extends StatelessWidget {
                 padding: EdgeInsets.zero,
                 child: Stack(
                   children: [
-                    Container(
-                      width: double.infinity,
-                      child: ImgDef.homeHeader(
-                        fit: BoxFit.cover,
-                        width: double.infinity
+                    Card(
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: ImgDef.homeHeader(
+                          fit: BoxFit.cover,
+                          width: double.infinity
+                        ),
                       ),
                     ),
                     // BackdropFilter(
