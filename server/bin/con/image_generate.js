@@ -13,10 +13,10 @@ const result = path.join(__dirname, './../../../client/lib/utils/img_def.dart');
 
 let hasil = [];
 for (let e of target) {
-    let conf = "${Conf.host}";
+    let Config = "${Config.host}";
     hasil.push(`
      static Widget ${_.camelCase(e.split('.')[0])}({double? width, double? height, BoxFit? fit}){
-        return CachedNetworkImage(imageUrl: "${conf}/img/def/${e}", width: width, height: height, fit: fit);
+        return CachedNetworkImage(imageUrl: "${Config}/img/def/${e}", width: width, height: height, fit: fit);
      }
     `)
 }
@@ -24,7 +24,7 @@ for (let e of target) {
 const template =
     `
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:propos/utils/conf.dart';
+import 'package:propos/utils/config.dart';
 import 'package:flutter/material.dart';
 
 class ImgDef {
