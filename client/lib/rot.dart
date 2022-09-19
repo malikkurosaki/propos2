@@ -4,6 +4,14 @@ import 'package:propos/utils/config.dart';
 import 'package:propos/utils/vl.dart';
 
 class Rot {
+    static Future < http.Response > cashierListCustomerGet({
+        String ? query,
+        Map ? body
+    }) => http.get(Uri.parse("${Config.host}/cashier-list-customer-get?${query??''}"), headers: Vl.headers, );
+    static Future < http.Response > cashierListDiscountGet({
+        String ? query,
+        Map ? body
+    }) => http.get(Uri.parse("${Config.host}/cashier-list-discount-get?${query??''}"), headers: Vl.headers, );
     static Future < http.Response > billNumberGet({
         String ? query,
         Map ? body

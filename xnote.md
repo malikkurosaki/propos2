@@ -37,7 +37,7 @@
 - [x] type payment di bill
 - [x] type payment harus diisi
 - [x] open , paid , void (status transaksi)
-- [ ] penyesuaian item display di kasir
+- [x] penyesuaian item display di kasir
 - [ ] muncul hasil additional detail
 - [x] banyak type payment (multiple)
 - [x] total tahihan => total bill
@@ -45,3 +45,11 @@
 - [x] bill number
 - [x] select company , outlet , device di login 
 - [x] change value 
+
+__note__: 
+  - sku digunakan jika client sudah punya product dan sudah ada skunya 
+
+### alpha4 next log
+- [] saat pilih payment method , jika sudah terpilih harusnya tidak bisa terpilih ulang
+- [] jika ada stock tampil di piihan item menu
+- 

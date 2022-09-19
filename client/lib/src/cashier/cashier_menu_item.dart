@@ -12,7 +12,11 @@ import 'package:propos/src/cashier/casier_val.dart';
 import 'package:propos/utils/config.dart';
 import 'package:propos/utils/val.dart';
 import 'package:responsive_builder/responsive_builder.dart';
+import 'package:short_uuids/short_uuids.dart';
 
+
+/// # Cashier Menu Item
+/// tampilah menu kotak kotak untuk milih menu
 class CashierMenuItem extends StatelessWidget {
   const CashierMenuItem({Key? key}) : super(key: key);
 
@@ -45,7 +49,7 @@ class CashierMenuItem extends StatelessWidget {
                         ),
                       )
                     : GridView.extent(
-                        maxCrossAxisExtent: media.isMobile ? Get.width / 2 : 200,
+                        maxCrossAxisExtent: media.isMobile ? Get.width / 2 : 150,
                         childAspectRatio: media.isMobile ? 0.8 : 0.8,
                         children: [
                           for (final prod in CashierVal.listProduct.value.val)
@@ -59,6 +63,7 @@ class CashierMenuItem extends StatelessWidget {
                                   prod['qty'] = 1;
                                   prod['note'] = '';
                                   prod['total'] = prod['qty'] * prod['price'];
+                                  prod['isManual'] = false;
                                   data.add(prod);
                                   SmartDialog.showToast("Added to cart", animationTime: Duration(milliseconds: 500));
                                 } else {
@@ -69,25 +74,36 @@ class CashierMenuItem extends StatelessWidget {
                                 Val.listorder.refresh();
                               },
                               child: Card(
+                                borderOnForeground: true,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Flexible(
                                       child: CachedNetworkImage(
-                                          imageUrl:
-                                              "${Config.host}/product-image/${(prod["ProductImage"]?['name'] ?? "null").toString()}",
-                                          fit: BoxFit.contain,
-                                          width: media.isMobile ? Get.width / 2 : 200),
+                                        imageUrl:
+                                            "${Config.host}/product-image/${(prod["ProductImage"]?['name'] ?? "null").toString()}",
+                                        fit: BoxFit.cover,
+                                        height: double.infinity,
+                                        width: double.infinity,
+                                        // width: media.isMobile ? Get.width / 2 : 200,
+                                      ),
                                     ),
-                                    Text(
-                                      prod['name'].toString(),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            prod['name'].toString(),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                          ),
+                                          Text(NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0)
+                                              .format(prod['price'])),
+                                        ],
+                                      ),
                                     ),
-                                    Text(
-                                        NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0)
-                                            .format(prod['price'])),
                                   ],
                                 ),
                               ),

@@ -6,6 +6,8 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:propos/components/select_customer.dart';
 import 'package:get/get.dart';
 import 'package:propos/src/cashier/cashier_add_customer.dart';
+import 'package:propos/src/cashier/cashier_select_customer.dart';
+import 'package:propos/src/cashier/cashier_select_discount.dart';
 import 'package:propos/utils/router_api.dart';
 
 class CashierAdditional extends StatelessWidget {
@@ -63,11 +65,12 @@ class CashierAdditional extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(
-                        child: SelectCustomer(
-                          onChanged: (id) {
-                            debugPrint(id);
-                          },
-                        ),
+                        child: CashierSelectCutomer()
+                        // SelectCustomer(
+                        //   onChanged: (id) {
+                        //     debugPrint(id);
+                        //   },
+                        // ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -76,91 +79,91 @@ class CashierAdditional extends StatelessWidget {
                             showDialog(
                               context: context,
                               builder: (context) => AlertDialog(
-                                insetPadding: EdgeInsets.zero,
-                                titlePadding: EdgeInsets.zero,
-                                contentPadding: EdgeInsets.zero,
-                                content: CashierAddCustomer()
-                                // Column(
-                                //   crossAxisAlignment: CrossAxisAlignment.start,
-                                //   mainAxisSize: MainAxisSize.min,
-                                //   children: [
-                                //     Row(
-                                //       children: [BackButton(), Text("Add Customer")],
-                                //     ),
-                                //     Padding(
-                                //       padding: const EdgeInsets.all(8.0),
-                                //       child: TextFormField(
-                                //         decoration: InputDecoration(
-                                //           filled: true,
-                                //           isDense: true,
-                                //           hintText: "Name",
-                                //           border: OutlineInputBorder(borderSide: BorderSide.none),
-                                //         ),
-                                //       ),
-                                //     ),
-                                //     Padding(
-                                //       padding: const EdgeInsets.all(8.0),
-                                //       child: TextFormField(
-                                //         decoration: InputDecoration(
-                                //           filled: true,
-                                //           isDense: true,
-                                //           hintText: "Phone Number",
-                                //           border: OutlineInputBorder(borderSide: BorderSide.none),
-                                //         ),
-                                //       ),
-                                //     ),
-                                //     Padding(
-                                //       padding: const EdgeInsets.all(8.0),
-                                //       child: TextFormField(
-                                //         decoration: InputDecoration(
-                                //           filled: true,
-                                //           isDense: true,
-                                //           hintText: "Email",
-                                //           border: OutlineInputBorder(borderSide: BorderSide.none),
-                                //         ),
-                                //       ),
-                                //     ),
-                                //     Padding(
-                                //       padding: const EdgeInsets.all(8.0),
-                                //       child: TextFormField(
-                                //         decoration: InputDecoration(
-                                //           filled: true,
-                                //           isDense: true,
-                                //           hintText: "Address",
-                                //           border: OutlineInputBorder(borderSide: BorderSide.none),
-                                //         ),
-                                //       ),
-                                //     ),
-                                //     Padding(
-                                //       padding: const EdgeInsets.all(8.0),
-                                //       child: TextFormField(
-                                //         decoration: InputDecoration(
-                                //           filled: true,
-                                //           isDense: true,
-                                //           hintText: "Sex",
-                                //           border: OutlineInputBorder(borderSide: BorderSide.none),
-                                //         ),
-                                //       ),
-                                //     ),
-                                //     Padding(
-                                //       padding: const EdgeInsets.all(8.0),
-                                //       child: MaterialButton(
-                                //         color: Colors.blue,
-                                //         child: Padding(
-                                //           padding: const EdgeInsets.all(10.0),
-                                //           child: Center(
-                                //             child: Text(
-                                //               "Save",
-                                //               style: TextStyle(color: Colors.white, fontSize: 16),
-                                //             ),
-                                //           ),
-                                //         ),
-                                //         onPressed: () {},
-                                //       ),
-                                //     )
-                                //   ],
-                                // ),
-                              ),
+                                  insetPadding: EdgeInsets.zero,
+                                  titlePadding: EdgeInsets.zero,
+                                  contentPadding: EdgeInsets.zero,
+                                  content: CashierAddCustomer()
+                                  // Column(
+                                  //   crossAxisAlignment: CrossAxisAlignment.start,
+                                  //   mainAxisSize: MainAxisSize.min,
+                                  //   children: [
+                                  //     Row(
+                                  //       children: [BackButton(), Text("Add Customer")],
+                                  //     ),
+                                  //     Padding(
+                                  //       padding: const EdgeInsets.all(8.0),
+                                  //       child: TextFormField(
+                                  //         decoration: InputDecoration(
+                                  //           filled: true,
+                                  //           isDense: true,
+                                  //           hintText: "Name",
+                                  //           border: OutlineInputBorder(borderSide: BorderSide.none),
+                                  //         ),
+                                  //       ),
+                                  //     ),
+                                  //     Padding(
+                                  //       padding: const EdgeInsets.all(8.0),
+                                  //       child: TextFormField(
+                                  //         decoration: InputDecoration(
+                                  //           filled: true,
+                                  //           isDense: true,
+                                  //           hintText: "Phone Number",
+                                  //           border: OutlineInputBorder(borderSide: BorderSide.none),
+                                  //         ),
+                                  //       ),
+                                  //     ),
+                                  //     Padding(
+                                  //       padding: const EdgeInsets.all(8.0),
+                                  //       child: TextFormField(
+                                  //         decoration: InputDecoration(
+                                  //           filled: true,
+                                  //           isDense: true,
+                                  //           hintText: "Email",
+                                  //           border: OutlineInputBorder(borderSide: BorderSide.none),
+                                  //         ),
+                                  //       ),
+                                  //     ),
+                                  //     Padding(
+                                  //       padding: const EdgeInsets.all(8.0),
+                                  //       child: TextFormField(
+                                  //         decoration: InputDecoration(
+                                  //           filled: true,
+                                  //           isDense: true,
+                                  //           hintText: "Address",
+                                  //           border: OutlineInputBorder(borderSide: BorderSide.none),
+                                  //         ),
+                                  //       ),
+                                  //     ),
+                                  //     Padding(
+                                  //       padding: const EdgeInsets.all(8.0),
+                                  //       child: TextFormField(
+                                  //         decoration: InputDecoration(
+                                  //           filled: true,
+                                  //           isDense: true,
+                                  //           hintText: "Sex",
+                                  //           border: OutlineInputBorder(borderSide: BorderSide.none),
+                                  //         ),
+                                  //       ),
+                                  //     ),
+                                  //     Padding(
+                                  //       padding: const EdgeInsets.all(8.0),
+                                  //       child: MaterialButton(
+                                  //         color: Colors.blue,
+                                  //         child: Padding(
+                                  //           padding: const EdgeInsets.all(10.0),
+                                  //           child: Center(
+                                  //             child: Text(
+                                  //               "Save",
+                                  //               style: TextStyle(color: Colors.white, fontSize: 16),
+                                  //             ),
+                                  //           ),
+                                  //         ),
+                                  //         onPressed: () {},
+                                  //       ),
+                                  //     )
+                                  //   ],
+                                  // ),
+                                  ),
                             );
                           },
                           icon: Icon(
@@ -200,60 +203,73 @@ class CashierAdditional extends StatelessWidget {
                           color: Colors.green,
                         ),
                       ),
-                      title: Text("Pax"),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      title: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          TextFormField(
-                            onChanged: (value) {
-                              if (int.tryParse(value) == null) {
-                                _conPax.clear();
-                                _conPax.text = "";
-                              }
-
-                              _pax.value = value;
-                            },
-                            controller: _conPax,
-                            decoration: InputDecoration(
-                              filled: true,
-                              isDense: true,
-                              border: OutlineInputBorder(borderSide: BorderSide.none),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text("Pax"),
+                          ),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                TextFormField(
+                                  onChanged: (value) {
+                                    if (int.tryParse(value) == null) {
+                                      _conPax.clear();
+                                      _conPax.text = "";
+                                    }
+                          
+                                    _pax.value = value;
+                                  },
+                                  controller: _conPax,
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    isDense: true,
+                                    border: OutlineInputBorder(borderSide: BorderSide.none),
+                                  ),
+                                ),
+                                Text(int.tryParse(_pax.value) == null ? "Number Only" : "")
+                              ],
                             ),
                           ),
-                          Text(int.tryParse(_pax.value) == null ? "Number Only" : "")
                         ],
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Builder(
-                      builder: (context) {
-                        final lsDiscount = [].obs;
-                        RouterApi.discountList().getData().then((res) {
-                          if (res.statusCode == 200) lsDiscount.assignAll(jsonDecode(res.body));
-                        });
-                        return Obx(
-                          () => DropdownButtonFormField(
-                            decoration: InputDecoration(
-                                filled: true,
-                                isDense: true,
-                                hintText: "Select Discount",
-                                border: OutlineInputBorder(borderSide: BorderSide.none)),
-                            items: [
-                              ...lsDiscount.map(
-                                (element) => DropdownMenuItem(
-                                  value: element,
-                                  child: Text(element['name']),
-                                ),
-                              ),
-                            ],
-                            onChanged: (value) {},
-                          ),
-                        );
-                      },
-                    ),
-                  ),
+                  // CashierSelectDiscount()
+                  // Padding(
+                  //   padding: const EdgeInsets.all(8.0),
+                  //   child: Builder(
+                  //     builder: (context) {
+                  //       final lsDiscount = [].obs;
+                  //       RouterApi.discountList().getData().then(
+                  //         (res) {
+                  //           if (res.statusCode == 200) lsDiscount.assignAll(jsonDecode(res.body));
+                  //         },
+                  //       );
+                  //       return Obx(
+                  //         () => DropdownButtonFormField(
+                  //           decoration: InputDecoration(
+                  //               filled: true,
+                  //               isDense: true,
+                  //               hintText: "Select Discount",
+                  //               border: OutlineInputBorder(borderSide: BorderSide.none)),
+                  //           items: [
+                  //             ...lsDiscount.map(
+                  //               (element) => DropdownMenuItem(
+                  //                 value: element,
+                  //                 child: Text(element['name']),
+                  //               ),
+                  //             ),
+                  //           ],
+                  //           onChanged: (value) {},
+                  //         ),
+                  //       );
+                  //     },
+                  //   ),
+                  // ),
                   // Padding(
                   //   padding: const EdgeInsets.all(8.0),
                   //   child: Text("Discount"),

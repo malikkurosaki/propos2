@@ -18,6 +18,10 @@ class CashierVal {
 
   static final listManualProduct = [].val("CashierVal.listManualProduct").obs;
 
+  static final listCustomer = [].obs;
+  static final selectedCustomer = {}.obs;
+
+
   static loadProduct() async {
     // final list = await RouterApi.listProduct().getData();
     final listPro = await RouterApi.productCashier().getData();

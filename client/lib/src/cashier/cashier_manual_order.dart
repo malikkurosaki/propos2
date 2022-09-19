@@ -6,6 +6,8 @@ import 'package:intl/intl.dart';
 import 'package:propos/components/calculator_pad.dart';
 import 'package:get/get.dart';
 import 'package:propos/src/cashier/casier_val.dart';
+import 'package:propos/utils/val.dart';
+import 'package:short_uuids/short_uuids.dart';
 
 class CashierManualOrder extends StatelessWidget {
   CashierManualOrder({Key? key}) : super(key: key);
@@ -57,18 +59,35 @@ class CashierManualOrder extends StatelessWidget {
                               return;
                             }
 
-                            final adaData = CashierVal.listManualProduct.value.val
-                                .map((element) => element['name'])
-                                .contains(_conName.text);
+                            final adaData =
+                                Val.listorder.value.val.map((element) => element['name']).contains(_conName.text);
                             if (adaData) {
-                              SmartDialog.showToast("data sudah ada");
+                              SmartDialog.showToast("data has already");
                               return;
                             }
 
-                            final lsData = [...CashierVal.listManualProduct.value.val];
-                            lsData.add({"name": _conName.text, "price": _price.value});
-                            CashierVal.listManualProduct.value.val = lsData;
-                            CashierVal.listManualProduct.refresh();
+                            final productId = const ShortUuid().generate();
+
+                            // final lsData = [...CashierVal.listManualProduct.value.val];
+                            final data = [...Val.listorder.value.val];
+                            final prod = {};
+                            prod['id'] = productId;
+                            prod['qty'] = 1;
+                            prod['price'] = int.parse(_price.value);
+                            prod['note'] = "";
+                            prod['total'] = int.parse(_price.value);
+                            prod['isManual'] = true;
+                            prod['name'] = _conName.text;
+                            data.add(prod);
+                            SmartDialog.showToast("Added to cart", animationTime: Duration(milliseconds: 500));
+
+                            Val.listorder.value.val = data;
+                            Val.listorder.refresh();
+
+                            // lsData.add({});
+
+                            // CashierVal.listManualProduct.value.val = lsData;
+                            // CashierVal.listManualProduct.refresh();
                             Get.back();
                           },
                         )

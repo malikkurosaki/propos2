@@ -13,27 +13,29 @@ class CashierTotalanFooter extends StatelessWidget {
   const CashierTotalanFooter({Key? key}) : super(key: key);
 
   Widget _saveOrderButton(BuildContext context) {
-    return Visibility(
-      visible: Val.listorder.value.val.isNotEmpty,
-      child: Padding(
-        padding: const EdgeInsets.all(4.0),
-        child: MaterialButton(
-          color: Colors.blue,
-          onPressed: Val.listorder.value.val.isEmpty
-              ? null
-              : () {
-                  // _savedOrderDialog(context);
-                  CashierDialogSave.now(context);
-                },
-          // icon: Icon(
-          //   Icons.save,
-          //   color: Val.listorder.value.val.isEmpty ? Colors.grey : Colors.cyan,
-          // ),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              "Save",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
+    return Obx(
+      () => Visibility(
+        visible: Val.listorder.value.val.isNotEmpty,
+        child: Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: MaterialButton(
+            color: Colors.blue,
+            onPressed: Val.listorder.value.val.isEmpty
+                ? null
+                : () {
+                    // _savedOrderDialog(context);
+                    CashierDialogSave.now(context);
+                  },
+            // icon: Icon(
+            //   Icons.save,
+            //   color: Val.listorder.value.val.isEmpty ? Colors.grey : Colors.cyan,
+            // ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                "Save",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
+              ),
             ),
           ),
         ),
@@ -134,7 +136,7 @@ class CashierTotalanFooter extends StatelessWidget {
             child: Text(
               "${NumberFormat.currency(
                 locale: 'id_ID',
-                symbol: 'Rp',
+                symbol: '',
                 decimalDigits: 0,
               ).format(
                 Val.listorder.value.val

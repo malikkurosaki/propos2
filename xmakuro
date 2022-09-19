@@ -2,7 +2,13 @@
 
 // get arguments
 const params = process.argv.slice(2);
-const listMenu = ["builder","runChrome","runServer","generateRouter","flutterCommand","gitPush"];
+const path = require('path');
+const fs = require('fs');
+
+const pathFile = path.join('./xmakuro');
+const targetFile = fs.readFileSync(pathFile).toString();
+// const listMenu = ["builder","runChrome","runServer","generateRouter","flutterCommand","gitPush","prismaMigrate"];
+const listMenu = targetFile.match(/.*function.*\)/g).map(item => item.replace(/function\s+/g, '').replace(/\(.*\)/g, '')).filter(e => !e.includes("match"));
 
 // check argument if available
 if (params.length > 0) {
@@ -35,8 +41,7 @@ if (params.length > 0) {
 
 // ================== Code =================
 
-const fs = require('fs');
-const path = require('path');
+
 const exec = require('child_process').execSync;
 const beautify = require('js-beautify');
 const _ = require('lodash');
@@ -102,7 +107,12 @@ function flutterCommand() {
     })
 }
 
-function gitPush(){
+function gitPush() {
     let branch = require('child_process').execSync('git rev-parse --abbrev-ref HEAD',).toString().trim();
     require('child_process').execSync(`git add . && git commit -m "${branch}" && git push origin ${branch}`, { stdio: "inherit" });
+}
+
+function prismaMigrate() {
+    require('child_process').execSync(`npx prisma migrate dev --name '$(date)'`, { stdio: "inherit", cwd: "./server" });
+    console.log("migrate completed");
 }
