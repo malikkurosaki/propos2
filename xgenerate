@@ -1,0 +1,15 @@
+#!/usr/bin/env node
+
+const path = require('path');
+const fs = require('fs');
+
+const pathFile = path.join('./xmakuro');
+const targetFile = fs.readFileSync(pathFile).toString();
+
+const getListMenu = targetFile.match(/.*listMenu[\s\S].*\]/g);
+const getFunc = targetFile.match(/.*function.*\)/g).map(item => item.replace(/function\s+/g, '').replace(/\(.*\)/g, ''));
+
+const temp = targetFile.replace(getListMenu[0], `const listMenu = ${JSON.stringify(getFunc)}`);
+
+fs.writeFileSync(pathFile, temp);
+console.log(`${getFunc.join(', ')}  Done !`);

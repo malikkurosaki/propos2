@@ -12,16 +12,17 @@ const targetFile = path.join(__dirname, "../client/lib/rot.dart")
 let listRouter = [];
 
 for (let itm of listSource) {
-    let dir = path.join(sourceDir, itm);
-    let listDir = fs.readdirSync(dir);
-    for (let itmDir of listDir) {
-        let name = path.parse(itmDir).name;
-        let method = path.parse(itmDir).name.split('_').splice(-1);
-        let host = "${Config.host}"
-        let query = "${query??''}";
-        let data = `static Future<http.Response> ${_.camelCase(name)}({String? query}) => http.${method}(Uri.parse("${host}/${_.kebabCase(name)}?${query}"), headers: Vl.headers);`
-        listRouter.push(data);
-    }
+  let dir = path.join(sourceDir, itm);
+  let listDir = fs.readdirSync(dir);
+  for (let itmDir of listDir) {
+    let name = path.parse(itmDir).name;
+    let method = path.parse(itmDir).name.split('_').splice(-1);
+    let host = "${Config.host}"
+    let query = "${query??''}";
+    let body = "body: body"
+    let data = `static Future<http.Response> ${_.camelCase(name)}({String? query, String? body}) => http.${method}(Uri.parse("${host}/${_.kebabCase(name)}?${query}"), headers: Vl.headers, ${method != 'get' ? body : ''});`
+    listRouter.push(data);
+  }
 
 }
 

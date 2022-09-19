@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:propos/menus.dart';
 import 'package:propos/pages.dart';
+import 'package:propos/src/home/home_drawer.dart';
 import 'package:propos/utils/img_def.dart';
 import 'package:propos/utils/router_api.dart';
 import 'package:propos/utils/val.dart';
@@ -40,7 +41,7 @@ class HomePage extends StatelessWidget {
                   ),
                 )
               : null,
-          drawer: media.isMobile ? _drawer(media) : null,
+          drawer: media.isMobile ? HomeDrawer() : null,
           body: SafeArea(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -70,7 +71,7 @@ class HomePage extends StatelessWidget {
                           child: Column(
                             children: [
                               Visibility(visible: false, child: Text(_drawerOpen.value.val.toString())),
-                              Flexible(child: _drawer(media)),
+                              Flexible(child: HomeDrawer()),
                             ],
                           ),
                         ),
@@ -89,112 +90,113 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _drawer(SizingInformation media) => Builder(builder: (context) {
-        final _drawerHeader = {}.obs;
-        RouterApi.drawerHeader().getData().then((data) {
-          if (data.statusCode == 200) _drawerHeader.value = jsonDecode(data.body);
-        });
+  // Widget _drawer(SizingInformation media) => Builder(builder: (context) {
+  //       // final _drawerHeader = {}.obs;
+  //       // RouterApi.drawerHeader().getData().then((data) {
+  //       //   if (data.statusCode == 200) _drawerHeader.value = jsonDecode(data.body);
+  //       // });
 
-        return Drawer(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          child: ListView(
-            controller: ScrollController(),
-            children: [
-              DrawerHeader(
-                padding: EdgeInsets.zero,
-                child: Stack(
-                  children: [
-                    Card(
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: ImgDef.homeHeader(
-                          fit: BoxFit.cover,
-                          width: double.infinity
-                        ),
-                      ),
-                    ),
-                    // BackdropFilter(
-                    //   filter: ImageFilter.blur(sigmaX: 2,sigmaY: 2),
-                    //   child: Container(
-                    //     color: Colors.white30,
-                    //   ),
-                    // ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(
-                            Vl.defCompany.val['name'].toString(),
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              backgroundColor: Colors.white
-                            ),
-                          ),
-                          Text(
-                            Vl.defOutlet.val['name'].toString(),
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              backgroundColor: Colors.white
-                            ),
-                          ),
-                          // Text('Probus System', style: TextStyle(
-                          //   backgroundColor: Colors.white
-                          // ),),
-                          // Text('Version 1.0.0',
-                          //   style: TextStyle(
-                          //     backgroundColor: Colors.white
-                          //   ),
-                          // ),
-                          // Text(Val.userId.val),
-                          // Align(
-                          //   alignment: Alignment.bottomRight,
-                          //   child: TextButton(
-                          //       onPressed: () {
-                          //         Get.toNamed(Pages.businessDetailPage().route, arguments: _userData);
-                          //       },
-                          //       child: Text("Detail")),
-                          // )
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Menus.listButton(media),
-              ListTile(
-                leading: Icon(Icons.exit_to_app),
-                onTap: () {
-                  Get.dialog(AlertDialog(
-                    content: Text("Are you sure want to logout?"),
-                    actions: [
-                      MaterialButton(
-                        child: Text("No"),
-                        onPressed: () {
-                          Get.back();
-                        },
-                      ),
-                      MaterialButton(
-                        child: Text("Yes"),
-                        onPressed: () {
-                          Vl.clear();
-                          Val.clear();
-                          ValDef.clear();
-                          Get.offAllNamed(Pages.rootPage().route);
-                        },
-                      ),
-                    ],
-                  ));
-                },
-                title: Text("Logout"),
-              )
-            ],
-          ),
-        );
-      });
+  //       return 
+  //       Drawer(
+  //         backgroundColor: Colors.white,
+  //         elevation: 0,
+  //         child: ListView(
+  //           controller: ScrollController(),
+  //           children: [
+  //             DrawerHeader(
+  //               padding: EdgeInsets.zero,
+  //               child: Stack(
+  //                 children: [
+  //                   Card(
+  //                     child: SizedBox(
+  //                       width: double.infinity,
+  //                       child: ImgDef.homeHeader(
+  //                         fit: BoxFit.cover,
+  //                         width: double.infinity
+  //                       ),
+  //                     ),
+  //                   ),
+  //                   // BackdropFilter(
+  //                   //   filter: ImageFilter.blur(sigmaX: 2,sigmaY: 2),
+  //                   //   child: Container(
+  //                   //     color: Colors.white30,
+  //                   //   ),
+  //                   // ),
+  //                   Padding(
+  //                     padding: const EdgeInsets.all(8.0),
+  //                     child: Column(
+  //                       crossAxisAlignment: CrossAxisAlignment.start,
+  //                       mainAxisSize: MainAxisSize.max,
+  //                       mainAxisAlignment: MainAxisAlignment.end,
+  //                       children: [
+  //                         Text(
+  //                           Vl.defCompany.val['name'].toString(),
+  //                           style: TextStyle(
+  //                             fontSize: 24,
+  //                             fontWeight: FontWeight.bold,
+  //                             backgroundColor: Colors.white
+  //                           ),
+  //                         ),
+  //                         Text(
+  //                           Vl.defOutlet.val['name'].toString(),
+  //                           style: TextStyle(
+  //                             fontSize: 16,
+  //                             fontWeight: FontWeight.bold,
+  //                             backgroundColor: Colors.white
+  //                           ),
+  //                         ),
+  //                         // Text('Probus System', style: TextStyle(
+  //                         //   backgroundColor: Colors.white
+  //                         // ),),
+  //                         // Text('Version 1.0.0',
+  //                         //   style: TextStyle(
+  //                         //     backgroundColor: Colors.white
+  //                         //   ),
+  //                         // ),
+  //                         // Text(Val.userId.val),
+  //                         // Align(
+  //                         //   alignment: Alignment.bottomRight,
+  //                         //   child: TextButton(
+  //                         //       onPressed: () {
+  //                         //         Get.toNamed(Pages.businessDetailPage().route, arguments: _userData);
+  //                         //       },
+  //                         //       child: Text("Detail")),
+  //                         // )
+  //                       ],
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //             Menus.listButton(media),
+  //             ListTile(
+  //               leading: Icon(Icons.exit_to_app),
+  //               onTap: () {
+  //                 Get.dialog(AlertDialog(
+  //                   content: Text("Are you sure want to logout?"),
+  //                   actions: [
+  //                     MaterialButton(
+  //                       child: Text("No"),
+  //                       onPressed: () {
+  //                         Get.back();
+  //                       },
+  //                     ),
+  //                     MaterialButton(
+  //                       child: Text("Yes"),
+  //                       onPressed: () {
+  //                         Vl.clear();
+  //                         Val.clear();
+  //                         ValDef.clear();
+  //                         Get.offAllNamed(Pages.rootPage().route);
+  //                       },
+  //                     ),
+  //                   ],
+  //                 ));
+  //               },
+  //               title: Text("Logout"),
+  //             )
+  //           ],
+  //         ),
+  //       );
+  //     });
 }

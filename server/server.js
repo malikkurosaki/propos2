@@ -22,7 +22,34 @@ app.use('/master', routerMaster)
 app.use(routerGambar);
 
 // new custom router beta
-app.use(routers);
+app.use((req, res, next) => {
+    if (req.url.includes('login')) {
+        return routers(req, res, next);
+    } else {
+        const { userid, companyid, outletid } = req.headers;
+        if (!userid || !companyid || !outletid) {
+
+            let info = {
+                userId: userid,
+                companyid: companyid,
+                outletid: outletid,
+                url: req.url
+            }
+
+            console.log(info);
+            return res.status(401).send('401 | unauthorized');
+        }
+        return routers(req, res, next);
+    }
+});
+
+app.use((req, res, next) => {
+    res.status(404).send("404 | not found")
+});
+
+app.use((req, res, nex) => {
+    res.status(500).send("500 | server error")
+})
 
 app.listen(port, () => {
     console.log(`server berjalan di port ${port}`.yellow);

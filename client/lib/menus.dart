@@ -130,7 +130,7 @@ class Menus {
                         child: ListTile(
                             leading: Icon(
                                 itm['icon'] as IconData,
-                                color: Colors.cyan,
+                                color: Colors.blue,
                             ),
                             title: Text(itm['title'].toString()),
                             selected: visible.value.val == itm['title'],

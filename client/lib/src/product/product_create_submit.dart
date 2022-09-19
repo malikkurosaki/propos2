@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:propos/rot.dart';
 import 'package:propos/src/product/product_val.dart';
 import 'package:propos/utils/notif.dart';
 import 'package:propos/utils/router_api.dart';
@@ -120,7 +121,9 @@ class ProductCreateSubmit extends StatelessWidget {
                         ];
                       }
 
-                      if (ProductVal.dataDetail.des.text.isNotEmpty) body['des'] = ProductVal.dataDetail.des.text;
+                      if (ProductVal.dataDetail.des.text.isNotEmpty) {
+                        body['des'] = ProductVal.dataDetail.des.text;
+                      }
 
                       if (ProductVal.dataDetail.modal.text.isNotEmpty) {
                         body['modal'] = int.parse(ProductVal.dataDetail.modal.text);
@@ -128,7 +131,9 @@ class ProductCreateSubmit extends StatelessWidget {
                       if (ProductVal.dataDetail.barcodeId.text.isNotEmpty) {
                         body['barcodeId'] = ProductVal.dataDetail.barcodeId.text;
                       }
-                      if (ProductVal.dataDetail.sku.text.isNotEmpty) body['sku'] = ProductVal.dataDetail.sku.text;
+                      if (ProductVal.dataDetail.sku.text.isNotEmpty) {
+                        body['sku'] = ProductVal.dataDetail.sku.text;
+                      }
                       if (ProductVal.dataDetail.berat.text.isNotEmpty) {
                         body['berat'] = int.parse(ProductVal.dataDetail.berat.text);
                       }
@@ -163,19 +168,73 @@ class ProductCreateSubmit extends StatelessWidget {
                     body['isDetail'] = ProductVal.dataDetail.isInclude.value;
                     body['isCustomPrice'] = ProductVal.isCustomPrice.value;
 
-                    // print(JsonEncoder.withIndent("   ").convert(body));
+                    final lsOutlet = (body['listOutlet'] as List);
+                    final isStock = (body['isStock'] as bool);
+                    final lsStock = [];
 
-                    final kirim = await RouterApi.productCreate().postData({"data": jsonEncode(body)});
-                    if (kirim.statusCode == 201) {
-                      // await ProductVal.loadProductByCompanyId();
-
-                      if (media.isMobile) {
-                        Get.back();
+                    if (lsOutlet.isNotEmpty && isStock) {
+                      for (final itm in lsOutlet) {
+                        lsStock.add({
+                          "companyId": body['companyId'],
+                          "minStock": body['minStock'],
+                          "outletId": itm['outletId'],
+                          "stock": body['stock'],
+                          "userId": Vl.userId.val,
+                        });
                       }
-                      SmartDialog.showToast("success");
-                    } else {
-                      Notif.error(message: kirim.body);
                     }
+
+                    final bodyV2 = {
+                      "name": body['name'],
+                      "price": body['price'],
+                      "description": body['des'],
+                      "barcodeId": body['barcodeId'],
+                      "categoryId": body['categoryId'],
+                      "companyId": body['companyId'],
+                      "costOfCapital": body['modal'],
+                      "isCustomPrice": body['isCustomPrice'],
+                      "isImage": body['isImage'],
+                      "isStock": body['isStock'],
+                      "productDimention": body['dimensi'],
+                      "productImageId": body['productImageId'],
+                      "productWeight": body['berat'],
+                      "userId": Vl.userId.val,
+                      "sku": body['sku'],
+                      "ProductStock": lsStock.isEmpty
+                          ? null
+                          : {
+                              "createMany": {"data": lsStock}
+                            },
+                      "ProductCustomPrice": body['listCustomPrice'] == null
+                          ? null
+                          : {
+                              "createMany": {"data": body['listCustomPrice']}
+                            },
+                      "ProductOutlet": body['listOutlet'] == null
+                          ? null
+                          : {
+                              "createMany": {"data": body['listOutlet']}
+                            },
+                    };
+
+                    bodyV2.removeWhere((key, value) => value == null);
+                    Rot.productCreatePost(body: {"data": jsonEncode(bodyV2)}).then(
+                      (res) {
+                        debugPrint(res.body);
+                      },
+                    );
+                    // debugPrint(JsonEncoder.withIndent(" ").convert(bodyV2));
+
+                    // final kirim = await RouterApi.productCreate().postData({"data": jsonEncode(body)});
+                    // if (kirim.statusCode == 201) {
+
+                    //   if (media.isMobile) {
+                    //     Get.back();
+                    //   }
+                    //   SmartDialog.showToast("success");
+                    // } else {
+                    //   Notif.error(message: kirim.body);
+                    // }
                   },
                   child: const Padding(
                     padding: EdgeInsets.all(10.0),

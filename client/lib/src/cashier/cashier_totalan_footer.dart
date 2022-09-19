@@ -99,7 +99,7 @@ class CashierTotalanFooter extends StatelessWidget {
           // ),
           Expanded(
             child: MaterialButton(
-              color: Colors.cyan,
+              color: Colors.blue,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: const Text(

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
@@ -15,8 +16,7 @@ import 'package:responsive_builder/responsive_builder.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({Key? key}) : super(key: key);
-  final _conEmail = TextEditingController();
-  final _conPassword = TextEditingController();
+
   final _bisaClick = true.obs;
 
   _load() async {
@@ -112,7 +112,7 @@ class LoginPage extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
-                        controller: _conEmail,
+                        controller: LoginVal.conEmail,
                         decoration: InputDecoration(
                           hintText: "Email",
                           filled: true,
@@ -126,7 +126,7 @@ class LoginPage extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
-                        controller: _conPassword,
+                        controller: LoginVal.conPassword,
                         decoration: InputDecoration(
                           hintText: "Password",
                           filled: true,
@@ -160,8 +160,8 @@ class LoginPage extends StatelessWidget {
                                   _bisaClick.value = false;
                                   Future.delayed(Duration(seconds: 3), () => _bisaClick.value = true);
                                   final body = {
-                                    "email": _conEmail.text,
-                                    "password": _conPassword.text,
+                                    "email": LoginVal.conEmail.text,
+                                    "password": LoginVal.conPassword.text,
                                   };
 
                                   if (body.values.contains("")) {
@@ -171,15 +171,17 @@ class LoginPage extends StatelessWidget {
 
                                   final login = await RouterAuth.login(body);
                                   if (login.statusCode == 200) {
-                                    final userId = login.body;
-                                    final companyRes = await Rot.loginListCompanyByUserIdGet(query: "userId=$userId");
-                                    if (companyRes.statusCode == 200) {
-                                      final listData = List<Map>.from(jsonDecode(companyRes.body));
-                                      LoginVal.listCompany.assignAll(listData);
-                                      LoginVal.selectedCompany.assignAll(LoginVal.listCompany[0]);
+                                    final dataLogin = jsonDecode(login.body);
+                                    final userId = dataLogin['id'];
+                                    final userName = dataLogin['name'];
+                                    final listCompany = List<Map>.from(dataLogin['Company']);
+                                    LoginVal.selectedCompany
+                                        .assignAll(listCompany.where((element) => element['idx'] == 1).toList().first);
 
-                                      debugPrint((LoginVal.listCompany[0]['id'] == LoginVal.selectedCompany['id']).toString());
-                                    }
+                                    // disini
+                                    showBottomSheet(
+                                        context: context,
+                                        builder: (context) => _popupSelect(listCompany, userId, userName));
 
                                     // Vl.userId.val = data['userId'];
 
@@ -255,6 +257,148 @@ class LoginPage extends StatelessWidget {
           ),
         );
       }),
+    );
+  }
+
+  Widget _popupSelect(List<Map> listCompany, String userId, String userName) {
+    return Column(
+      children: [
+        Flexible(
+          child: ListView(
+            children: [
+              Row(
+                children: [BackButton()],
+              ),
+              ImgDef.wellcome(),
+              Column(
+                children: [
+                  ListTile(
+                    leading: Icon(Icons.business),
+                    subtitle: Text("company"),
+                    title: DropdownSearch<Map>(
+                      onChanged: (value) async {
+                        LoginVal.selectedCompany.assignAll(value!);
+                        final res = await Rot.loginListOutletByCompanyGet(query: "companyId=${value['id']}");
+                        debugPrint(res.body);
+
+                        if (res.statusCode == 200) {
+                          LoginVal.listoutlet.assignAll(jsonDecode(res.body));
+                        }
+                      },
+                      items: listCompany,
+                      itemAsString: (value) => value['name'],
+                      dropdownBuilder: (context, value) => Text(value!['name'].toString()),
+                      selectedItem: LoginVal.selectedCompany,
+                      dropdownDecoratorProps: DropDownDecoratorProps(
+                        dropdownSearchDecoration: InputDecoration(
+                          filled: true,
+                          isDense: true,
+                          border: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Obx(
+                    () => ListTile(
+                      leading: Icon(Icons.store),
+                      subtitle: Text("outlet"),
+                      title: LoginVal.listoutlet.isEmpty
+                          ? Text(
+                              "Select Outlet",
+                              style: TextStyle(color: Colors.grey),
+                            )
+                          : DropdownSearch<Map>(
+                              items: [...LoginVal.listoutlet],
+                              onChanged: (value) async {
+                                LoginVal.selectedOutlet.assignAll(value!);
+                                final res = await Rot.loginListDeviceByOutletGet(query: "outletId=${value['id']}");
+                                if (res.statusCode == 200) {
+                                  LoginVal.listDevice.assignAll(jsonDecode(res.body));
+                                }
+                              },
+                              dropdownDecoratorProps: DropDownDecoratorProps(
+                                dropdownSearchDecoration: InputDecoration(
+                                  filled: true,
+                                  isDense: true,
+                                  hintText: "Select Outlet",
+                                  border: InputBorder.none,
+                                ),
+                              ),
+                              itemAsString: (value) => value['name'],
+                            ),
+                    ),
+                  ),
+                  Obx(
+                    () => ListTile(
+                      leading: Icon(Icons.tablet),
+                      subtitle: Text("device"),
+                      title: LoginVal.listDevice.isEmpty
+                          ? Text(
+                              "Select Device",
+                              style: TextStyle(color: Colors.grey),
+                            )
+                          : DropdownSearch<Map>(
+                              items: [...LoginVal.listDevice],
+                              onChanged: (value) {
+                                LoginVal.selectedDevice.assignAll(value!);
+                              },
+                              dropdownDecoratorProps: DropDownDecoratorProps(
+                                dropdownSearchDecoration: InputDecoration(
+                                  filled: true,
+                                  isDense: true,
+                                  hintText: "Select Outlet",
+                                  border: InputBorder.none,
+                                ),
+                              ),
+                              itemAsString: (value) => value['name'],
+                            ),
+                    ),
+                  )
+                ],
+              )
+            ],
+          ),
+        ),
+        Obx(
+          () => !(() {
+            final com = LoginVal.selectedCompany.isNotEmpty;
+            final out = LoginVal.selectedOutlet.isNotEmpty;
+            final dev = LoginVal.selectedDevice.isNotEmpty;
+
+            return com && out && dev;
+          })()
+              ? Text("...")
+              : Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: MaterialButton(
+                    color: Colors.blue,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Center(
+                        child: Text(
+                          "Next",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                    onPressed: () {
+                      Vl.userId.val = userId;
+                      Vl.companyId.val = LoginVal.selectedCompany['id'];
+                      Vl.outletId.val = LoginVal.selectedOutlet['id'];
+                      Vl.deviceId.val = LoginVal.selectedDevice['id'];
+
+                      Vl.defUser.val = {"id": userId, "name": userName};
+
+                      Vl.defCompany.val = LoginVal.selectedCompany;
+                      Vl.defOutlet.val = LoginVal.selectedOutlet;
+                      Vl.defDevice.val = LoginVal.selectedDevice;
+
+                      Get.toNamed(Pages.rootPage().route);
+                    },
+                  ),
+                ),
+        )
+      ],
     );
   }
 

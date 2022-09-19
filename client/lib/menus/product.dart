@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:propos/src/product/product_create.dart';
 import 'package:propos/src/product/product_display.dart';
 import 'package:propos/src/product/product_val.dart';
+import 'package:propos/src/product/product_view_main.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
 class Product extends StatelessWidget {
@@ -21,7 +22,8 @@ class Product extends StatelessWidget {
                   children: [
                     Expanded(
                       // child: _listDisplay(media),
-                      child: ProductDisplay(),
+                      // child: ProductDisplay(),
+                      child: ProductViewMain(),
                     ),
                     // disini
                     Visibility(

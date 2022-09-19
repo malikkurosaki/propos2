@@ -21,31 +21,10 @@ const sekarang = expressAsyncHandler(async (req, res, next) => {
             id: true,
             name: true,
             Company: {
-                where: {
-                    id: {
-                        not: {
-                            equals: undefined
-                        }
-                    }
-                },
                 select: {
                     id: true,
                     name: true,
-                    createdAt: true,
-                    Outlet: {
-                        where: {
-                            id: {
-                                not: {
-                                    equals: undefined
-                                }
-                            }
-                        },
-                        select: {
-                            id: true,
-                            name: true,
-                            createdAt: true,
-                        }
-                    }
+                    idx: true
                 }
             },
         }
@@ -72,7 +51,7 @@ const sekarang = expressAsyncHandler(async (req, res, next) => {
         //     }
         // }
 
-        res.status(200).send(getUser.id);
+        res.status(200).send(getUser);
     } else {
         res.status(401).send("email atau password salah");
     }
@@ -116,7 +95,7 @@ const device = expressAsyncHandler(async (req, res) => {
 const loginCashier = expressAsyncHandler(async (req, res) => {
     const { id, name, password } = req.body;
     if (id == undefined || name == undefined || password == undefined) return res.status(403).send('403')
-    
+
     const data = await prisma.employee.findFirst({
         where: {
             id: {

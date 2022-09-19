@@ -10,6 +10,7 @@ class Vl {
   static final defUser = {}.val('Vl.defUser');
   static final defCompany = {}.val('Vl.defCompany');
   static final defOutlet = {}.val('Vl.defOutlet');
+  static final defDevice = {}.val("Vl.device");
 
   static final listPrinter = [].val("Vl.listPrinter");
   static final selectedPrinter = {}.val("Vl.selectedPrinter");

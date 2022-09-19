@@ -37,53 +37,45 @@ class ProductVal {
   static final listoutlet = [].obs;
   static final selectedOutlet = {}.obs;
 
-  // static Future<void> loadCompanyProductDisplay() async {
-  //   RouterApi.listCompany().getData().then(
-  //     (res) {
-  //       debugPrint(res.body);
+  // new here
+  static final listSelectCompany = [].obs;
+  static final listSelectOutlet = [].obs;
+  static final listSelectCategory = [].obs;
 
-  //       if (res.statusCode == 200) {
-  //         final lsData = List.from(jsonDecode(res.body));
-  //         listCompany.value.val = lsData;
-  //         listCompany.refresh();
+  static final selectCompany = {}.obs;
+  static final selectOutlet = {}.obs;
+  static final selectedCategory = {}.obs;
 
-  //         if (!listCompany.value.val.contains(selectedCompany.value.val)) {
-  //           selectedCompany.value.val = listCompany.value.val[0];
-  //           selectedCompany.refresh();
-  //         }
+  static final listSelectProduct = [].obs;
 
-  //         if (selectedCompany.value.val.isNotEmpty) {
-  //           loadProductByCompanyId();
-  //         }
-  //       }
-  //     },
-  //   );
+  // static Future<void> loadListCompany() async {
+  //   final res = await Rot.productListCompanyGet();
+  //   if (res.statusCode == 200) listCompany.value.val = jsonDecode(res.body);
+  //   if (!listCompany.value.val.contains(selectedCompany.value.val)) {
+  //     selectedCompany.value.val = listCompany.value.val.where((element) => element['id'] == Vl.companyId.val).first;
+  //   }
   // }
 
-  // static Future<void> loadProductByCompanyId() async {
-  //   RouterApi.productGetByCompanyId(query: "cusCompanyId=${ProductVal.selectedCompany.value.val['id']}").getData().then(
-  //     (res) {
-  //       if (res.statusCode == 200) {
-  //         listProduct.assignAll(jsonDecode(res.body));
-  //       }
-  //     },
-  //   );
+  //  static Future<void> loadSelectCompanyList() async {
+  //   final res = await Rot.productListCompanyGet();
+  //   if (res.statusCode == 200) {
+  //     listSelectCompany.value.val = jsonDecode(res.body);
+  //     listSelectCompany.refresh();
+  //   }
   // }
-
-  static Future<void> loadListCompany() async {
-    final res = await Rot.productListCompanyGet();
-    if (res.statusCode == 200) listCompany.value.val = jsonDecode(res.body);
-    if (!listCompany.value.val.contains(selectedCompany.value.val)) {
-      selectedCompany.value.val = listCompany.value.val.where((element) => element['id'] == Vl.companyId.val).first;
-    }
-  }
 
   static Future<void> loadListOutlet() async {
     final data = await Rot.productListOutletGet();
-    if (data.statusCode == 200) listoutlet.assignAll(jsonDecode(data.body));
-    if (!listoutlet.contains(selectedOutlet)) {
-      selectedOutlet.assignAll(listoutlet.where((p0) => p0['id'] == Vl.outletId.val).first);
-    }
+    // if (data.statusCode == 200) listoutlet.assignAll(jsonDecode(data.body));
+    // if (!listoutlet.contains(selectedOutlet)) {
+    //   selectedOutlet.assignAll(listoutlet.where((p0) => p0['id'] == Vl.outletId.val).first);
+    // }
+  }
+
+
+  static Future<void> loadDefaultProduct() async {
+    final data = await Rot.productDefaultGet();
+    if (data.statusCode == 200) listSelectProduct.assignAll(jsonDecode((data.body)));
   }
 
   // static loadProduct() async {

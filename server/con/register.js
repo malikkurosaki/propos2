@@ -15,12 +15,15 @@ const sekarang = expressAsyncHandler(async (req, res, next) => {
                 password: password,
                 Company: {
                     create: {
+                        idx: 1,
                         name: namaUsaha,
                         Outlet: {
                             create: {
                                 name: namaUsaha,
+                                idx: 1,
                                 Device: {
                                     create: {
+                                        idx: 1,
                                         name: namaUsaha,
                                         deviceId: generator.uuid().toString(),
                                     }

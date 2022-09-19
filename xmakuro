@@ -1,18 +1,108 @@
 #!/usr/bin/env node
+
+// get arguments
+const params = process.argv.slice(2);
+const listMenu = ["builder","runChrome","runServer","generateRouter","flutterCommand","gitPush"];
+
+// check argument if available
+if (params.length > 0) {
+    if (params[0] === '-i' || params[0] === '--install') {
+        require(`child_process`).execSync(`npm i lodash`);
+        return;
+    } else {
+        console.log("menu belum ada , mungkin next");
+        return;
+    }
+} else {
+    const prompts = require('prompts');
+    const _ = require('lodash');
+    prompts({
+        type: "autocomplete",
+        name: "menu",
+        message: "pilih menu",
+        choices: listMenu.map(itm => {
+            return {
+                title: _.startCase(itm),
+                value: itm
+            }
+        })
+    }).then(({ menu }) => {
+        if (!menu) return console.log("ok dah....");
+        eval(`${menu}()`);
+        return;
+    })
+}
+
+// ================== Code =================
+
 const fs = require('fs');
 const path = require('path');
-const dir = fs.readdirSync(path.join(__dirname, "/xcon"));
-require('prompts')({
-    type: "autocomplete",
-    name: "menu",
-    message: "pilih menu",
-    choices: dir.map(e => {
-        return {
-            title: e.split(".")[0].replace(/_/g, " "),
-            value: e
+const exec = require('child_process').execSync;
+const beautify = require('js-beautify');
+const _ = require('lodash');
+
+function builder() {
+    require('./xgenerate')
+}
+
+
+function runChrome() {
+    exec(`flutter run -d chrome`, { stdio: "inherit", cwd: "./client" });
+}
+
+function runServer() {
+    exec(`nodemon .`, { stdio: "inherit", cwd: "./server" })
+}
+
+function generateRouter() {
+
+    const sourceDir = path.join(__dirname, "./server/routers");
+    const listSource = fs.readdirSync(sourceDir);
+
+    const targetFile = path.join(__dirname, "./client/lib/rot.dart")
+    let listRouter = [];
+
+    for (let itm of listSource) {
+        let dir = path.join(sourceDir, itm);
+        let listDir = fs.readdirSync(dir);
+        for (let itmDir of listDir) {
+            let name = path.parse(itmDir).name;
+            let method = path.parse(itmDir).name.split('_').splice(-1);
+            let host = "${Config.host}"
+            let query = "${query??''}";
+            let body = "body: body"
+            let data = `static Future<http.Response> ${_.camelCase(name)}({String? query, Map? body}) => http.${method}(Uri.parse("${host}/${_.kebabCase(name)}?${query}"), headers: Vl.headers, ${method != 'get' ? body : ''});`
+            listRouter.push(data);
         }
+
+    }
+
+    let tmp = `
+    import 'package:http/http.dart' as http;
+    import 'package:propos/utils/config.dart';
+    import 'package:propos/utils/vl.dart';
+
+    class Rot{
+        ${listRouter.join('')}
+    }
+`
+    fs.writeFileSync(targetFile, beautify(tmp));
+    console.log("generate router completed")
+}
+
+function flutterCommand() {
+    require('prompts')({
+        type: "text",
+        name: "cmd",
+        message: "masukkan perintah"
+    }).then(({ cmd }) => {
+        if (!cmd) return console.log("ok , gk ada ya");
+        require('child_process').execSync(cmd, { stdio: "inherit", cwd: "./client/" });
+        console.log("command completed");
     })
-}).then(({ menu }) => {
-    if (!menu) return console.log("ok dah....");
-    require(path.join(__dirname, "./xcon/" + menu))
-})
+}
+
+function gitPush(){
+    let branch = require('child_process').execSync('git rev-parse --abbrev-ref HEAD',).toString().trim();
+    require('child_process').execSync(`git add . && git commit -m "${branch}" && git push origin ${branch}`, { stdio: "inherit" });
+}

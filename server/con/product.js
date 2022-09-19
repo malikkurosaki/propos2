@@ -198,7 +198,7 @@ const createProduct = expressAsyncHandler(async (req, res, next) => {
                     }
                 }
             }
-        });
+        },);
         res.status(201).json(data)
     } catch (error) {
         return res.status(401).send(error)

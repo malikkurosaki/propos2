@@ -72,28 +72,22 @@ class CashierMenuItem extends StatelessWidget {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Expanded(
+                                    Flexible(
                                       child: CachedNetworkImage(
                                           imageUrl:
                                               "${Config.host}/product-image/${(prod["ProductImage"]?['name'] ?? "null").toString()}",
                                           fit: BoxFit.contain,
                                           width: media.isMobile ? Get.width / 2 : 200),
                                     ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        prod['name'].toString(),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                                      ),
+                                    Text(
+                                      prod['name'].toString(),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                                     ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                          NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0)
-                                              .format(prod['price'])),
-                                    ),
+                                    Text(
+                                        NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0)
+                                            .format(prod['price'])),
                                   ],
                                 ),
                               ),

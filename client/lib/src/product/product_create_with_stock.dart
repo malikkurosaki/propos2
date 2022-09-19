@@ -32,7 +32,7 @@ class ProductCreateWithStock extends StatelessWidget {
             child: Column(
               children: [
                 ListTile(
-                  title: const Text("New Stock"),
+                  title: const Text("Initial Stock"),
                   subtitle: TextField(
                     controller: ProductVal.dataStock.stock,
                     decoration: const InputDecoration(
@@ -42,7 +42,7 @@ class ProductCreateWithStock extends StatelessWidget {
                   ),
                 ),
                 ListTile(
-                  title: const Text("Minimal Stock"),
+                  title: const Text("Minimum Stock"),
                   subtitle: TextField(
                     controller: ProductVal.dataStock.minStock,
                     decoration: const InputDecoration(

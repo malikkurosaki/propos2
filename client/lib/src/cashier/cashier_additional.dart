@@ -5,6 +5,7 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:propos/components/select_customer.dart';
 import 'package:get/get.dart';
+import 'package:propos/src/cashier/cashier_add_customer.dart';
 import 'package:propos/utils/router_api.dart';
 
 class CashierAdditional extends StatelessWidget {
@@ -78,86 +79,87 @@ class CashierAdditional extends StatelessWidget {
                                 insetPadding: EdgeInsets.zero,
                                 titlePadding: EdgeInsets.zero,
                                 contentPadding: EdgeInsets.zero,
-                                content: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Row(
-                                      children: [BackButton(), Text("Add Customer")],
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: TextFormField(
-                                        decoration: InputDecoration(
-                                          filled: true,
-                                          isDense: true,
-                                          hintText: "Name",
-                                          border: OutlineInputBorder(borderSide: BorderSide.none),
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: TextFormField(
-                                        decoration: InputDecoration(
-                                          filled: true,
-                                          isDense: true,
-                                          hintText: "Phone Number",
-                                          border: OutlineInputBorder(borderSide: BorderSide.none),
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: TextFormField(
-                                        decoration: InputDecoration(
-                                          filled: true,
-                                          isDense: true,
-                                          hintText: "Email",
-                                          border: OutlineInputBorder(borderSide: BorderSide.none),
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: TextFormField(
-                                        decoration: InputDecoration(
-                                          filled: true,
-                                          isDense: true,
-                                          hintText: "Address",
-                                          border: OutlineInputBorder(borderSide: BorderSide.none),
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: TextFormField(
-                                        decoration: InputDecoration(
-                                          filled: true,
-                                          isDense: true,
-                                          hintText: "Sex",
-                                          border: OutlineInputBorder(borderSide: BorderSide.none),
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: MaterialButton(
-                                        color: Colors.blue,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(10.0),
-                                          child: Center(
-                                            child: Text(
-                                              "Save",
-                                              style: TextStyle(color: Colors.white, fontSize: 16),
-                                            ),
-                                          ),
-                                        ),
-                                        onPressed: () {},
-                                      ),
-                                    )
-                                  ],
-                                ),
+                                content: CashierAddCustomer()
+                                // Column(
+                                //   crossAxisAlignment: CrossAxisAlignment.start,
+                                //   mainAxisSize: MainAxisSize.min,
+                                //   children: [
+                                //     Row(
+                                //       children: [BackButton(), Text("Add Customer")],
+                                //     ),
+                                //     Padding(
+                                //       padding: const EdgeInsets.all(8.0),
+                                //       child: TextFormField(
+                                //         decoration: InputDecoration(
+                                //           filled: true,
+                                //           isDense: true,
+                                //           hintText: "Name",
+                                //           border: OutlineInputBorder(borderSide: BorderSide.none),
+                                //         ),
+                                //       ),
+                                //     ),
+                                //     Padding(
+                                //       padding: const EdgeInsets.all(8.0),
+                                //       child: TextFormField(
+                                //         decoration: InputDecoration(
+                                //           filled: true,
+                                //           isDense: true,
+                                //           hintText: "Phone Number",
+                                //           border: OutlineInputBorder(borderSide: BorderSide.none),
+                                //         ),
+                                //       ),
+                                //     ),
+                                //     Padding(
+                                //       padding: const EdgeInsets.all(8.0),
+                                //       child: TextFormField(
+                                //         decoration: InputDecoration(
+                                //           filled: true,
+                                //           isDense: true,
+                                //           hintText: "Email",
+                                //           border: OutlineInputBorder(borderSide: BorderSide.none),
+                                //         ),
+                                //       ),
+                                //     ),
+                                //     Padding(
+                                //       padding: const EdgeInsets.all(8.0),
+                                //       child: TextFormField(
+                                //         decoration: InputDecoration(
+                                //           filled: true,
+                                //           isDense: true,
+                                //           hintText: "Address",
+                                //           border: OutlineInputBorder(borderSide: BorderSide.none),
+                                //         ),
+                                //       ),
+                                //     ),
+                                //     Padding(
+                                //       padding: const EdgeInsets.all(8.0),
+                                //       child: TextFormField(
+                                //         decoration: InputDecoration(
+                                //           filled: true,
+                                //           isDense: true,
+                                //           hintText: "Sex",
+                                //           border: OutlineInputBorder(borderSide: BorderSide.none),
+                                //         ),
+                                //       ),
+                                //     ),
+                                //     Padding(
+                                //       padding: const EdgeInsets.all(8.0),
+                                //       child: MaterialButton(
+                                //         color: Colors.blue,
+                                //         child: Padding(
+                                //           padding: const EdgeInsets.all(10.0),
+                                //           child: Center(
+                                //             child: Text(
+                                //               "Save",
+                                //               style: TextStyle(color: Colors.white, fontSize: 16),
+                                //             ),
+                                //           ),
+                                //         ),
+                                //         onPressed: () {},
+                                //       ),
+                                //     )
+                                //   ],
+                                // ),
                               ),
                             );
                           },

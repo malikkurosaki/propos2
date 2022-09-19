@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
 import 'package:propos/utils/config.dart';
+import 'package:flutter/material.dart';
 
 class ImgDef {
 
@@ -109,6 +109,15 @@ class ImgDef {
         BoxFit ? fit
     }) {
         return CachedNetworkImage(imageUrl: "${Config.host}/img/def/signup-page.png", width: width, height: height, fit: fit);
+    }
+
+
+    static Widget wellcome({
+        double ? width,
+        double ? height,
+        BoxFit ? fit
+    }) {
+        return CachedNetworkImage(imageUrl: "${Config.host}/img/def/wellcome.png", width: width, height: height, fit: fit);
     }
 
 
