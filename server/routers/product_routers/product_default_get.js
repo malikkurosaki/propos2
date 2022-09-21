@@ -4,12 +4,24 @@ const Prisma = require('@prisma/client').PrismaClient;
 const prisma = new Prisma();
 
 module.exports = expressAsyncHandler(async (req, res) => {
-    const { userid, companyid, outletid } = Object.assign(ModelHeader, req.header);
-    if (!userid || !companyid || !outletid) return res.status(401).send("bad request");
+
+    const dataCom = await prisma.defaultPrefByUser.findUnique({
+        where: {
+            token: req.token
+        },
+        select: {
+            companyId: true
+        }
+    })
+
+    console.log(dataCom);
+
 
     const data = await prisma.product.findMany({
         where: {
-            companyId: companyid
+            companyId: {
+                equals: dataCom.companyId
+            }
         }
     });
 

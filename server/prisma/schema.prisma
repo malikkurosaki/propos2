@@ -44,6 +44,7 @@ model User {
   ProductStock          ProductStock[]
   Favorite              Favorite[]
   DefaultPreference     DefaultPreference[]
+  isActive              Boolean                 @default(true)
 }
 
 model Company {
@@ -118,6 +119,7 @@ model Device {
   Bill              Bill[]
   isActive          Boolean?            @default(true)
   DefaultPreference DefaultPreference[]
+  DefaultPrefByUser DefaultPrefByUser[]
 }
 
 model DefaultPreference {
@@ -496,6 +498,7 @@ model Employee {
   companyId             String?
   DefaultPrefByEmployee DefaultPrefByEmployee[]
   isActive              Boolean?                @default(true)
+  DefaultPrefByUser     DefaultPrefByUser[]
 }
 
 model Cashier {
@@ -539,14 +542,20 @@ model PaymentMethodOutlet {
 }
 
 model DefaultPrefByUser {
-  User      User?    @relation(fields: [userId], references: [id])
-  userId    String   @id
-  Company   Company? @relation(fields: [companyId], references: [id])
-  companyId String?
-  Outlet    Outlet?  @relation(fields: [outletId], references: [id])
-  outletId  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String    @id @default(uuid())
+  token      String    @unique
+  User       User?     @relation(fields: [userId], references: [id])
+  userId     String
+  Company    Company?  @relation(fields: [companyId], references: [id])
+  companyId  String?
+  Outlet     Outlet?   @relation(fields: [outletId], references: [id])
+  outletId   String?
+  Device     Device?   @relation(fields: [deviceId], references: [id])
+  Employee   Employee? @relation(fields: [employeeId], references: [id])
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deviceId   String?
+  employeeId String?
 }
 
 model DefaultPrefByEmployee {
@@ -571,9 +580,8 @@ model MOrderStatus {
 }
 
 model MRole {
-  id   String @id @default(uuid())
-  name String
-
+  id        String   @id @default(uuid())
+  name      String
   User      User[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

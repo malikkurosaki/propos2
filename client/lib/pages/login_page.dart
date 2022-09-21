@@ -140,24 +140,30 @@ class LoginPage extends StatelessWidget {
                     Obx(
                       () => Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: MaterialButton(
-                          color: Colors.blue,
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Center(
-                              child: Text(
-                                "Login",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
+                        child: !_bisaClick.value
+                            ? Center(
+                                child: LinearProgressIndicator(),
+                              )
+                            : MaterialButton(
+                                color: Colors.blue,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Center(
+                                    child: Text(
+                                      "Login",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ),
-                          onPressed: !_bisaClick.value
-                              ? null
-                              : () async {
+                                onPressed: () async {
                                   _bisaClick.value = false;
+                                  Future.delayed(Duration(seconds: 3), () {
+                                    _bisaClick.value = true;
+                                  });
+
                                   Future.delayed(Duration(seconds: 3), () => _bisaClick.value = true);
                                   final body = {
                                     "email": LoginVal.conEmail.text,
@@ -169,38 +175,178 @@ class LoginPage extends StatelessWidget {
                                     return;
                                   }
 
-                                  final login = await RouterAuth.login(body);
-                                  if (login.statusCode == 200) {
-                                    final dataLogin = jsonDecode(login.body);
-                                    final userId = dataLogin['id'];
-                                    final userName = dataLogin['name'];
-                                    final listCompany = List<Map>.from(dataLogin['Company']);
-                                    LoginVal.selectedCompany
-                                        .assignAll(listCompany.where((element) => element['idx'] == 1).toList().first);
+                                  final res = await Rot.loginPost(body: {"data": jsonEncode(body)});
+                                  if (res.statusCode == 201) {
+                                    Vl.token.val = res.body;
+                                    // LoginVal.listCompany.assignAll(jsonDecode(res.body));
 
-                                    // disini
-                                    showBottomSheet(
-                                        context: context,
-                                        builder: (context) => _popupSelect(listCompany, userId, userName));
+                                    Rot.lgnListCompanyByUserIdGet().then(
+                                      (res) {
+                                        if (res.statusCode == 200) {
+                                          LoginVal.listCompany.assignAll(jsonDecode(res.body));
 
-                                    // Vl.userId.val = data['userId'];
+                                          showBottomSheet(
+                                            context: context,
+                                            builder: (context) => Material(
+                                              color: Colors.grey.shade100,
+                                              child: Column(
+                                                children: [
+                                                  ListTile(
+                                                    title: Text(
+                                                      "Please Completer This Action First",
+                                                      style: TextStyle(fontSize: 24),
+                                                    ),
+                                                  ),
+                                                  ListTile(
+                                                    title: DropdownSearch<Map>(
+                                                      dropdownDecoratorProps: DropDownDecoratorProps(
+                                                        dropdownSearchDecoration: InputDecoration(
+                                                            filled: true,
+                                                            border: InputBorder.none,
+                                                            hintText: "Select Company"),
+                                                      ),
+                                                      items: [...LoginVal.listCompany],
+                                                      itemAsString: (value) => value['name'].toString(),
+                                                      onChanged: (value) async {
+                                                        LoginVal.selectedCompany.assignAll(value!);
 
-                                    // debugPrint(Vl.deviceId.val.toString());
+                                                        final listOutlet = await Rot.lgnListOutletByCompanyGet(
+                                                          query: "companyId=${value['id']}",
+                                                        );
 
-                                    // Vl.companyId.val = data['companyId'];
-                                    // Vl.outletId.val = data['outletId'];
+                                                        if (listOutlet.statusCode == 200) {
+                                                          LoginVal.listoutlet.assignAll(jsonDecode(listOutlet.body));
+                                                        }
+                                                      },
+                                                    ),
+                                                  ),
+                                                  Obx(
+                                                    () => ListTile(
+                                                      title: LoginVal.listoutlet.isEmpty
+                                                          ? Text("Select Outlet")
+                                                          : DropdownSearch<Map>(
+                                                              dropdownDecoratorProps: DropDownDecoratorProps(
+                                                                dropdownSearchDecoration: InputDecoration(
+                                                                    filled: true,
+                                                                    border: InputBorder.none,
+                                                                    hintText: "Select outlet"),
+                                                              ),
+                                                              items: [...LoginVal.listoutlet],
+                                                              itemAsString: (value) => value['name'].toString(),
+                                                              onChanged: (value) {
+                                                                LoginVal.selectedOutlet.assignAll(value!);
+                                                                Rot.lgnListDeviceByOutletGet(
+                                                                        query: "outletId=${value['id']}")
+                                                                    .then(
+                                                                  (value) {
+                                                                    // debugPrint(value.body.toString());
+                                                                    if (value.statusCode == 200) {
+                                                                      LoginVal.listDevice
+                                                                          .assignAll(jsonDecode(value.body));
+                                                                    }
+                                                                  },
+                                                                );
+                                                              },
+                                                            ),
+                                                    ),
+                                                  ),
+                                                  Obx(
+                                                    () => ListTile(
+                                                      title: LoginVal.listDevice.isEmpty
+                                                          ? Text("Select Device")
+                                                          : DropdownSearch<Map>(
+                                                              dropdownDecoratorProps: DropDownDecoratorProps(
+                                                                dropdownSearchDecoration: InputDecoration(
+                                                                    filled: true,
+                                                                    border: InputBorder.none,
+                                                                    hintText: "Select outlet"),
+                                                              ),
+                                                              items: [...LoginVal.listDevice],
+                                                              itemAsString: (value) => value['name'].toString(),
+                                                              onChanged: (value) {
+                                                                LoginVal.selectedDevice.assignAll(value!);
+                                                              },
+                                                            ),
+                                                    ),
+                                                  ),
+                                                  Obx(
+                                                    () => LoginVal.selectedCompany.isEmpty ||
+                                                            LoginVal.selectedOutlet.isEmpty ||
+                                                            LoginVal.selectedDevice.isEmpty
+                                                        ? SizedBox.shrink()
+                                                        : ListTile(
+                                                            title: MaterialButton(
+                                                              color: Colors.blue,
+                                                              onPressed: () async {
+                                                                final modelData = {
+                                                                  "token": Vl.token.val,
+                                                                  "deviceId": LoginVal.selectedDevice['id'],
+                                                                  "userId": null,
+                                                                  "companyId": LoginVal.selectedCompany['id'],
+                                                                  "outletId": LoginVal.selectedOutlet['id']
+                                                                };
 
-                                    // Vl.defUser.val = data['user'];
-                                    // Vl.defCompany.val = data['company'];
-                                    // Vl.defOutlet.val = data['outlet'];
-                                    // Get.offAllNamed(Pages.homePage().route);
+                                                                final data = await Rot.lgnSetDefaultPost(
+                                                                  body: {"data": jsonEncode(modelData)},
+                                                                );
+
+                                                                if (data.statusCode == 200) {
+                                                                  Get.offNamed(Pages.homePage().route);
+                                                                } else {
+                                                                  SmartDialog.showToast(data.body.toString());
+                                                                }
+                                                              },
+                                                              child: Padding(
+                                                                padding: const EdgeInsets.all(10.0),
+                                                                child: Text(
+                                                                  "Simpan",
+                                                                  style: TextStyle(color: Colors.white),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    );
                                   } else {
-                                    SmartDialog.showToast(login.body);
+                                    SmartDialog.showToast(res.body);
                                   }
 
-                                  _bisaClick.value = true;
+                                  // final login = await RouterAuth.login(body);
+                                  // if (login.statusCode == 200) {
+                                  //   final dataLogin = jsonDecode(login.body);
+                                  //   final userId = dataLogin['id'];
+                                  //   final userName = dataLogin['name'];
+                                  //   final listCompany = List<Map>.from(dataLogin['Company']);
+                                  //   LoginVal.selectedCompany
+                                  //       .assignAll(listCompany.where((element) => element['idx'] == 1).toList().first);
+
+                                  //   // disini
+                                  //   showBottomSheet(
+                                  //       context: context,
+                                  //       builder: (context) => _popupSelect(listCompany, userId, userName));
+
+                                  //   // Vl.userId.val = data['userId'];
+
+                                  //   // debugPrint(Vl.deviceId.val.toString());
+
+                                  //   // Vl.companyId.val = data['companyId'];
+                                  //   // Vl.outletId.val = data['outletId'];
+
+                                  //   // Vl.defUser.val = data['user'];
+                                  //   // Vl.defCompany.val = data['company'];
+                                  //   // Vl.defOutlet.val = data['outlet'];
+                                  //   // Get.offAllNamed(Pages.homePage().route);
+                                  // } else {
+                                  //   SmartDialog.showToast(login.body);
+                                  // }
                                 },
-                        ),
+                              ),
                       ),
                     ),
                     Column(
@@ -278,7 +424,7 @@ class LoginPage extends StatelessWidget {
                     title: DropdownSearch<Map>(
                       onChanged: (value) async {
                         LoginVal.selectedCompany.assignAll(value!);
-                        final res = await Rot.loginListOutletByCompanyGet(query: "companyId=${value['id']}");
+                        final res = await Rot.lgnListOutletByCompanyGet(query: "companyId=${value['id']}");
                         debugPrint(res.body);
 
                         if (res.statusCode == 200) {
@@ -311,7 +457,7 @@ class LoginPage extends StatelessWidget {
                               items: [...LoginVal.listoutlet],
                               onChanged: (value) async {
                                 LoginVal.selectedOutlet.assignAll(value!);
-                                final res = await Rot.loginListDeviceByOutletGet(query: "outletId=${value['id']}");
+                                final res = await Rot.lgnListDeviceByOutletGet(query: "outletId=${value['id']}");
                                 if (res.statusCode == 200) {
                                   LoginVal.listDevice.assignAll(jsonDecode(res.body));
                                 }

@@ -1,14 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:propos/rot.dart';
 import 'package:propos/src/product/product_val.dart';
 import 'package:propos/utils/notif.dart';
-import 'package:propos/utils/router_api.dart';
-import 'package:propos/utils/vl.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:get/get.dart';
 
@@ -51,6 +47,15 @@ class ProductCreateSubmit extends StatelessWidget {
                   onPressed: () async {
                     ProductVal.isLoadingCreateButton.value = true;
                     Future.delayed(const Duration(seconds: 2), () => ProductVal.isLoadingCreateButton.value = false);
+
+                    final mapDataId = {};
+                    final dataID = await Rot.productCreateIdGet();
+                    if (dataID.statusCode == 200) {
+                      mapDataId.assignAll(jsonDecode(dataID.body));
+                    } else {
+                      SmartDialog.showToast(dataID.body);
+                      return;
+                    }
 
                     if (ProductVal.primary.conPrice.text.isEmpty || ProductVal.primary.conName.text.isEmpty) {
                       SmartDialog.showToast("nama dan harga tidak diijinkan kosong");
@@ -106,7 +111,7 @@ class ProductCreateSubmit extends StatelessWidget {
                       if (ProductVal.dataDetail.companyId.value.isNotEmpty) {
                         body['companyId'] = ProductVal.dataDetail.companyId.value;
                       } else {
-                        body['companyId'] = Vl.companyId.val;
+                        body['companyId'] = mapDataId['companyId'];
                       }
 
                       if (ProductVal.dataDetail.listoutlet.isNotEmpty) {
@@ -114,9 +119,9 @@ class ProductCreateSubmit extends StatelessWidget {
                       } else {
                         body['listOutlet'] = [
                           {
-                            "outletId": Vl.outletId.val,
-                            "companyId": Vl.companyId.val,
-                            "userId": Vl.userId.val,
+                            "outletId": mapDataId['outletId'],
+                            "companyId": mapDataId['companyId'],
+                            "userId": mapDataId['userId'],
                           }
                         ];
                       }
@@ -152,15 +157,15 @@ class ProductCreateSubmit extends StatelessWidget {
                         }
                       }
                     } else {
-                      body['companyId'] = Vl.companyId.val;
+                      body['companyId'] = mapDataId['companyId'];
                       body['listOutlet'] = [
                         {
-                          "outletId": Vl.outletId.val,
-                          "companyId": Vl.companyId.val,
-                          "userId": Vl.userId.val,
+                          "outletId": mapDataId['outletId'],
+                          "companyId": mapDataId['companyId'],
+                          "userId": mapDataId['userId'],
                         }
                       ];
-                      body['userId'] = Vl.userId.val;
+                      body['userId'] = mapDataId['userId'];
                     }
 
                     body['isImage'] = ProductVal.dataImage.isInclude.value;
@@ -179,7 +184,7 @@ class ProductCreateSubmit extends StatelessWidget {
                           "minStock": body['minStock'],
                           "outletId": itm['outletId'],
                           "stock": body['stock'],
-                          "userId": Vl.userId.val,
+                          "userId": mapDataId['userId'],
                         });
                       }
                     }
@@ -198,7 +203,7 @@ class ProductCreateSubmit extends StatelessWidget {
                       "productDimention": body['dimensi'],
                       "productImageId": body['productImageId'],
                       "productWeight": body['berat'],
-                      "userId": Vl.userId.val,
+                      "userId": mapDataId['userId'],
                       "sku": body['sku'],
                       "ProductStock": lsStock.isEmpty
                           ? null
@@ -218,23 +223,12 @@ class ProductCreateSubmit extends StatelessWidget {
                     };
 
                     bodyV2.removeWhere((key, value) => value == null);
+
                     Rot.productCreatePost(body: {"data": jsonEncode(bodyV2)}).then(
                       (res) {
                         debugPrint(res.body);
                       },
                     );
-                    // debugPrint(JsonEncoder.withIndent(" ").convert(bodyV2));
-
-                    // final kirim = await RouterApi.productCreate().postData({"data": jsonEncode(body)});
-                    // if (kirim.statusCode == 201) {
-
-                    //   if (media.isMobile) {
-                    //     Get.back();
-                    //   }
-                    //   SmartDialog.showToast("success");
-                    // } else {
-                    //   Notif.error(message: kirim.body);
-                    // }
                   },
                   child: const Padding(
                     padding: EdgeInsets.all(10.0),

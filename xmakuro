@@ -76,7 +76,7 @@ function generateRouter() {
             let host = "${Config.host}"
             let query = "${query??''}";
             let body = "body: body"
-            let data = `static Future<http.Response> ${_.camelCase(name)}({String? query, Map? body}) => http.${method}(Uri.parse("${host}/${_.kebabCase(name)}?${query}"), headers: Vl.headers, ${method != 'get' ? body : ''});`
+            let data = `static Future<http.Response> ${_.camelCase(name)}({String? query, Map? body}) => http.${method}(Uri.parse("${host}/${_.kebabCase(name)}?${query}"), headers: {"token": Vl.token.val}, ${method != 'get' ? body : ''});`
             listRouter.push(data);
         }
 
@@ -115,4 +115,16 @@ function gitPush() {
 function prismaMigrate() {
     require('child_process').execSync(`npx prisma migrate dev --name '$(date)'`, { stdio: "inherit", cwd: "./server" });
     console.log("migrate completed");
+}
+
+function commandServer(){
+    require(`prompts`)({
+        type: "text",
+        name: "cmd",
+        message: "masukkan perintah"
+    }).then(({cmd}) => {
+        if(!cmd) return console.log("ok gak ada");
+        const exec = require('child_process').execSync(cmd, {stdio: "inherit", cwd: "./server"});
+    });
+    
 }

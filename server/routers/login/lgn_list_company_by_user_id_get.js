@@ -4,12 +4,10 @@ const prisma = new Prisma();
 
 module.exports = expressAsyncHandler(async (req, res) => {
 
-    const { userId } = req.query;
-    if (!userId) return res.status(400).send("bad request");
     const data = await prisma.company.findMany({
         where: {
             userId: {
-                equals: userId
+                equals: req.userId
             }
         },
         select: {
@@ -17,6 +15,8 @@ module.exports = expressAsyncHandler(async (req, res) => {
             name: true
         }
     });
+
+    console.log(data)
 
     res.status(200).json(data);
 })

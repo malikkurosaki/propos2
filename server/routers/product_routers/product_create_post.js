@@ -59,11 +59,9 @@ const ModelCreateProduct =
 
 module.exports = expressAsyncHandler(async (req, res) => {
     let body = req.body;
-    let { userid, companyid, outletid } = Object.assign(ModelHeader, req.headers);
-    if(!userid || !companyid || !outletid) return res.status(400).json({ message: "Bad Request" });
     let data = await prisma.product.create({
         data: JSON.parse(body.data)
     })
 
-    res.status(201).json(data);
+    res.status(data ? 201 : 400).json(data);
 })

@@ -9,6 +9,9 @@ const routerMaster = require('./router_master');
 const routerAuth = require('./router_auth');
 const routerGambar = require('./router_gambar');
 const routers = require('./routers');
+const Pc = require('@prisma/client').PrismaClient
+const prisma = new Pc();
+var CryptoJS = require("crypto-js");
 
 app.use(cors());
 app.use(express.json());
@@ -22,23 +25,27 @@ app.use('/master', routerMaster)
 app.use(routerGambar);
 
 // new custom router beta
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
     if (req.url.includes('login')) {
         return routers(req, res, next);
     } else {
-        const { userid, companyid, outletid } = req.headers;
-        if (!userid || !companyid || !outletid) {
-
-            let info = {
-                userId: userid,
-                companyid: companyid,
-                outletid: outletid,
-                url: req.url
+        const token = req.headers.token;
+        if (!token || token == "") return res.status(401).json({ message: 'Unauthorized' });
+        var bytes = CryptoJS.AES.decrypt(token, '123456');
+        var id = bytes.toString(CryptoJS.enc.Utf8);
+        const user = await prisma.user.findUnique({
+            where: {
+                id: id
+            },
+            select: {
+                id: true,
+                isActive: true
             }
+        });
 
-            console.log(info);
-            return res.status(401).send('401 | unauthorized');
-        }
+        if (!user || !user.isActive) return res.status(401).json({ message: 'Unauthorized' });
+        req.userId = user.id;
+        req.token = token;
         return routers(req, res, next);
     }
 });

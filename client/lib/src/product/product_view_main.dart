@@ -58,8 +58,8 @@ class ProductViewMain extends StatelessWidget {
                               onChanged: (value) {
                                 ProductVal.selectCompany.assignAll(value!);
                                 // ProductVal.selectCompany.refresh();
-          
-                                Rot.loginListOutletByCompanyGet(query: "companyId=${value['id']}").then(
+
+                                Rot.lgnListOutletByCompanyGet(query: "companyId=${value['id']}").then(
                                   (res) {
                                     if (res.statusCode == 200) {
                                       ProductVal.listSelectOutlet.assignAll(jsonDecode(res.body));
@@ -67,7 +67,7 @@ class ProductViewMain extends StatelessWidget {
                                     }
                                   },
                                 );
-          
+
                                 Rot.productListCategoryByCompanyIdGet(query: "companyId=${value['id']}").then(
                                   (res) {
                                     if (res.statusCode == 200) {
@@ -81,7 +81,7 @@ class ProductViewMain extends StatelessWidget {
                     },
                   ),
                 ),
-          
+
                 // select outlet
                 Obx(
                   () => ListTile(
@@ -166,96 +166,92 @@ class ProductViewMain extends StatelessWidget {
                   suffixIcon: Icon(Icons.close)),
             ),
           ),
-          Obx(() => Padding(
-                padding: const EdgeInsets.all(16),
-                child: Card(
-                  margin: EdgeInsets.zero,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: FittedBox(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            color: Colors.grey.shade200,
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              children: [
-                                SizedBox(
-                                  width: 300,
-                                  child: Text(
-                                    "Product Name",
-                                    style: TextStyle(fontWeight: FontWeight.bold),
-                                  ),
+          Obx(
+            () => Padding(
+              padding: const EdgeInsets.all(16),
+              child: Card(
+                margin: EdgeInsets.zero,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: FittedBox(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          color: Colors.grey.shade200,
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 600,
+                                child: Text(
+                                  "Product Name",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
-                                SizedBox(
-                                  width: 200,
-                                  child: Text(
-                                    "Price",
-                                    style: TextStyle(fontWeight: FontWeight.bold),
-                                  ),
+                              ),
+                              SizedBox(
+                                width: 200,
+                                child: Text(
+                                  "Price",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
-                                SizedBox(
-                                  width: 200,
-                                  child: Text(
-                                    "Stock",
-                                    style: TextStyle(fontWeight: FontWeight.bold),
-                                  ),
+                              ),
+                              SizedBox(
+                                width: 100,
+                                child: Text(
+                                  "Action",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
-                                SizedBox(
-                                  width: 200,
-                                  child: Text(
-                                    "Sale",
-                                    style: TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 200,
-                                  child: Text(
-                                    "Action",
-                                    style: TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                )
-                              ],
-                            ),
+                              )
+                            ],
                           ),
-                          ...ProductVal.listSelectProduct.map(
-                            (e) => Row(
-                              children: [
-                                SizedBox(
-                                  width: 300,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(e['name']),
+                        ),
+                        ...ProductVal.listSelectProduct.map(
+                          (e) => Row(
+                            children: [
+                              SizedBox(
+                                width: 600,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(e['name']),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 200,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    NumberFormat.currency(decimalDigits: 0, locale: "id_ID", symbol: "")
+                                        .format(e['price']),
                                   ),
                                 ),
-                                SizedBox(
-                                  width: 200,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      NumberFormat.currency(decimalDigits: 0, locale: "id_ID", symbol: "")
-                                          .format(e['price']),
-                                      textAlign: TextAlign.end,
-                                    ),
+                              ),
+                              SizedBox(
+                                width: 100,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: PopupMenuButton(
+                                    itemBuilder: (context) => [
+                                      PopupMenuItem(
+                                        child: Text("Delete"),
+                                      ),
+                                      PopupMenuItem(
+                                        child: Text("Edit"),
+                                      )
+                                    ],
                                   ),
                                 ),
-                                SizedBox(
-                                  width: 200,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text("0"),
-                                  ),
-                                )
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
+                              )
+                            ],
+                          ),
+                        ).toList()
+                      ],
                     ),
                   ),
                 ),
-              ))
+              ),
+            ),
+          )
         ],
       ),
     );

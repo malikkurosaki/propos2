@@ -14,6 +14,7 @@ class CashierSelectCutomer extends StatelessWidget {
   Future<void> _onLoad() async {
     Rot.cashierListCustomerGet().then(
       (res) {
+        debugPrint("ini di CashierSelectCustomer"+res.body);
         if (res.statusCode == 200) {
           CashierVal.listCustomer.assignAll(jsonDecode(res.body));
         }

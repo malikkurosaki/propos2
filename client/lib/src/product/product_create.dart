@@ -14,19 +14,7 @@ import 'package:responsive_builder/responsive_builder.dart';
 import 'package:get/get.dart';
 
 class ProductCreate extends StatelessWidget {
-  // ProductCreate(
-  //     {Key? key,
-  //     required this.media,
-  //     required this.lsCompany,
-  //     required this.productImage,
-  //     required this.isLoadingCreateButton})
-  //     : super(key: key);
-
-  // final SizingInformation media;
-  // final RxList<dynamic> lsCompany;
-  // final RxMap<String, dynamic> productImage;
-  // final RxBool isLoadingCreateButton;
-
+  const ProductCreate({Key? key}) : super(key: key);
   _onLoad() {
     RouterApi.productCreateSelect().getData().then(
       (value) {
@@ -41,10 +29,7 @@ class ProductCreate extends StatelessWidget {
   Widget build(BuildContext context) {
     final menu = [
       {"title": "Primary", "widget": const ProductCreatePrimary()},
-      {
-        "title": "Include Image",
-        "widget": const ProductCreateWithImage()
-      },
+      {"title": "Include Image", "widget": const ProductCreateWithImage()},
       {"title": "Include Stock", "widget": const ProductCreateWithStock()}
     ];
     _onLoad();

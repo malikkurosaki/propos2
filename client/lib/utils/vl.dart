@@ -17,6 +17,8 @@ class Vl {
 
   static final headers = {'userId': Vl.userId.val, 'companyId': companyId.val, 'outletId': outletId.val};
 
+  static final token = "".val("Vl.token");
+
   static void clear() {
     userId.val = "";
     companyId.val = "";

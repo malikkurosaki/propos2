@@ -7,6 +7,7 @@ CREATE TABLE `User` (
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
     `mRoleId` VARCHAR(191) NULL,
+    `isActive` BOOLEAN NOT NULL DEFAULT true,
 
     UNIQUE INDEX `User_email_key`(`email`),
     PRIMARY KEY (`id`)
@@ -15,6 +16,7 @@ CREATE TABLE `User` (
 -- CreateTable
 CREATE TABLE `Company` (
     `id` VARCHAR(191) NOT NULL,
+    `idx` INTEGER NULL,
     `name` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -48,6 +50,7 @@ CREATE TABLE `DetailCompany` (
 -- CreateTable
 CREATE TABLE `Device` (
     `id` VARCHAR(191) NOT NULL,
+    `idx` INTEGER NULL,
     `deviceId` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NULL,
@@ -62,8 +65,21 @@ CREATE TABLE `Device` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
+CREATE TABLE `DefaultPreference` (
+    `deviceId` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NULL,
+    `companyId` VARCHAR(191) NULL,
+    `outletId` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`deviceId`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `Outlet` (
     `id` VARCHAR(191) NOT NULL,
+    `idx` INTEGER NULL,
     `name` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -82,6 +98,7 @@ CREATE TABLE `Outlet` (
 -- CreateTable
 CREATE TABLE `Product` (
     `id` VARCHAR(191) NOT NULL,
+    `idx` INTEGER NULL,
     `name` VARCHAR(191) NOT NULL,
     `price` INTEGER NOT NULL,
     `description` LONGTEXT NULL,
@@ -105,6 +122,7 @@ CREATE TABLE `Product` (
     `minStock` INTEGER NULL,
     `img` VARCHAR(191) NULL,
     `isActive` BOOLEAN NULL DEFAULT true,
+    `isManual` BOOLEAN NULL DEFAULT false,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -220,6 +238,7 @@ CREATE TABLE `CustomPrice` (
 -- CreateTable
 CREATE TABLE `Category` (
     `id` VARCHAR(191) NOT NULL,
+    `idx` INTEGER NULL,
     `name` VARCHAR(191) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
@@ -234,6 +253,7 @@ CREATE TABLE `Category` (
 -- CreateTable
 CREATE TABLE `Favorite` (
     `id` VARCHAR(191) NOT NULL,
+    `idx` INTEGER NULL,
     `userId` VARCHAR(191) NOT NULL,
     `productId` VARCHAR(191) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -247,6 +267,7 @@ CREATE TABLE `Favorite` (
 -- CreateTable
 CREATE TABLE `Bill` (
     `id` VARCHAR(191) NOT NULL,
+    `idx` INTEGER NULL,
     `totalQty` INTEGER NULL,
     `totalPrice` INTEGER NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -271,6 +292,7 @@ CREATE TABLE `Bill` (
 -- CreateTable
 CREATE TABLE `Order` (
     `id` VARCHAR(191) NOT NULL,
+    `idx` INTEGER NULL,
     `quantity` INTEGER NULL,
     `note` VARCHAR(191) NULL,
     `total` VARCHAR(191) NULL,
@@ -328,6 +350,7 @@ CREATE TABLE `OrderTemList` (
 -- CreateTable
 CREATE TABLE `Customer` (
     `id` VARCHAR(191) NOT NULL,
+    `idx` INTEGER NULL,
     `userId` VARCHAR(191) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
@@ -357,6 +380,7 @@ CREATE TABLE `CustomerCompany` (
 -- CreateTable
 CREATE TABLE `Employee` (
     `id` VARCHAR(191) NOT NULL,
+    `idx` INTEGER NULL,
     `name` VARCHAR(191) NULL,
     `password` VARCHAR(191) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -373,6 +397,7 @@ CREATE TABLE `Employee` (
 -- CreateTable
 CREATE TABLE `Cashier` (
     `id` VARCHAR(191) NOT NULL,
+    `idx` INTEGER NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
     `isOwner` BOOLEAN NOT NULL DEFAULT false,
@@ -385,6 +410,7 @@ CREATE TABLE `Cashier` (
 -- CreateTable
 CREATE TABLE `PaymentMethod` (
     `id` VARCHAR(191) NOT NULL,
+    `idx` INTEGER NULL,
     `name` VARCHAR(191) NULL,
     `description` VARCHAR(191) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -412,13 +438,18 @@ CREATE TABLE `PaymentMethodOutlet` (
 
 -- CreateTable
 CREATE TABLE `DefaultPrefByUser` (
+    `id` VARCHAR(191) NOT NULL,
+    `token` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NOT NULL,
     `companyId` VARCHAR(191) NULL,
     `outletId` VARCHAR(191) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
+    `deviceId` VARCHAR(191) NULL,
+    `employeeId` VARCHAR(191) NULL,
 
-    PRIMARY KEY (`userId`)
+    UNIQUE INDEX `DefaultPrefByUser_token_key`(`token`),
+    PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -536,6 +567,18 @@ ALTER TABLE `Device` ADD CONSTRAINT `Device_companyId_fkey` FOREIGN KEY (`compan
 
 -- AddForeignKey
 ALTER TABLE `Device` ADD CONSTRAINT `Device_outletId_fkey` FOREIGN KEY (`outletId`) REFERENCES `Outlet`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `DefaultPreference` ADD CONSTRAINT `DefaultPreference_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `DefaultPreference` ADD CONSTRAINT `DefaultPreference_companyId_fkey` FOREIGN KEY (`companyId`) REFERENCES `Company`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `DefaultPreference` ADD CONSTRAINT `DefaultPreference_deviceId_fkey` FOREIGN KEY (`deviceId`) REFERENCES `Device`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `DefaultPreference` ADD CONSTRAINT `DefaultPreference_outletId_fkey` FOREIGN KEY (`outletId`) REFERENCES `Outlet`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Outlet` ADD CONSTRAINT `Outlet_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
@@ -748,7 +791,13 @@ ALTER TABLE `DefaultPrefByUser` ADD CONSTRAINT `DefaultPrefByUser_userId_fkey` F
 ALTER TABLE `DefaultPrefByUser` ADD CONSTRAINT `DefaultPrefByUser_companyId_fkey` FOREIGN KEY (`companyId`) REFERENCES `Company`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `DefaultPrefByUser` ADD CONSTRAINT `DefaultPrefByUser_deviceId_fkey` FOREIGN KEY (`deviceId`) REFERENCES `Device`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `DefaultPrefByUser` ADD CONSTRAINT `DefaultPrefByUser_outletId_fkey` FOREIGN KEY (`outletId`) REFERENCES `Outlet`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `DefaultPrefByUser` ADD CONSTRAINT `DefaultPrefByUser_employeeId_fkey` FOREIGN KEY (`employeeId`) REFERENCES `Employee`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `DefaultPrefByEmployee` ADD CONSTRAINT `DefaultPrefByEmployee_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
