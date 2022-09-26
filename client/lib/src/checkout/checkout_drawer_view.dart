@@ -5,14 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:propos/rot.dart';
+import 'package:propos/src/cashier/casier_val.dart';
 import 'package:propos/src/checkout/checkout_change.dart';
 import 'package:propos/src/checkout/checkout_val.dart';
-import 'package:propos/utils/router_api.dart';
 import 'package:propos/utils/struk_tiket.dart';
 import 'package:propos/utils/val.dart';
 import 'package:propos/utils/vl.dart';
-import 'package:get/get.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
 class CheckoutDrawerView extends StatelessWidget {
@@ -41,44 +43,102 @@ class CheckoutDrawerView extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       child: Column(
                         children: [
-                          Builder(
-                            builder: (context) {
-                              final company = {}.obs;
-                              RouterApi.companySingle().getData().then((value) {
-                                if (value.statusCode == 200) company.assignAll(jsonDecode(value.body));
-                              });
-                              return Obx(
-                                () => Text(
-                                  company['name'].toString(),
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              );
+                          // Builder(
+                          //   builder: (context) {
+                          //     final company = {}.obs;
+                          //     RouterApi.companySingle().getData().then(
+                          //       (value) {
+                          //         if (value.statusCode == 200) company.assignAll(jsonDecode(value.body));
+                          //       },
+                          //     );
+                          //     return Obx(
+                          //       () => Text(
+                          //         company['name'].toString(),
+                          //         style: TextStyle(
+                          //           fontSize: 20,
+                          //           fontWeight: FontWeight.bold,
+                          //         ),
+                          //       ),
+                          //     );
+                          //   },
+                          // ),
+                          // Builder(
+                          //   builder: (context) {
+                          //     final outlet = {}.obs;
+                          //     RouterApi.outletSingle().getData().then(
+                          //       (value) {
+                          //         if (value.statusCode == 200) outlet.assignAll(jsonDecode(value.body));
+                          //       },
+                          //     );
+                          //     return Obx(
+                          //       () => Text(
+                          //         outlet['name'].toString(),
+                          //         style: TextStyle(
+                          //           fontWeight: FontWeight.bold,
+                          //         ),
+                          //       ),
+                          //     );
+                          //   },
+                          // ),
+                          FutureBuilder<http.Response>(
+                            future: Rot.checkoutCodNameGet(),
+                            builder: (con, snap) {
+                              if (snap.connectionState != ConnectionState.done) return LinearProgressIndicator();
+                              if (snap.data!.statusCode == 200) {
+                                final mpData = jsonDecode(snap.data!.body);
+                                Future.delayed(
+                                    Duration(milliseconds: 100), () => CheckoutVal.codName.assignAll(mpData));
+                              }
+                              return SizedBox.shrink();
                             },
                           ),
-                          Builder(
-                            builder: (context) {
-                              final outlet = {}.obs;
-                              RouterApi.outletSingle().getData().then((value) {
-                                if (value.statusCode == 200) outlet.assignAll(jsonDecode(value.body));
-                              });
-                              return Obx(
-                                () => Text(
-                                  outlet['name'].toString(),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
+                          Obx(
+                            () => CheckoutVal.codName.isEmpty
+                                ? SizedBox.shrink()
+                                : Column(
+                                    children: [
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(Icons.business),
+                                          Text(
+                                            CheckoutVal.codName['Company']['name'].toString(),
+                                            style: TextStyle(fontSize: 24),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(Icons.store),
+                                          Text(
+                                            CheckoutVal.codName['Outlet']['name'].toString(),
+                                            style: TextStyle(fontSize: 18),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(Icons.devices),
+                                          Text(
+                                            CheckoutVal.codName['Device']['name'].toString(),
+                                            style: TextStyle(fontSize: 16),
+                                          ),
+                                        ],
+                                      )
+                                    ],
                                   ),
-                                ),
-                              );
-                            },
                           ),
-                          Text(
-                            "jl. hasanudin nomer 36 x denpasar bali",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.place),
+                              Text(
+                                "jl. hasanudin nomer 36 x denpasar bali",
+                                style: TextStyle(),
+                              ),
+                            ],
                           ),
                           Text(
                             "bill",
@@ -110,7 +170,10 @@ class CheckoutDrawerView extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: Row(
-                        children: [Text("Pos: "), Text("Pos")],
+                        children: [
+                          Text("Cus: "),
+                          Text(CashierVal.selectedCustomer.value.val['name'] ?? ""),
+                        ],
                       ),
                     ),
                     DottedLine(),
@@ -132,10 +195,10 @@ class CheckoutDrawerView extends StatelessWidget {
                                   children: [
                                     Expanded(
                                       child: Row(
-                                        children: [Text("${itm['qty']} x "), Text("Rp. " + itm['price'].toString())],
+                                        children: [Text("${itm['qty']} x "), Text(NumberFormat.currency(locale: "id_ID", decimalDigits: 0, symbol: "").format(int.parse(itm['price'].toString())))],
                                       ),
                                     ),
-                                    Text(NumberFormat.currency(locale: 'id_ID', symbol: 'Rp. ', decimalDigits: 0)
+                                    Text(NumberFormat.currency(locale: 'id_ID', symbol: '', decimalDigits: 0)
                                         .format(itm['total']))
                                   ],
                                 ),
@@ -197,10 +260,10 @@ class CheckoutDrawerView extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text("Payment Type: "),
-                            CheckoutVal.listPaymentWidget.isEmpty
+                            CheckoutVal.listPaymentWidget.value.val.isEmpty
                                 ? Text("Cash")
                                 : Text(
-                                    CheckoutVal.listPaymentWidget
+                                    CheckoutVal.listPaymentWidget.value.val
                                         .map((element) => element['method'])
                                         .toList()
                                         .join(','),
@@ -209,16 +272,16 @@ class CheckoutDrawerView extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text("Subtotal: "),
-                          Text("Rp. "),
-                        ],
-                      ),
-                    ),
+                    // Padding(
+                    //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //     children: [
+                    //       Text("Subtotal: "),
+                    //       Text("Rp. "),
+                    //     ],
+                    //   ),
+                    // ),
                     // Padding(
                     //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     //   child: Row(
@@ -239,25 +302,25 @@ class CheckoutDrawerView extends StatelessWidget {
                     //     ],
                     //   ),
                     // ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text("Total: "),
-                          Text(
-                            NumberFormat.currency(
-                              locale: 'id_ID',
-                              symbol: 'Rp',
-                              decimalDigits: 0,
-                            ).format(
-                              Val.listorder.value.val
-                                  .fold(0, (prev, element) => int.parse(prev.toString()) + element['total']),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    // Padding(
+                    //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //     children: [
+                    //       Text("Total: "),
+                    //       Text(
+                    //         NumberFormat.currency(
+                    //           locale: 'id_ID',
+                    //           symbol: 'Rp',
+                    //           decimalDigits: 0,
+                    //         ).format(
+                    //           Val.listorder.value.val
+                    //               .fold(0, (prev, element) => int.parse(prev.toString()) + element['total']),
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       child: DottedLine(),
@@ -276,12 +339,12 @@ class CheckoutDrawerView extends StatelessWidget {
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    Text(
-                                      "Rp. ",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
+                                    // Text(
+                                    //   "Rp. ",
+                                    //   style: TextStyle(
+                                    //     fontWeight: FontWeight.bold,
+                                    //   ),
+                                    // ),
                                   ],
                                 ),
                               ),
@@ -297,7 +360,7 @@ class CheckoutDrawerView extends StatelessWidget {
                                       ),
                                     ),
                                     Text(
-                                      "Rp. ",
+                                      "",
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                       ),

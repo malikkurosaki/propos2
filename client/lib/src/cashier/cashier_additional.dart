@@ -8,12 +8,13 @@ import 'package:get/get.dart';
 import 'package:propos/src/cashier/cashier_add_customer.dart';
 import 'package:propos/src/cashier/cashier_select_customer.dart';
 import 'package:propos/src/cashier/cashier_select_discount.dart';
+import 'package:propos/src/cashier/casier_val.dart';
 import 'package:propos/utils/router_api.dart';
 
 class CashierAdditional extends StatelessWidget {
   CashierAdditional({Key? key}) : super(key: key);
-  final _conPax = TextEditingController(text: "1");
-  final _pax = "0".obs;
+  // final _conPax = TextEditingController(text: "1");
+  // final _pax = "0".obs;
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +54,9 @@ class CashierAdditional extends StatelessWidget {
                         ),
                         MaterialButton(
                           color: Colors.white,
-                          onPressed: () {},
+                          onPressed: () {
+                            Get.back();
+                          },
                           child: Text(
                             "Save",
                             style: TextStyle(color: Colors.green, fontSize: 16),
@@ -64,14 +67,13 @@ class CashierAdditional extends StatelessWidget {
                   ),
                   Row(
                     children: [
-                      Expanded(
-                        child: CashierSelectCutomer()
-                        // SelectCustomer(
-                        //   onChanged: (id) {
-                        //     debugPrint(id);
-                        //   },
-                        // ),
-                      ),
+                      Expanded(child: CashierSelectCutomer()
+                          // SelectCustomer(
+                          //   onChanged: (id) {
+                          //     debugPrint(id);
+                          //   },
+                          // ),
+                          ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: IconButton(
@@ -178,12 +180,9 @@ class CashierAdditional extends StatelessWidget {
                     () => ListTile(
                       leading: IconButton(
                         onPressed: () {
-                          final angka = int.tryParse(_conPax.text);
-                          if (int.tryParse(_conPax.text) == null) {
-                            _conPax.text = "1";
-                          }
-                          if (angka != null && angka > 1) {
-                            _conPax.text = (angka - 1).toString();
+                          CashierVal.pax.value -= 1;
+                          if (CashierVal.pax.value < 1) {
+                            CashierVal.pax.value = 1;
                           }
                         },
                         icon: Icon(
@@ -193,10 +192,7 @@ class CashierAdditional extends StatelessWidget {
                       ),
                       trailing: IconButton(
                         onPressed: () {
-                          if (int.tryParse(_conPax.text) == null) {
-                            _conPax.text = "0";
-                          }
-                          _conPax.text = (int.parse(_conPax.text) + 1).toString();
+                          CashierVal.pax.value += 1;
                         },
                         icon: Icon(
                           Icons.add_circle,
@@ -217,20 +213,19 @@ class CashierAdditional extends StatelessWidget {
                                 TextFormField(
                                   onChanged: (value) {
                                     if (int.tryParse(value) == null) {
-                                      _conPax.clear();
-                                      _conPax.text = "";
+                                      CashierVal.pax.value = 1;
                                     }
-                          
-                                    _pax.value = value;
+
+                                    CashierVal.pax.value = int.parse(value);
                                   },
-                                  controller: _conPax,
+                                  controller: TextEditingController(text: CashierVal.pax.value.toString()),
                                   decoration: InputDecoration(
                                     filled: true,
                                     isDense: true,
                                     border: OutlineInputBorder(borderSide: BorderSide.none),
                                   ),
                                 ),
-                                Text(int.tryParse(_pax.value) == null ? "Number Only" : "")
+                                // Text(int.tryParse(CashierVal.pax.value.toString()) == null ? "Number Only" : "")
                               ],
                             ),
                           ),

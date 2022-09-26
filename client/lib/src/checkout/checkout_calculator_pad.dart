@@ -11,7 +11,7 @@ class CheckoutCalculatorPad extends StatelessWidget {
   const CheckoutCalculatorPad({Key? key, required this.onChanged}) : super(key: key);
 
   final Function(String value) onChanged;
-  static final valueNya = "0".val("CheckoutCalculatorPad._hasilNya").obs;
+  // static final CheckoutVal.totalPayment = "0".val("CheckoutCalculatorPad._hasilNya").obs;
 
   GridButtonItem _pad({String? text, Widget? child}) => GridButtonItem(
     borderRadius: 8,
@@ -44,29 +44,29 @@ class CheckoutCalculatorPad extends StatelessWidget {
                     borderColor: Colors.transparent,
                     onPressed: (data) {
                       if (data == "del") {
-                        final ini = valueNya.value.val.split("");
+                        final ini = CheckoutVal.totalPayment.value.val.split("");
                         ini.removeLast();
-                        valueNya.value.val = ini.join();
-                        if (valueNya.value.val == "") {
-                          valueNya.value.val = "0";
+                        CheckoutVal.totalPayment.value.val = ini.join();
+                        if (CheckoutVal.totalPayment.value.val == "") {
+                          CheckoutVal.totalPayment.value.val = "0";
                         }
-                        valueNya.refresh();
+                        CheckoutVal.totalPayment.refresh();
                       } else if (data == "c") {
-                        valueNya.value.val = "0";
-                        valueNya.refresh();
+                        CheckoutVal.totalPayment.value.val = "0";
+                        CheckoutVal.totalPayment.refresh();
                       } else if (data == "") {
                       } else {
-                        final ini = valueNya.value.val.split("");
+                        final ini = CheckoutVal.totalPayment.value.val.split("");
                         if (ini.first == "0") {
                           ini.removeAt(0);
                         }
                         String jadinya = ini.join();
                         jadinya += data;
-                        valueNya.value.val = jadinya;
-                        valueNya.refresh();
+                        CheckoutVal.totalPayment.value.val = jadinya;
+                        CheckoutVal.totalPayment.refresh();
                       }
 
-                      onChanged(valueNya.value.val);
+                      onChanged(CheckoutVal.totalPayment.value.val);
 
                       // if (data == "del") {
                       //   final ini = CheckoutVal.toPay.value.val.split("");

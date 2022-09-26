@@ -5,6 +5,8 @@ import 'package:propos/components/input.dart';
 import 'package:propos/components/company_multi_select.dart';
 import 'package:propos/components/save_button.dart';
 import 'package:propos/components/search_view.dart';
+import 'package:propos/src/customer/customer_create.dart';
+import 'package:propos/src/customer/customer_display.dart';
 import 'package:propos/utils/notif.dart';
 import 'package:propos/utils/router_api.dart';
 import 'package:responsive_builder/responsive_builder.dart';
@@ -28,7 +30,7 @@ class Customer extends StatelessWidget {
                     child: Card(
                       child: Column(
                         children: [
-                          Flexible(child: _listDisplay()
+                          Flexible(child: CustomerDisplay()
                               // Column(
                               //   children: [
                               //     ListTile(
@@ -52,31 +54,30 @@ class Customer extends StatelessWidget {
                   ),
                   Visibility(
                     visible: !media.isMobile,
-                    child: SizedBox(
-                      width: 360,
-                      child: Card(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                "Create Customer",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            Flexible(
-                              child: ListView(
-                                children: [_create()],
-                              ),
-                            )
-                          ],
+                    child: SizedBox(width: 360, child: CustomerCreate()
+                        // Card(
+                        //   child: Column(
+                        //     crossAxisAlignment: CrossAxisAlignment.start,
+                        //     children: [
+                        //       Padding(
+                        //         padding: const EdgeInsets.all(8.0),
+                        //         child: Text(
+                        //           "Create Customer",
+                        //           style: TextStyle(
+                        //             fontSize: 18,
+                        //             fontWeight: FontWeight.bold,
+                        //           ),
+                        //         ),
+                        //       ),
+                        //       Flexible(
+                        //         child: ListView(
+                        //           children: [_create()],
+                        //         ),
+                        //       )
+                        //     ],
+                        //   ),
+                        // ),
                         ),
-                      ),
-                    ),
                   )
                 ],
               ),

@@ -4,9 +4,9 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:get/get.dart';
 import 'package:propos/rot.dart';
 import 'package:propos/src/cashier/casier_val.dart';
-import 'package:get/get.dart';
 
 class CashierSelectCutomer extends StatelessWidget {
   const CashierSelectCutomer({Key? key}) : super(key: key);
@@ -14,7 +14,7 @@ class CashierSelectCutomer extends StatelessWidget {
   Future<void> _onLoad() async {
     Rot.cashierListCustomerGet().then(
       (res) {
-        debugPrint("ini di CashierSelectCustomer"+res.body);
+        debugPrint("ini di CashierSelectCustomer" + res.body);
         if (res.statusCode == 200) {
           CashierVal.listCustomer.assignAll(jsonDecode(res.body));
         }
@@ -35,18 +35,28 @@ class CashierSelectCutomer extends StatelessWidget {
                   dropdownSearchDecoration: InputDecoration(
                     filled: true,
                     border: InputBorder.none,
-                    hintText: CashierVal.selectedCustomer.isEmpty
+                    hintText: CashierVal.selectedCustomer.value.val.isEmpty
                         ? "Select Customer"
-                        : CashierVal.selectedCustomer['name'].toString(),
+                        : CashierVal.selectedCustomer.value.val['name'].toString(),
                   ),
                 ),
                 items: [...CashierVal.listCustomer],
                 itemAsString: (value) => value['name'],
                 onChanged: (value) {
-                  CashierVal.selectedCustomer.assignAll(value!);
-                  // debugPrint(value.toString());
+                  CashierVal.selectedCustomer.value.val.assignAll(value!);
+                  CashierVal.selectedCustomer.refresh();
                 },
               ),
+        trailing: IconButton(
+          onPressed: () {
+            CashierVal.selectedCustomer.value.val.assignAll({});
+            CashierVal.selectedCustomer.refresh();
+          },
+          icon: Icon(
+            Icons.delete,
+            color: Colors.orange,
+          ),
+        ),
       ),
     );
   }

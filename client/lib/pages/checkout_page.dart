@@ -15,7 +15,7 @@ class CheckoutPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    CheckoutVal.onload();
+    // CheckoutVal.onload();
     return ResponsiveBuilder(
       builder: (context, media) {
         return SafeArea(
@@ -65,13 +65,13 @@ class CheckoutPage extends StatelessWidget {
                         visible: !media.isMobile,
                         child: CheckoutCalculatorPad(
                           onChanged: (value) {
-                            if (CheckoutVal.listPaymentWidget.isNotEmpty) {
-                              CheckoutVal.listPaymentWidget
+                            if (CheckoutVal.listPaymentWidget.value.val.isNotEmpty) {
+                              CheckoutVal.listPaymentWidget.value.val
                                   .where(
                                     (p0) => (p0['selected'] as bool),
                                   )
                                   .first['value'] = value;
-                              final total = CheckoutVal.listPaymentWidget.fold<int>(
+                              final total = CheckoutVal.listPaymentWidget.value.val.fold<int>(
                                   0,
                                   (previousValue, element) =>
                                       int.parse(previousValue.toString()) + int.parse(element['value']));

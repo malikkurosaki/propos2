@@ -16,10 +16,64 @@ class Rot {
     }) => http.get(Uri.parse("${Config.host}/cashier-list-discount-get?${query??''}"), headers: {
         "token": Vl.token.val
     }, );
+    static Future < http.Response > cashierListProductGet({
+        String ? query,
+        Map ? body
+    }) => http.get(Uri.parse("${Config.host}/cashier-list-product-get?${query??''}"), headers: {
+        "token": Vl.token.val
+    }, );
     static Future < http.Response > billNumberGet({
         String ? query,
         Map ? body
     }) => http.get(Uri.parse("${Config.host}/bill-number-get?${query??''}"), headers: {
+        "token": Vl.token.val
+    }, );
+    static Future < http.Response > checkoutBillCreatePost({
+        String ? query,
+        Map ? body
+    }) => http.post(Uri.parse("${Config.host}/checkout-bill-create-post?${query??''}"), headers: {
+        "token": Vl.token.val
+    }, body: body);
+    static Future < http.Response > checkoutCashGet({
+        String ? query,
+        Map ? body
+    }) => http.get(Uri.parse("${Config.host}/checkout-cash-get?${query??''}"), headers: {
+        "token": Vl.token.val
+    }, );
+    static Future < http.Response > checkoutCodGet({
+        String ? query,
+        Map ? body
+    }) => http.get(Uri.parse("${Config.host}/checkout-cod-get?${query??''}"), headers: {
+        "token": Vl.token.val
+    }, );
+    static Future < http.Response > checkoutCodNameGet({
+        String ? query,
+        Map ? body
+    }) => http.get(Uri.parse("${Config.host}/checkout-cod-name-get?${query??''}"), headers: {
+        "token": Vl.token.val
+    }, );
+    static Future < http.Response > checkoutListPaymentMethodGet({
+        String ? query,
+        Map ? body
+    }) => http.get(Uri.parse("${Config.host}/checkout-list-payment-method-get?${query??''}"), headers: {
+        "token": Vl.token.val
+    }, );
+    static Future < http.Response > customPriceCreatePost({
+        String ? query,
+        Map ? body
+    }) => http.post(Uri.parse("${Config.host}/custom-price-create-post?${query??''}"), headers: {
+        "token": Vl.token.val
+    }, body: body);
+    static Future < http.Response > customPriceListCompanyGet({
+        String ? query,
+        Map ? body
+    }) => http.get(Uri.parse("${Config.host}/custom-price-list-company-get?${query??''}"), headers: {
+        "token": Vl.token.val
+    }, );
+    static Future < http.Response > customPriceListGet({
+        String ? query,
+        Map ? body
+    }) => http.get(Uri.parse("${Config.host}/custom-price-list-get?${query??''}"), headers: {
         "token": Vl.token.val
     }, );
     static Future < http.Response > customerCreatePost({
@@ -28,6 +82,18 @@ class Rot {
     }) => http.post(Uri.parse("${Config.host}/customer-create-post?${query??''}"), headers: {
         "token": Vl.token.val
     }, body: body);
+    static Future < http.Response > customerListCompanyGet({
+        String ? query,
+        Map ? body
+    }) => http.get(Uri.parse("${Config.host}/customer-list-company-get?${query??''}"), headers: {
+        "token": Vl.token.val
+    }, );
+    static Future < http.Response > customerListCustomerGet({
+        String ? query,
+        Map ? body
+    }) => http.get(Uri.parse("${Config.host}/customer-list-customer-get?${query??''}"), headers: {
+        "token": Vl.token.val
+    }, );
     static Future < http.Response > homeCompanyGet({
         String ? query,
         Map ? body
@@ -76,6 +142,24 @@ class Rot {
     }) => http.post(Uri.parse("${Config.host}/login-post?${query??''}"), headers: {
         "token": Vl.token.val
     }, body: body);
+    static Future < http.Response > paymentMethodCreatePost({
+        String ? query,
+        Map ? body
+    }) => http.post(Uri.parse("${Config.host}/payment-method-create-post?${query??''}"), headers: {
+        "token": Vl.token.val
+    }, body: body);
+    static Future < http.Response > paymentMethodListPaymentMethodGet({
+        String ? query,
+        Map ? body
+    }) => http.get(Uri.parse("${Config.host}/payment-method-list-payment-method-get?${query??''}"), headers: {
+        "token": Vl.token.val
+    }, );
+    static Future < http.Response > paymentMethothListCompanyGet({
+        String ? query,
+        Map ? body
+    }) => http.get(Uri.parse("${Config.host}/payment-methoth-list-company-get?${query??''}"), headers: {
+        "token": Vl.token.val
+    }, );
     static Future < http.Response > productCreateIdGet({
         String ? query,
         Map ? body
@@ -118,4 +202,10 @@ class Rot {
     }) => http.get(Uri.parse("${Config.host}/product-list-outlet-get?${query??''}"), headers: {
         "token": Vl.token.val
     }, );
+    static Future < http.Response > productRemoveDelete({
+        String ? query,
+        Map ? body
+    }) => http.delete(Uri.parse("${Config.host}/product-remove-delete?${query??''}"), headers: {
+        "token": Vl.token.val
+    }, body: body);
 }

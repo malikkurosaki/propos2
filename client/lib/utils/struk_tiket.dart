@@ -3,6 +3,7 @@ import 'package:esc_pos_bluetooth/esc_pos_bluetooth.dart' as besc;
 import 'package:flutter_bluetooth_basic/flutter_bluetooth_basic.dart' as bd;
 import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:propos/src/cashier/casier_val.dart';
 import 'package:propos/utils/val.dart';
 import 'package:propos/utils/val_def.dart';
 import 'package:propos/utils/vl.dart';
@@ -37,7 +38,7 @@ class StrukTiket {
       PosColumn(text: "total", width: 3, styles: PosStyles(align: PosAlign.right))
     ]);
     bytes += generator.hr();
-    for (final itm in Val.listorder.value.val) {
+    for (final itm in CashierVal.listorder.value.val) {
       bytes += generator.row([
         PosColumn(text: itm['qty'].toString(), width: 2, styles: PosStyles(align: PosAlign.left)),
         PosColumn(text: itm['name'].toString(), width: 3, styles: PosStyles(align: PosAlign.left)),

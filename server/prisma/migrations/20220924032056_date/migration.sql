@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `Bill` ADD COLUMN `pax` INTEGER NOT NULL DEFAULT 1;

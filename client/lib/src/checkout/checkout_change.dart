@@ -26,13 +26,13 @@ class CheckoutChange extends StatelessWidget {
             () => Text(
               NumberFormat.currency(
                 locale: 'id_ID',
-                symbol: 'Rp. ',
+                symbol: '',
                 decimalDigits: 0,
               ).format(int.parse(change.value)).contains("-")
                   ? "0"
                   : NumberFormat.currency(
                       locale: 'id_ID',
-                      symbol: 'Rp. ',
+                      symbol: '',
                       decimalDigits: 0,
                     ).format(int.parse(change.value)),
               style: const TextStyle(

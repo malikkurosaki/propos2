@@ -24,7 +24,7 @@ class Cashier extends StatelessWidget {
 
   _onLoad() async {
     // _loadCategory();
-    CashierVal.loadProduct();
+    // CashierVal.loadProduct();
   }
 
   @override
@@ -54,7 +54,7 @@ class Cashier extends StatelessWidget {
   }
 
   // Widget _headerTotalan(SizingInformation media, RxList lsTampungan) => Builder(builder: (context) {
-  //       return 
+  //       return
   //       Ink(
   //         color: Colors.grey.shade200,
   //         child: ListTile(
@@ -243,7 +243,7 @@ class Cashier extends StatelessWidget {
   //     });
 
   // Widget _totalan(SizingInformation media) {
-  //   return 
+  //   return
   //   Scaffold(
   //     body: Builder(
   //       builder: (context) {
@@ -539,8 +539,7 @@ class Cashier extends StatelessWidget {
   //   );
   // }
 
-  Widget _searchBox() => 
-  Card(
+  Widget _searchBox() => Card(
         child: Padding(
           padding: const EdgeInsets.all(2.0),
           child: TextField(
@@ -566,7 +565,7 @@ class Cashier extends StatelessWidget {
         ),
       );
 
-  // Widget _listMenuItem(SizingInformation media) => 
+  // Widget _listMenuItem(SizingInformation media) =>
   // Column(
   //       crossAxisAlignment: CrossAxisAlignment.start,
   //       children: [
@@ -648,7 +647,7 @@ class Cashier extends StatelessWidget {
   //       ],
   //     );
 
-  // Widget _categoryView() => 
+  // Widget _categoryView() =>
   // Padding(
   //       padding: const EdgeInsets.all(8.0),
   //       child: Builder(

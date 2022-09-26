@@ -1,13 +1,14 @@
 import 'dart:convert';
 
-import 'package:dropdown_search/dropdown_search.dart';
+import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:propos/pages.dart';
 import 'package:propos/rot.dart';
+import 'package:propos/src/cashier/casier_val.dart';
+import 'package:propos/src/checkout/checkout_action.dart';
 import 'package:propos/src/checkout/checkout_calculator_pad.dart';
 import 'package:propos/src/checkout/checkout_change.dart';
 import 'package:propos/src/checkout/checkout_hot_pad.dart';
@@ -15,8 +16,6 @@ import 'package:propos/src/checkout/checkout_payment_method.dart';
 import 'package:propos/src/checkout/checkout_val.dart';
 import 'package:propos/utils/router_api.dart';
 import 'package:propos/utils/val.dart';
-import 'package:http/http.dart' as http;
-import 'package:get/get.dart';
 import 'package:propos/utils/vl.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
@@ -110,7 +109,7 @@ class CheckoutMainView extends StatelessWidget {
                             ),
                           ],
                         ),
-                        Divider(),
+                        DottedLine(dashColor: Colors.grey),
                         Row(
                           children: [
                             Expanded(
@@ -121,7 +120,7 @@ class CheckoutMainView extends StatelessWidget {
                                   Text(
                                     NumberFormat.currency(
                                       locale: 'id_ID',
-                                      symbol: 'Rp',
+                                      symbol: '',
                                       decimalDigits: 0,
                                     ).format(CheckoutVal.totalBill),
                                     style: const TextStyle(
@@ -141,7 +140,7 @@ class CheckoutMainView extends StatelessWidget {
                                     () => Text(
                                       NumberFormat.currency(
                                         locale: 'id_ID',
-                                        symbol: 'Rp',
+                                        symbol: '',
                                         decimalDigits: 0,
                                       ).format(int.parse(CheckoutVal.totalPayment.value.val)),
                                       style: const TextStyle(
@@ -156,21 +155,21 @@ class CheckoutMainView extends StatelessWidget {
                             CheckoutChange()
                           ],
                         ),
-                        Divider(),
+                        DottedLine(dashColor: Colors.grey),
                         CheckoutPaymentMethod(),
-                        Divider()
+                        DottedLine(dashColor: Colors.grey)
                       ],
                     ),
                   ),
                   CheckoutHotPad(
                     onChanged: (value) {
-                      if (CheckoutVal.listPaymentWidget.isNotEmpty) {
-                        CheckoutVal.listPaymentWidget
+                      if (CheckoutVal.listPaymentWidget.value.val.isNotEmpty) {
+                        CheckoutVal.listPaymentWidget.value.val
                             .where(
                               (p0) => (p0['selected'] as bool),
                             )
                             .first['value'] = value;
-                        final total = CheckoutVal.listPaymentWidget.fold<int>(
+                        final total = CheckoutVal.listPaymentWidget.value.val.fold<int>(
                             0,
                             (previousValue, element) =>
                                 int.parse(previousValue.toString()) + int.parse(element['value']));
@@ -191,13 +190,13 @@ class CheckoutMainView extends StatelessWidget {
                     visible: media.isMobile,
                     child: CheckoutCalculatorPad(
                       onChanged: (value) {
-                        if (CheckoutVal.listPaymentWidget.isNotEmpty) {
-                          CheckoutVal.listPaymentWidget
+                        if (CheckoutVal.listPaymentWidget.value.val.isNotEmpty) {
+                          CheckoutVal.listPaymentWidget.value.val
                               .where(
                                 (p0) => (p0['selected'] as bool),
                               )
                               .first['value'] = value;
-                          final total = CheckoutVal.listPaymentWidget.fold<int>(
+                          final total = CheckoutVal.listPaymentWidget.value.val.fold<int>(
                               0,
                               (previousValue, element) =>
                                   int.parse(previousValue.toString()) + int.parse(element['value']));
@@ -231,58 +230,166 @@ class CheckoutMainView extends StatelessWidget {
                               ? const Text("loading ...")
                               : MaterialButton(
                                   color: Colors.blue,
-                                  onPressed: () async {
-                                    loading.value = true;
-                                    final bill = <String, String>{
-                                      "id": Val.billId.value.val.toString(),
-                                      "totalQty": CheckoutVal.totalQty.toString(),
-                                      "totalPrice": CheckoutVal.totalBill.toString(),
-                                      "userId": Vl.userId.val.toString(),
-                                      "companyId": Vl.companyId.val.toString(),
-                                      "outletId": Vl.outletId.val.toString(),
-                                      // "employeeId": "",
-                                      // "cashierId": "",
-                                      // "discount": "",
-                                      // "tax": "",
-                                      "payment": CheckoutVal.totalPayment.value.val,
-                                      "change": CheckoutChange.change.value,
-                                      // "customerId": ""
-                                    };
+                                  onPressed: CheckoutAction().pay,
+                                  // () async {
+                                  //   loading.value = true;
+                                  //   final mapCash = {};
 
-                                    final listOrder = [];
-                                    for (final itm in Val.listorder.value.val) {
-                                      final order = {
-                                        "quantity": itm['qty'],
-                                        "note": itm['note'],
-                                        "total": itm['total'],
-                                        // "discount": "",
-                                        // "tax": "",
-                                        "productId ": itm['productId'],
-                                        "billId": Val.billId.value.val.toString(),
-                                      };
+                                  //   final cashData = await Rot.checkoutCashGet();
+                                  //   if (cashData.statusCode == 200) mapCash.assignAll(jsonDecode(cashData.body));
 
-                                      listOrder.add(order);
-                                    }
+                                  //   final cod = {};
+                                  //   final resCod = await Rot.checkoutCodGet();
+                                  //   if (resCod.statusCode == 200) cod.assignAll(jsonDecode(resCod.body));
 
-                                    final body = <String, String>{
-                                      "bill": jsonEncode(bill),
-                                      "listOrder": jsonEncode(listOrder)
-                                    };
+                                  //   final productManual = Val.listorder.value.val
+                                  //       .where((element) => element['isManual'] == true)
+                                  //       .toList()
+                                  //       .map(
+                                  //         (e) => {
+                                  //           "name": e['name'],
+                                  //           "price": e['price'],
+                                  //           "companyId": cod['companyId'],
+                                  //           "note": e['note'],
+                                  //           "total": e['total'],
+                                  //           "userId": cod['userId']
+                                  //         },
+                                  //       )
+                                  //       .toList();
 
-                                    try {
-                                      final pay = await RouterApi.billCreate().postData(body);
-                                      await SmartDialog.showToast("Payment Success");
-                                      Val.change.value.val = CheckoutChange.change.value;
-                                      // Val.billId.value.val = Val.billId.value.val;
+                                  //   final productAuto = Val.listorder.value.val
+                                  //       .where((element) => element['isManual'] == false)
+                                  //       .toList()
+                                  //       .map(
+                                  //         (e) => {
+                                  //           "note": e['note'],
+                                  //           // "number": "null",
+                                  //           // "tax": "undefined",
+                                  //           "productId": e['productId'],
+                                  //           "total": e['total'],
+                                  //           "quantity": e['qty'],
+                                  //           // "discountId": "undefined",
+                                  //         },
+                                  //       )
+                                  //       .toList();
 
-                                      // Val.struk.value.val = _struk(media).toString();
-                                      Get.offAllNamed(Pages.paymentSuccessPage().route);
-                                      loading.value = false;
-                                    } catch (e) {
-                                      debugPrint(e.toString());
-                                      SmartDialog.showToast(e.toString());
-                                    }
-                                  },
+                                  //   // debugPrint(JsonEncoder.withIndent("   ").convert(productManual));
+                                  //   // debugPrint(JsonEncoder.withIndent("   ").convert(productManual));
+
+                                  //   final model = {
+                                  //     "number": CheckoutVal.billNumber.value,
+                                  //     "cashierId": "",
+                                  //     "change": int.parse(CheckoutChange.change.value),
+                                  //     "companyId": cod['companyId'],
+                                  //     "customerId": CashierVal.selectedCustomer.value.val.isEmpty
+                                  //         ? ""
+                                  //         : CashierVal.selectedCustomer.value.val['id'],
+                                  //     "deviceId": cod['deviceId'],
+                                  //     "discountId": "",
+                                  //     "employeeId": "",
+                                  //     "outletId": cod['outletId'],
+                                  //     "tax": "",
+                                  //     "totalPrice": CheckoutVal.totalBill,
+                                  //     "totalQty": CashierVal.totalQty.value,
+                                  //     "userId": cod['userId'],
+                                  //     "BillPayment": {
+                                  //       "createMany": {
+                                  //         "data": CheckoutVal.listPaymentWidget.isEmpty
+                                  //             ? [
+                                  //                 {"paymentMethodId": mapCash['id'], "value": CheckoutVal.totalBill}
+                                  //               ]
+                                  //             : [
+                                  //                 ...CheckoutVal.listPaymentWidget.map(
+                                  //                   (e) => {
+                                  //                     "paymentMethodId": e['paymentId'],
+                                  //                     "value": e['value'],
+                                  //                   },
+                                  //                 )
+                                  //               ]
+                                  //       }
+                                  //     },
+                                  //     "OrderManual": productManual.isEmpty
+                                  //         ? ""
+                                  //         : {
+                                  //             "createMany": {
+                                  //               "data": [...productManual]
+                                  //             }
+                                  //           },
+                                  //     "Order": {
+                                  //       "createMany": {
+                                  //         "data": [...productAuto]
+                                  //       }
+                                  //     },
+                                  //     "pax": CashierVal.pax.value
+                                  //   };
+
+                                  //   model.removeWhere((key, value) => value.toString().isEmpty);
+                                  //   final body = {"data": jsonEncode(model)};
+
+                                  //   final res = await Rot.checkoutBillCreatePost(body: body);
+                                  //   if (res.statusCode == 201) {
+                                  //     SmartDialog.showToast("success");
+                                  //     Val.listorder.value.val = [];
+                                  //     Val.listorder.refresh();
+                                  //     Get.back();
+                                  //   } else {
+                                  //     SmartDialog.showToast(res.body);
+                                  //   }
+
+                                  //   // final bill = <String, String>{
+                                  //   //   "id": Val.billId.value.val.toString(),
+                                  //   //   "totalQty": CheckoutVal.totalQty.toString(),
+                                  //   //   "totalPrice": CheckoutVal.totalBill.toString(),
+                                  //   //   "userId": Vl.userId.val.toString(),
+                                  //   //   "companyId": Vl.companyId.val.toString(),
+                                  //   //   "outletId": Vl.outletId.val.toString(),
+                                  //   //   // "employeeId": "",
+                                  //   //   // "cashierId": "",
+                                  //   //   // "discount": "",
+                                  //   //   // "tax": "",
+                                  //   //   "payment": CheckoutVal.totalPayment.value.val,
+                                  //   //   "change": CheckoutChange.change.value,
+                                  //   //   // "customerId": ""
+                                  //   // };
+
+                                  //   // final listOrder = [];
+                                  //   // for (final itm in Val.listorder.value.val) {
+                                  //   //   final order = {
+                                  //   //     "quantity": itm['qty'],
+                                  //   //     "note": itm['note'],
+                                  //   //     "total": itm['total'],
+                                  //   //     // "discount": "",
+                                  //   //     // "tax": "",
+                                  //   //     "productId ": itm['productId'],
+                                  //   //     "billId": Val.billId.value.val.toString(),
+                                  //   //   };
+
+                                  //   //   listOrder.add(order);
+                                  //   // }
+
+                                  //   // final body = <String, String>{
+                                  //   //   "bill": jsonEncode(bill),
+                                  //   //   "listOrder": jsonEncode(listOrder)
+                                  //   // };
+
+                                  //   // debugPrint(CheckoutVal.listPaymentWidget.toString());
+
+                                  //   // try {
+                                  //   //   final pay = await RouterApi.billCreate().postData(body);
+                                  //   //   await SmartDialog.showToast("Payment Success");
+                                  //   //   Val.change.value.val = CheckoutChange.change.value;
+                                  //   //   // Val.billId.value.val = Val.billId.value.val;
+
+                                  //   //   // Val.struk.value.val = _struk(media).toString();
+                                  //   //   Get.offAllNamed(Pages.paymentSuccessPage().route);
+                                  //   //   loading.value = false;
+                                  //   // } catch (e) {
+                                  //   //   debugPrint(e.toString());
+                                  //   //   SmartDialog.showToast(e.toString());
+                                  //   // }
+
+                                  //   loading.value = false;
+                                  // },
                                   child: const Padding(
                                     padding: EdgeInsets.all(10.0),
                                     child: Center(

@@ -39,13 +39,22 @@ app.use(async (req, res, next) => {
             },
             select: {
                 id: true,
-                isActive: true
+                isActive: true,
+                DefaultPrefByUser: {
+                    select: {
+                        companyId: true,
+                        outletId: true,
+                        deviceId: true,
+                        userId: true
+                    }
+                }
             }
         });
 
         if (!user || !user.isActive) return res.status(401).json({ message: 'Unauthorized' });
         req.userId = user.id;
         req.token = token;
+        req.cod = user.DefaultPrefByUser;
         return routers(req, res, next);
     }
 });

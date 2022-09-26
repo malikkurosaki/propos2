@@ -13,8 +13,9 @@ let modelCustomer = {
 }
 
 module.exports = expressAsyncHandler(async (req, res) => {
+    let body = JSON.parse(req.body.data);
+    body['userId'] = req.userId;
+    const resData = await prisma.customer.create({ data: body })
 
-    const data = Object.assign(modelCustomer, JSON.parse(req.body.data))
-    const result = await prisma.customer.create({ data })
-    res.status(201).json(result);
-})
+    res.status(201).json(resData);
+},)

@@ -45,6 +45,7 @@ model User {
   Favorite              Favorite[]
   DefaultPreference     DefaultPreference[]
   isActive              Boolean                 @default(true)
+  OrderManual           OrderManual[]
 }
 
 model Company {
@@ -83,6 +84,7 @@ model Company {
   ProductStock          ProductStock[]
   Favorite              Favorite[]
   DefaultPreference     DefaultPreference[]
+  OrderManual           OrderManual[]
 }
 
 model DetailCompany {
@@ -237,6 +239,7 @@ model Discount {
   Product      Product[]
   Bill         Bill[]
   isActive     Boolean?  @default(true)
+  Order        Order[]
 }
 
 model ProductCustomPrice {
@@ -358,54 +361,85 @@ model Favorite {
 }
 
 model Bill {
-  id         String    @id @default(uuid())
-  idx        Int?
-  totalQty   Int?
-  totalPrice Int?
-  User       User?     @relation(fields: [userId], references: [id])
-  Company    Company?  @relation(fields: [companyId], references: [id])
-  Outlet     Outlet?   @relation(fields: [outletId], references: [id])
-  Employee   Employee? @relation(fields: [employeeId], references: [id])
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-  userId     String?
-  companyId  String?
-  outletId   String?
-  employeeId String?
-  Order      Order[]
-  Cashier    Cashier?  @relation(fields: [cashierId], references: [id])
-  cashierId  String?
-  discount   String?
-  tax        String?
-  payment    Int?
-  change     Int?
-  Customer   Customer? @relation(fields: [customerId], references: [id])
-  customerId String?
-  Device     Device?   @relation(fields: [deviceId], references: [id])
-  deviceId   String?
-  Discount   Discount? @relation(fields: [discountId], references: [id])
-  discountId String?
+  id          String        @id @default(uuid())
+  idx         Int?
+  number      Int?
+  totalQty    Int?
+  totalPrice  Int?
+  User        User?         @relation(fields: [userId], references: [id])
+  Company     Company?      @relation(fields: [companyId], references: [id])
+  Outlet      Outlet?       @relation(fields: [outletId], references: [id])
+  Employee    Employee?     @relation(fields: [employeeId], references: [id])
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  userId      String?
+  companyId   String?
+  outletId    String?
+  employeeId  String?
+  Order       Order[]
+  Cashier     Cashier?      @relation(fields: [cashierId], references: [id])
+  cashierId   String?
+  discount    String?
+  tax         String?
+  payment     Int?
+  change      Int?
+  Customer    Customer?     @relation(fields: [customerId], references: [id])
+  customerId  String?
+  Device      Device?       @relation(fields: [deviceId], references: [id])
+  deviceId    String?
+  Discount    Discount?     @relation(fields: [discountId], references: [id])
+  discountId  String?
+  pax         Int           @default(1)
   // @status
   // 1 paid
   // 2 void
-  status     Int?      @default(1)
+  status      Int?          @default(1)
+  BillPayment BillPayment[]
+  OrderManual OrderManual[]
+}
+
+model BillPayment {
+  id              String         @id @default(uuid())
+  PaymentMethod   PaymentMethod? @relation(fields: [paymentMethodId], references: [id])
+  Bill            Bill?          @relation(fields: [billId], references: [id])
+  paymentMethodId String?
+  value           Int?
+  billId          String?
 }
 
 model Order {
+  id         String    @id @default(uuid())
+  idx        Int?
+  quantity   Int?
+  note       String?
+  total      Int?
+  discount   String?
+  tax        String?
+  Bill       Bill?     @relation(fields: [billId], references: [id])
+  Product    Product?  @relation(fields: [productId], references: [id])
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  productId  String?
+  billId     String?
+  number     Int?
+  Discount   Discount? @relation(fields: [discountId], references: [id])
+  discountId String?
+}
+
+model OrderManual {
   id        String   @id @default(uuid())
-  idx       Int?
-  quantity  Int?
+  name      String
+  price     Int
   note      String?
-  total     String?
-  discount  String?
-  tax       String?
-  Bill      Bill?    @relation(fields: [billId], references: [id])
-  Product   Product? @relation(fields: [productId], references: [id])
+  total     Int?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  productId String?
+  User      User?    @relation(fields: [userId], references: [id])
+  Company   Company? @relation(fields: [companyId], references: [id])
+  userId    String?
+  companyId String?
+  Bill      Bill?    @relation(fields: [billId], references: [id])
   billId    String?
-  number    Int?
 }
 
 model OrderHistory {
@@ -514,17 +548,18 @@ model Cashier {
 }
 
 model PaymentMethod {
-  id          String   @id @default(uuid())
+  id          String        @id @default(uuid())
   idx         Int?
   name        String?
   description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  User        User?    @relation(fields: [userId], references: [id])
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  User        User?         @relation(fields: [userId], references: [id])
   userId      String?
-  Company     Company? @relation(fields: [companyId], references: [id])
+  Company     Company?      @relation(fields: [companyId], references: [id])
   companyId   String?
-  isActive    Boolean? @default(true)
+  isActive    Boolean?      @default(true)
+  BillPayment BillPayment[]
 }
 
 model PaymentMethodOutlet {

@@ -59,6 +59,7 @@ class CashierCategoryView extends StatelessWidget {
                       final data = await RouterApi.productGetByCategory(query: "categoryId=${cat['id']}").getData();
                       if (data.statusCode == 200) {
                         final lsData = jsonDecode(data.body);
+
                         CashierVal.listProduct.value.val = lsData;
                         CashierVal.listProduct.refresh();
                       }

@@ -117,14 +117,30 @@ function prismaMigrate() {
     console.log("migrate completed");
 }
 
-function commandServer(){
+function prismaGenerate() {
+    require('child_process').execSync(`npx prisma generate`, { stdio: "inherit", cwd: "./server" });
+    console.log('generate completed');
+}
+
+function commandServer() {
     require(`prompts`)({
         type: "text",
         name: "cmd",
         message: "masukkan perintah"
-    }).then(({cmd}) => {
-        if(!cmd) return console.log("ok gak ada");
-        const exec = require('child_process').execSync(cmd, {stdio: "inherit", cwd: "./server"});
+    }).then(({ cmd }) => {
+        if (!cmd) return console.log("ok gak ada");
+        const exec = require('child_process').execSync(cmd, { stdio: "inherit", cwd: "./server" });
     });
-    
+
+}
+
+function commandClient() {
+    require(`prompts`)({
+        type: "text",
+        name: "cmd",
+        message: "masukkan perintah"
+    }).then(({ cmd }) => {
+        if (!cmd) return console.log("ok gak ada");
+        const exec = require('child_process').execSync(cmd, { stdio: "inherit", cwd: "./client" });
+    });
 }

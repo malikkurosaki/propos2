@@ -17,7 +17,7 @@ class ProductViewMain extends StatelessWidget {
   _onLoad() {
     Rot.productDefaultGet().then(
       (res) {
-        debugPrint(res.body);
+        // debugPrint(res.body);
         if (res.statusCode == 200) {
           ProductVal.listSelectProduct.assignAll(jsonDecode(res.body));
           // ProductVal.listSelectProduct.refresh();
@@ -206,45 +206,75 @@ class ProductViewMain extends StatelessWidget {
                             ],
                           ),
                         ),
-                        ...ProductVal.listSelectProduct.map(
-                          (e) => Row(
-                            children: [
-                              SizedBox(
-                                width: 600,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(e['name']),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 200,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    NumberFormat.currency(decimalDigits: 0, locale: "id_ID", symbol: "")
-                                        .format(e['price']),
+                        ...ProductVal.listSelectProduct
+                            .map(
+                              (e) => Row(
+                                children: [
+                                  SizedBox(
+                                    width: 600,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(e['name']),
+                                    ),
                                   ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 100,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: PopupMenuButton(
-                                    itemBuilder: (context) => [
-                                      PopupMenuItem(
-                                        child: Text("Delete"),
+                                  SizedBox(
+                                    width: 200,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                        NumberFormat.currency(decimalDigits: 0, locale: "id_ID", symbol: "")
+                                            .format(e['price']),
                                       ),
-                                      PopupMenuItem(
-                                        child: Text("Edit"),
-                                      )
-                                    ],
+                                    ),
                                   ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ).toList()
+                                  SizedBox(
+                                    width: 100,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: PopupMenuButton(
+                                        onSelected: (value) async {
+                                          if (value == 'del') {
+                                            final dataDel = await Rot.productRemoveDelete(query: "id=${e['id']}");
+                                            if (dataDel.statusCode == 201) {
+                                              debugPrint("dataah berhasil dihapus");
+                                            } else {
+                                              debugPrint("dataa gagal dihapus");
+                                            }
+                                          }
+                                        },
+                                        itemBuilder: (context) => [
+                                          PopupMenuItem(
+                                            value: "del",
+                                            child: Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.delete,
+                                                  size: 16,
+                                                ),
+                                                Expanded(child: Text("Delete")),
+                                              ],
+                                            ),
+                                          ),
+                                          PopupMenuItem(
+                                            value: "edit",
+                                            child: Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.edit,
+                                                  size: 16,
+                                                ),
+                                                Expanded(child: Text("Edit")),
+                                              ],
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            )
+                            .toList()
                       ],
                     ),
                   ),
