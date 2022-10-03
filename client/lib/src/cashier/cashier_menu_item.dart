@@ -35,26 +35,29 @@ class CashierMenuItem extends StatelessWidget {
             CashierSearchBox(),
             CashierCategoryView(),
             // _categoryView(),
-            FutureBuilder<http.Response>(
-              future: Rot.cashierListProductGet(),
-              builder: ((context, snapshot) {
-                if (snapshot.connectionState != ConnectionState.done)
-                  return Center(
-                    child: LinearProgressIndicator(),
-                  );
-                final List lsData = jsonDecode(snapshot.data!.body);
-                Future.delayed(Duration(milliseconds: 100), () {
-                  CashierVal.listProduct.value.val = lsData;
-                  CashierVal.listProduct.refresh();
-                });
+            SizedBox(
+              height: 4,
+              child: FutureBuilder<http.Response>(
+                future: Rot.cashierListProductGet(),
+                builder: ((context, snapshot) {
+                  if (snapshot.connectionState != ConnectionState.done)
+                    return Center(
+                      child: LinearProgressIndicator(),
+                    );
+                  final List lsData = jsonDecode(snapshot.data!.body);
+                  Future.delayed(Duration(milliseconds: 100), () {
+                    CashierVal.listProduct.value.val = lsData;
+                    CashierVal.listProduct.refresh();
+                  });
 
-                return lsData.isNotEmpty
-                    ? SizedBox.shrink()
-                    : MaterialButton(
-                        onPressed: () {},
-                        child: Text("Cleate product"),
-                      );
-              }),
+                  return lsData.isNotEmpty
+                      ? SizedBox.shrink()
+                      : MaterialButton(
+                          onPressed: () {},
+                          child: Text("Cleate product"),
+                        );
+                }),
+              ),
             ),
             Flexible(
               child: Obx(
@@ -74,6 +77,12 @@ class CashierMenuItem extends StatelessWidget {
                             prod['note'] = '';
                             prod['total'] = prod['qty'] * prod['price'];
                             prod['isManual'] = false;
+
+                            try {
+                              prod['stock'] = prod['ProductStock'][0]['stock'];
+                            } catch (e) {
+                              
+                            }
                             data.add(prod);
                             SmartDialog.showToast("Added to cart", animationTime: Duration(milliseconds: 500));
                           } else {
@@ -85,34 +94,63 @@ class CashierMenuItem extends StatelessWidget {
                         },
                         child: Card(
                           borderOnForeground: true,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          child: Stack(
                             children: [
-                              Flexible(
-                                child: CachedNetworkImage(
-                                  imageUrl:
-                                      "${Config.host}/product-image/${(prod["ProductImage"]?['name'] ?? "null").toString()}",
-                                  fit: BoxFit.cover,
-                                  height: double.infinity,
-                                  width: double.infinity,
-                                  // width: media.isMobile ? Get.width / 2 : 200,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      prod['name'].toString(),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Flexible(
+                                    child: CachedNetworkImage(
+                                      imageUrl:
+                                          "${Config.host}/product-image/${(prod["ProductImage"]?['name'] ?? "null").toString()}",
+                                      fit: BoxFit.cover,
+                                      height: double.infinity,
+                                      width: double.infinity,
+                                      // width: media.isMobile ? Get.width / 2 : 200,
                                     ),
-                                    Text(NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0)
-                                        .format(prod['price'])),
-                                  ],
-                                ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          prod['name'].toString(),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(
+                                          NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0)
+                                              .format(
+                                            prod['price'],
+                                          ),
+                                        ),
+                                        () {
+                                          try {
+                                            return Ink(
+                                              color: Colors.green,
+                                              child: Row(
+                                                children: [
+                                                  Text("stock ", style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 12
+                                                  ),),
+                                                  Text(
+                                                    prod['ProductStock'][0]['stock'].toString(),
+                                                    style: TextStyle(fontSize: 12, color: Colors.white),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          } catch (e) {
+                                            return SizedBox.shrink();
+                                          }
+                                        }()
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),

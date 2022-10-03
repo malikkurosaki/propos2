@@ -7,16 +7,14 @@ import 'package:responsive_builder/responsive_builder.dart';
 import 'package:get/get.dart';
 
 class RootPage extends StatelessWidget {
-  const RootPage({
-    Key ? key
-  }): super(key: key);
+  const RootPage({Key? key}) : super(key: key);
 
-  _onLoad()async{
+  _onLoad() async {
     await 1.delay();
 
-    if(Vl.userId.val.isEmpty){
+    if (Vl.userId.val.isEmpty) {
       Get.offAllNamed(Pages.loginPage().route);
-    }else{
+    } else {
       Get.offAllNamed(Pages.homePage().route);
     }
   }

@@ -4,6 +4,8 @@ import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:intl/intl.dart';
+import 'package:propos/src/checkout/checkout_val.dart';
+import 'package:propos/src/printers/printer_val.dart';
 import 'package:propos/utils/router_api.dart';
 import 'package:propos/utils/struk_tiket.dart';
 import 'package:propos/utils/val.dart';
@@ -89,7 +91,7 @@ class Struk extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: Row(
-                      children: [Text("Receipt: "), Text(Val.billId.value.val.toString())],
+                      children: [Text("Receipt: "), Text(CheckoutVal.billId.value.val.toString())],
                     ),
                   ),
                   Padding(
@@ -272,7 +274,7 @@ class Struk extends StatelessWidget {
                           ],
                         ),
                         onPressed: () async {
-                          if (Vl.selectedPrinter.val.isEmpty) {
+                          if (PrinterVal.device.value.val.isEmpty) {
                             SmartDialog.showToast("select printer first");
                             return;
                           }

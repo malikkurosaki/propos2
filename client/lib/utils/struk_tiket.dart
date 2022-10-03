@@ -4,6 +4,8 @@ import 'package:flutter_bluetooth_basic/flutter_bluetooth_basic.dart' as bd;
 import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:propos/src/cashier/casier_val.dart';
+import 'package:propos/src/checkout/checkout_val.dart';
+import 'package:propos/src/printers/printer_val.dart';
 import 'package:propos/utils/val.dart';
 import 'package:propos/utils/val_def.dart';
 import 'package:propos/utils/vl.dart';
@@ -26,7 +28,7 @@ class StrukTiket {
     bytes += textCenter(generator, "Jalan Hasanudin No 38 Denpasar - Bali");
     bytes += textCenter(generator, "Telp: 089697338821");
     bytes += generator.hr();
-    bytes += textLeft(generator, "ID#    : ${Val.billId.value.val}");
+    bytes += textLeft(generator, "ID#    : ${CheckoutVal.billId.value.val}");
     bytes += textLeft(generator, "Kasir  : ${Val.cashier.value.val['name']}");
     bytes += textLeft(generator,
         "Tgl:   : ${DateTime.now().toString().substring(0, 10)} ${DateTime.now().toString().substring(11, 19)}");
@@ -60,17 +62,17 @@ class StrukTiket {
 
   toPrint() async {
     SmartDialog.showLoading();
-    if (Vl.selectedPrinter.val.isEmpty) {
+    if (PrinterVal.device.value.val.isEmpty) {
       SmartDialog.showToast("Printer belum dipilih");
       return;
     }
     final printerManager = besc.PrinterBluetoothManager();
-    final printer = besc.PrinterBluetooth(bd.BluetoothDevice.fromJson({
-      "id": Vl.selectedPrinter.val['id'],
-      "name": Vl.selectedPrinter.val['name'],
-      "address": Vl.selectedPrinter.val['address'],
-    }));
-    printerManager.selectPrinter(printer);
+    // final printer = besc.PrinterBluetooth(bd.BluetoothDevice.fromJson({
+    //   "id": PrinterVal.device.value.val['id'],
+    //   "name": PrinterVal.device.value.val['name'],
+    //   "address": PrinterVal.device.value.val['address'],
+    // }));
+    // printerManager.selectPrinter(printer);
     final besc.PosPrintResult res = await printerManager.printTicket(await tiket());
     SmartDialog.dismiss();
     SmartDialog.showToast("Print ${res.msg}");

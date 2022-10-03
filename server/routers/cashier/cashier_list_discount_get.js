@@ -3,10 +3,10 @@ const pc = require('@prisma/client').PrismaClient;
 const prisma = new pc();
 
 module.exports = handler(async (req, res) => {
-    const { userid, companyid, outletid } = req.headers;
+    // const { userid, companyid, outletid } = req.headers;
     const data = await prisma.discount.findMany({
         where: {
-            companyId: companyid
+            companyId: req.companyId
         },
         select: {
             id: true,

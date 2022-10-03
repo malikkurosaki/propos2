@@ -12,6 +12,7 @@ import 'package:propos/rot.dart';
 import 'package:propos/src/cashier/casier_val.dart';
 import 'package:propos/src/checkout/checkout_change.dart';
 import 'package:propos/src/checkout/checkout_val.dart';
+import 'package:propos/src/printers/printer_val.dart';
 import 'package:propos/utils/struk_tiket.dart';
 import 'package:propos/utils/val.dart';
 import 'package:propos/utils/vl.dart';
@@ -43,43 +44,7 @@ class CheckoutDrawerView extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       child: Column(
                         children: [
-                          // Builder(
-                          //   builder: (context) {
-                          //     final company = {}.obs;
-                          //     RouterApi.companySingle().getData().then(
-                          //       (value) {
-                          //         if (value.statusCode == 200) company.assignAll(jsonDecode(value.body));
-                          //       },
-                          //     );
-                          //     return Obx(
-                          //       () => Text(
-                          //         company['name'].toString(),
-                          //         style: TextStyle(
-                          //           fontSize: 20,
-                          //           fontWeight: FontWeight.bold,
-                          //         ),
-                          //       ),
-                          //     );
-                          //   },
-                          // ),
-                          // Builder(
-                          //   builder: (context) {
-                          //     final outlet = {}.obs;
-                          //     RouterApi.outletSingle().getData().then(
-                          //       (value) {
-                          //         if (value.statusCode == 200) outlet.assignAll(jsonDecode(value.body));
-                          //       },
-                          //     );
-                          //     return Obx(
-                          //       () => Text(
-                          //         outlet['name'].toString(),
-                          //         style: TextStyle(
-                          //           fontWeight: FontWeight.bold,
-                          //         ),
-                          //       ),
-                          //     );
-                          //   },
-                          // ),
+                         
                           FutureBuilder<http.Response>(
                             future: Rot.checkoutCodNameGet(),
                             builder: (con, snap) {
@@ -97,20 +62,11 @@ class CheckoutDrawerView extends StatelessWidget {
                                 ? SizedBox.shrink()
                                 : Column(
                                     children: [
+                                     
                                       Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          Icon(Icons.business),
-                                          Text(
-                                            CheckoutVal.codName['Company']['name'].toString(),
-                                            style: TextStyle(fontSize: 24),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(Icons.store),
+                                          // Icon(Icons.store),
                                           Text(
                                             CheckoutVal.codName['Outlet']['name'].toString(),
                                             style: TextStyle(fontSize: 18),
@@ -120,7 +76,7 @@ class CheckoutDrawerView extends StatelessWidget {
                                       Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          Icon(Icons.devices),
+                                          // Icon(Icons.devices),
                                           Text(
                                             CheckoutVal.codName['Device']['name'].toString(),
                                             style: TextStyle(fontSize: 16),
@@ -152,7 +108,7 @@ class CheckoutDrawerView extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: Row(
-                        children: [Text("Receipt: "), Text(Val.billId.value.val.toString())],
+                        children: [Text("Receipt: "), Text(CheckoutVal.billId.value.val.toString())],
                       ),
                     ),
                     Padding(
@@ -176,6 +132,15 @@ class CheckoutDrawerView extends StatelessWidget {
                         ],
                       ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Row(
+                        children: [
+                          Text("Pax: "),
+                          Text(CashierVal.pax.value.val.toString()),
+                        ],
+                      ),
+                    ),
                     DottedLine(),
                     Column(
                       children: [
@@ -195,7 +160,11 @@ class CheckoutDrawerView extends StatelessWidget {
                                   children: [
                                     Expanded(
                                       child: Row(
-                                        children: [Text("${itm['qty']} x "), Text(NumberFormat.currency(locale: "id_ID", decimalDigits: 0, symbol: "").format(int.parse(itm['price'].toString())))],
+                                        children: [
+                                          Text("${itm['qty']} x "),
+                                          Text(NumberFormat.currency(locale: "id_ID", decimalDigits: 0, symbol: "")
+                                              .format(int.parse(itm['price'].toString())))
+                                        ],
                                       ),
                                     ),
                                     Text(NumberFormat.currency(locale: 'id_ID', symbol: '', decimalDigits: 0)
@@ -215,7 +184,7 @@ class CheckoutDrawerView extends StatelessWidget {
                         children: [
                           Text("Total Bill: "),
                           Text(NumberFormat.currency(locale: "id_ID", symbol: "", decimalDigits: 0)
-                              .format(int.parse(CheckoutVal.totalBill.toString()))),
+                              .format(int.parse(CashierVal.totalPrice.value.val.toString()))),
                         ],
                       ),
                     ),
@@ -243,10 +212,10 @@ class CheckoutDrawerView extends StatelessWidget {
                           children: [
                             Text("Change: "),
                             Text(
-                              CheckoutChange.change.value.contains("-")
+                              CheckoutVal.change.value.val.contains("-")
                                   ? "0"
                                   : NumberFormat.currency(locale: "id_ID", symbol: "", decimalDigits: 0).format(
-                                      int.parse(CheckoutChange.change.value),
+                                      int.parse(CheckoutVal.change.value.val),
                                     ),
                             ),
                           ],
@@ -272,55 +241,7 @@ class CheckoutDrawerView extends StatelessWidget {
                         ),
                       ),
                     ),
-                    // Padding(
-                    //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    //   child: Row(
-                    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //     children: [
-                    //       Text("Subtotal: "),
-                    //       Text("Rp. "),
-                    //     ],
-                    //   ),
-                    // ),
-                    // Padding(
-                    //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    //   child: Row(
-                    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //     children: [
-                    //       Text("Discount: "),
-                    //       Text("Rp. "),
-                    //     ],
-                    //   ),
-                    // ),
-                    // Padding(
-                    //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    //   child: Row(
-                    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //     children: [
-                    //       Text("Tax: "),
-                    //       Text("Rp. "),
-                    //     ],
-                    //   ),
-                    // ),
-                    // Padding(
-                    //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    //   child: Row(
-                    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //     children: [
-                    //       Text("Total: "),
-                    //       Text(
-                    //         NumberFormat.currency(
-                    //           locale: 'id_ID',
-                    //           symbol: 'Rp',
-                    //           decimalDigits: 0,
-                    //         ).format(
-                    //           Val.listorder.value.val
-                    //               .fold(0, (prev, element) => int.parse(prev.toString()) + element['total']),
-                    //         ),
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
+                   
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       child: DottedLine(),
@@ -402,7 +323,7 @@ class CheckoutDrawerView extends StatelessWidget {
                             ],
                           ),
                           onPressed: () async {
-                            if (Vl.selectedPrinter.val.isEmpty) {
+                            if (PrinterVal.device.value.val.isEmpty) {
                               SmartDialog.showToast("select printer first");
                               return;
                             }

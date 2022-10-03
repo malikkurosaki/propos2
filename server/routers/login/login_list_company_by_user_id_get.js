@@ -7,12 +7,24 @@ module.exports = expressAsyncHandler(async (req, res) => {
     const data = await prisma.company.findMany({
         where: {
             userId: {
-                equals: req.userId
+                equals: req.query.userId
             }
         },
         select: {
             id: true,
-            name: true
+            name: true,
+            Outlet: {
+                select: {
+                    id: true,
+                    name: true,
+                    Device: {
+                        select: {
+                            id: true,
+                            name: true
+                        }
+                    }
+                }
+            }
         }
     });
 

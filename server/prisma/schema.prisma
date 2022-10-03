@@ -46,6 +46,7 @@ model User {
   DefaultPreference     DefaultPreference[]
   isActive              Boolean                 @default(true)
   OrderManual           OrderManual[]
+  DefaultPrefByDevice   DefaultPrefByDevice[]
 }
 
 model Company {
@@ -85,6 +86,7 @@ model Company {
   Favorite              Favorite[]
   DefaultPreference     DefaultPreference[]
   OrderManual           OrderManual[]
+  DefaultPrefByDevice   DefaultPrefByDevice[]
 }
 
 model DetailCompany {
@@ -105,37 +107,24 @@ model DetailCompany {
 }
 
 model Device {
-  id                String              @id @default(uuid())
-  idx               Int?
-  deviceId          String              @unique
-  name              String
-  User              User?               @relation(fields: [userId], references: [id])
-  userId            String?
-  Outlet            Outlet?             @relation(fields: [outletId], references: [id])
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
-  outletId          String?
-  Company           Company?            @relation(fields: [companyId], references: [id])
-  Employee          Employee[]
-  companyId         String?
-  Bill              Bill[]
-  isActive          Boolean?            @default(true)
-  DefaultPreference DefaultPreference[]
-  DefaultPrefByUser DefaultPrefByUser[]
-}
-
-model DefaultPreference {
-  // id        String   @id @default(uuid())
-  Device    Device?  @relation(fields: [deviceId], references: [id])
-  deviceId  String   @id
-  User      User?    @relation(fields: [userId], references: [id])
-  Company   Company? @relation(fields: [companyId], references: [id])
-  Outlet    Outlet?  @relation(fields: [outletId], references: [id])
-  userId    String?
-  companyId String?
-  outletId  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                  String                @id @default(uuid())
+  idx                 Int?
+  deviceId            String                @unique
+  name                String
+  User                User?                 @relation(fields: [userId], references: [id])
+  userId              String?
+  Outlet              Outlet?               @relation(fields: [outletId], references: [id])
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  outletId            String?
+  Company             Company?              @relation(fields: [companyId], references: [id])
+  Employee            Employee[]
+  companyId           String?
+  Bill                Bill[]
+  isActive            Boolean?              @default(true)
+  DefaultPreference   DefaultPreference[]
+  DefaultPrefByUser   DefaultPrefByUser[]
+  DefaultPrefByDevice DefaultPrefByDevice[]
 }
 
 model Outlet {
@@ -170,6 +159,7 @@ model Outlet {
   isActive              Boolean?                @default(true)
   Favorite              Favorite[]
   DefaultPreference     DefaultPreference[]
+  DefaultPrefByDevice   DefaultPrefByDevice[]
 }
 
 model Product {
@@ -284,8 +274,8 @@ model ProductOutlet {
 
 model ProductStock {
   id        String   @id @default(uuid())
-  stock     Int?
-  minStock  Int?
+  stock     Int?     @default(0)
+  minStock  Int?     @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   User      User?    @relation(fields: [userId], references: [id])
@@ -296,7 +286,7 @@ model ProductStock {
   companyId String?
   outletId  String?
   productId String?
-  isActive  Boolean? @default(true)
+  isActive  Boolean? @default(false)
 }
 
 model StockHistory {
@@ -366,6 +356,7 @@ model Bill {
   number      Int?
   totalQty    Int?
   totalPrice  Int?
+  totalPay    Int?
   User        User?         @relation(fields: [userId], references: [id])
   Company     Company?      @relation(fields: [companyId], references: [id])
   Outlet      Outlet?       @relation(fields: [outletId], references: [id])
@@ -576,21 +567,52 @@ model PaymentMethodOutlet {
   companyId   String?
 }
 
+model DefaultPreference {
+  // id        String   @id @default(uuid())
+  Device    Device?  @relation(fields: [deviceId], references: [id])
+  deviceId  String   @id
+  User      User?    @relation(fields: [userId], references: [id])
+  Company   Company? @relation(fields: [companyId], references: [id])
+  Outlet    Outlet?  @relation(fields: [outletId], references: [id])
+  userId    String?
+  companyId String?
+  outletId  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model DefaultPrefByUser {
-  id         String    @id @default(uuid())
-  token      String    @unique
-  User       User?     @relation(fields: [userId], references: [id])
-  userId     String
-  Company    Company?  @relation(fields: [companyId], references: [id])
-  companyId  String?
-  Outlet     Outlet?   @relation(fields: [outletId], references: [id])
-  outletId   String?
-  Device     Device?   @relation(fields: [deviceId], references: [id])
-  Employee   Employee? @relation(fields: [employeeId], references: [id])
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-  deviceId   String?
-  employeeId String?
+  id                    String               @id @default(uuid())
+  token                 String               @unique
+  User                  User?                @relation(fields: [userId], references: [id])
+  userId                String
+  Company               Company?             @relation(fields: [companyId], references: [id])
+  companyId             String?
+  Outlet                Outlet?              @relation(fields: [outletId], references: [id])
+  outletId              String?
+  Device                Device?              @relation(fields: [deviceId], references: [id])
+  Employee              Employee?            @relation(fields: [employeeId], references: [id])
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
+  deviceId              String?
+  employeeId            String?
+  DefaultPrefByDevice   DefaultPrefByDevice? @relation(fields: [defaultPrefByDeviceId], references: [id])
+  defaultPrefByDeviceId String?
+}
+
+model DefaultPrefByDevice {
+  id                String              @id @default(uuid())
+  Device            Device?             @relation(fields: [deviceId], references: [id])
+  deviceId          String?             @unique
+  User              User?               @relation(fields: [userId], references: [id])
+  userId            String?
+  Company           Company?            @relation(fields: [companyId], references: [id])
+  companyId         String?
+  Outlet            Outlet?             @relation(fields: [outletId], references: [id])
+  outletId          String?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  DefaultPrefByUser DefaultPrefByUser[]
 }
 
 model DefaultPrefByEmployee {

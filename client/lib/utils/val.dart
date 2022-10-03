@@ -1,6 +1,7 @@
 import 'package:esc_pos_bluetooth/esc_pos_bluetooth.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:get/get.dart';
+import 'package:propos/src/checkout/checkout_val.dart';
 
 class Val {
   static final user = {}.val('Val.user').obs;
@@ -13,7 +14,7 @@ class Val {
   // static final listPrinter = [].val("Val.listPrinter2").obs;
   // static final printerDevice = {}.val("Val.printer2").obs;
   static final change = "".val("Val.change").obs;
-  static final billId = "".val("Val.billId").obs;
+  // static final billId = "".val("CheckoutVal.billId").obs;
   static final cashier = {}.val("Val.cashier").obs;
 
   static get totalOrder => Val.listorder.value.val
@@ -34,7 +35,7 @@ class Val {
     // Val.printerDevice.value.val = {};
     Val.printerWeb.value.val = [];
     Val.change.value.val = "";
-    Val.billId.value.val = "";
+    CheckoutVal.billId.value.val = "";
     Val.cashier.value.val = {};
   }
 }

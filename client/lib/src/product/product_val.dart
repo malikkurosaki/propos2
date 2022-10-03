@@ -8,7 +8,9 @@ import 'package:get_storage/get_storage.dart';
 import 'package:propos/utils/vl.dart';
 
 class ProductVal {
-  static final keyForm = GlobalKey<FormState>();
+  static final isReloadProduct = false.obs;
+
+  // static final keyForm = GlobalKey<FormState>();
   static final productImage = <String, dynamic>{"id": "null", "name": "null"}.obs;
   static final editVal = "".obs;
   static final listPropertyCreate = [].obs;
@@ -71,7 +73,6 @@ class ProductVal {
     //   selectedOutlet.assignAll(listoutlet.where((p0) => p0['id'] == Vl.outletId.val).first);
     // }
   }
-
 
   static Future<void> loadDefaultProduct() async {
     final data = await Rot.productDefaultGet();

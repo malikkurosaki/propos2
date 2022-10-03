@@ -6,6 +6,7 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:intl/intl.dart';
 import 'package:propos/rot.dart';
+import 'package:propos/src/cashier/casier_val.dart';
 import 'package:propos/src/checkout/checkout_calculator_pad.dart';
 import 'package:propos/src/checkout/checkout_change.dart';
 import 'package:propos/src/checkout/checkout_val.dart';
@@ -20,13 +21,19 @@ class CheckoutPaymentMethod extends StatelessWidget {
       final total = CheckoutVal.listPaymentWidget.value.val
           .fold<int>(0, (previousValue, element) => int.parse(previousValue.toString()) + int.parse(element['value']));
 
-      CheckoutChange.change.value =
-          (total - CheckoutVal.totalBill).isNegative ? "0" : (total - CheckoutVal.totalBill).toString();
+      CheckoutVal.change.value.val = (total - CashierVal.totalPrice.value.val).isNegative
+          ? "0"
+          : (total - CashierVal.totalPrice.value.val).toString();
       CheckoutVal.totalPayment.value.val = total.toString();
       CheckoutVal.totalPayment.refresh();
+      CheckoutVal.change.refresh();
     } else {
       CheckoutVal.totalPayment.value.val = "0";
       CheckoutVal.totalPayment.refresh();
+
+      final nilai = (int.parse(CheckoutVal.totalPayment.value.val.toString()) - CashierVal.totalPrice.value.val);
+      CheckoutVal.change.value.val = nilai.isNegative ? "0" : nilai.toString();
+      CheckoutVal.change.refresh();
     }
   }
 
@@ -139,7 +146,7 @@ class CheckoutPaymentMethod extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: IconButton(
                 onPressed: () {
-                  final lsData = [];
+                  final lsData = [...CheckoutVal.listPaymentWidget.value.val];
                   lsData.add(
                     {
                       "id": "${CheckoutVal.listPaymentWidget.value.val.length}-${DateTime.now().toString()}",

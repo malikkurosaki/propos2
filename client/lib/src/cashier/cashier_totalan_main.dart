@@ -5,6 +5,8 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:intl/intl.dart';
 import 'package:propos/src/cashier/cashier_select_discount.dart';
+import 'package:propos/src/cashier/cashier_totalan_add_note.dart';
+import 'package:propos/src/cashier/cashier_totalan_detail.dart';
 import 'package:propos/src/cashier/casier_val.dart';
 import 'package:get/get.dart';
 import 'package:propos/utils/img_def.dart';
@@ -13,11 +15,8 @@ import 'package:propos/utils/val.dart';
 class CashierTotalanMain extends StatelessWidget {
   const CashierTotalanMain({Key? key}) : super(key: key);
 
-  _onLoad() {}
-
   @override
   Widget build(BuildContext context) {
-    _onLoad();
     return Obx(
       () => Val.listorder.value.val.isEmpty
           ? Center(
@@ -26,27 +25,6 @@ class CashierTotalanMain extends StatelessWidget {
           : ListView(
               controller: ScrollController(),
               children: [
-                // for (final itmManual in CashierVal.listManualProduct.value.val)
-                //   ListTile(
-                //     leading: InkWell(
-                //       onTap: () {},
-                //       child: Icon(
-                //         Icons.remove_circle,
-                //         color: Colors.deepOrange,
-                //         size: 36,
-                //       ),
-                //     ),
-                //     trailing: InkWell(
-                //       child: Icon(
-                //         Icons.add_circle,
-                //         color: Colors.blue,
-                //         size: 36,
-                //       ),
-                //     ),
-                //     title: Text(itmManual['name'].toString()),
-                //     onTap: () {},
-                //     subtitle: Text("Manual"),
-                //   ),
                 for (final itm in Val.listorder.value.val)
                   Column(
                     children: [
@@ -70,117 +48,16 @@ class CashierTotalanMain extends StatelessWidget {
                             // CashierVal.isMultipleSelect.toggle();
                           },
                           onTap: () {
-                            final _conName = TextEditingController(text: itm['note'].toString());
                             // dialog add note
                             showBottomSheet(
                               context: context,
-                              builder: (context) => Material(
-                                color: Colors.grey.shade100,
-                                // title: Text("Note"),
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      color: Colors.orange,
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Row(
-                                        children: [
-                                          BackButton(
-                                            color: Colors.white,
-                                          ),
-                                          Expanded(
-                                            child: Text(
-                                              itm['name'].toString(),
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(color: Colors.white),
-                                            ),
-                                          ),
-                                          MaterialButton(
-                                            color: Colors.white,
-                                            onPressed: () {
-                                              if (_conName.text.isNotEmpty) {
-                                                final data = List.from(Val.listorder.value.val);
-                                                final idx = data.indexWhere((element) => element['id'] == itm['id']);
-                                                data[idx]['note'] = _conName.text;
-                                                Val.listorder.value.val = data;
-                                                Val.listorder.refresh();
-                                                SmartDialog.showToast("Note Saved");
-                                                Get.back();
-                                              } else {
-                                                SmartDialog.showToast("Empty Note");
-                                              }
-                                            },
-                                            child: Text(
-                                              "Save",
-                                              style: TextStyle(color: Colors.orange),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    ListTile(
-                                      title: Text(
-                                        "Add Note",
-                                        style: TextStyle(fontSize: 18),
-                                      ),
-                                    ),
-                                    ListTile(
-                                      leading: Icon(Icons.edit),
-                                      title: TextField(
-                                        controller: _conName,
-                                        decoration: InputDecoration(
-                                          hintText: 'Note',
-                                          filled: true,
-                                          border: OutlineInputBorder(
-                                            borderSide: BorderSide.none,
-                                          ),
-                                        ),
-                                      ),
-                                      trailing: IconButton(
-                                        onPressed: () {},
-                                        icon: Icon(
-                                          Icons.delete,
-                                          color: Colors.orange,
-                                        ),
-                                      ),
-                                    ),
-                                    // ListTile(
-                                    //   title: Row(
-                                    //     mainAxisAlignment: MainAxisAlignment.end,
-                                    //     children: [
-                                    //       MaterialButton(
-                                    //         child: Text("Cancel"),
-                                    //         onPressed: () {
-                                    //           Get.back();
-                                    //         },
-                                    //       ),
-                                    //       MaterialButton(
-                                    //         child: Text("Ok"),
-                                    //         onPressed: () {
-
-                                    //         },
-                                    //       ),
-                                    //     ],
-                                    //   ),
-                                    // ),
-                                    Divider(),
-                                    ListTile(
-                                      title: Text(
-                                        "Add Discount",
-                                        style: TextStyle(fontSize: 18),
-                                      ),
-                                    ),
-                                    CashierSelectDiscount(
-                                      onChanged: (value) {},
-                                    )
-                                  ],
-                                ),
-                              ),
+                              builder: (context) => CashierTotalanAddNote(itm: itm),
                             );
                           },
                           leading: InkWell(
                             child: Icon(
                               Icons.remove_circle,
-                              color: Colors.deepOrange,
+                              color: Colors.orange,
                               size: 36,
                             ),
                             onTap: () {
@@ -249,14 +126,22 @@ class CashierTotalanMain extends StatelessWidget {
                               ),
                               itm['note'].toString().isEmpty
                                   ? SizedBox.shrink()
-                                  : ListTile(
-                                      dense: true,
-                                      leading: Icon(
-                                        Icons.edit,
-                                        color: Colors.green,
+                                  : Ink(
+                                      color: Colors.grey.shade100,
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.edit,
+                                            size: 16,
+                                            color: Colors.green,
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(itm['note']),
+                                          ),
+                                        ],
+                                      )
                                       ),
-                                      title: Text(itm['note']),
-                                    ),
                               !itm['isManual']
                                   ? SizedBox.shrink()
                                   : Text(
@@ -271,7 +156,7 @@ class CashierTotalanMain extends StatelessWidget {
                           trailing: InkWell(
                             child: Icon(
                               Icons.add_circle,
-                              color: Colors.blue,
+                              color: Colors.green,
                               size: 36,
                             ),
                             onTap: () {
@@ -295,6 +180,7 @@ class CashierTotalanMain extends StatelessWidget {
                       DottedLine(dashColor: Colors.grey.shade300)
                     ],
                   ),
+                  CashierTotalanDetail()
               ],
             ),
     );

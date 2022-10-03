@@ -1,29 +1,36 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:get/get.dart';
+import 'package:propos/rot.dart';
 import 'package:propos/src/cashier/casier_val.dart';
 import 'package:propos/utils/router_api.dart';
-import 'package:propos/utils/vl.dart';
+import 'package:http/http.dart' as http;
 
 class CashierCategoryView extends StatelessWidget {
   const CashierCategoryView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Builder(
-      builder: (context) {
-        final listCat = [].obs;
-        RouterApi.categoryByCompanyId(query: "cusCompanyId=${Vl.companyId.val}").getData().then(
-          (data) {
-            if (data.statusCode == 200) {
-              listCat.assignAll(jsonDecode(data.body));
-            }
-          },
-        );
-        return Obx(
+    return Column(
+      children: [
+        SizedBox(
+          height: 4,
+          child: FutureBuilder<http.Response>(
+            future: Rot.cashierListCategoryGet(),
+            builder: (con, snap) {
+              if (snap.connectionState != ConnectionState.done) return LinearProgressIndicator();
+              if (snap.data!.statusCode == 200) {
+                (() async {
+                  await 0.1.delay();
+                  CashierVal.listCategory.assignAll(jsonDecode(snap.data!.body));
+                })();
+              }
+              return SizedBox.shrink();
+            },
+          ),
+        ),
+        Obx(
           () => SingleChildScrollView(
             controller: ScrollController(),
             scrollDirection: Axis.horizontal,
@@ -35,14 +42,13 @@ class CashierCategoryView extends StatelessWidget {
                   child: MaterialButton(
                     // color: Colors.cyan,
                     onPressed: () async {
-                      CashierVal.listProduct.value.val = CashierVal.tmpListProduct.value.val;
-                      CashierVal.listProduct.refresh();
-                      // final list = await RouterApi.productList().getData();
-                      // if (list.statusCode == 200) {
-                      //   final lsData = jsonDecode(list.body);
-                      //   _listProduct.value.val = lsData;
-                      //   _listProduct.refresh();
-                      // }
+                      // CashierVal.listProduct.value.val = CashierVal.tmpListProduct.value.val;
+                      // CashierVal.listProduct.refresh();
+                      final list = await Rot.cashierListProductGet();
+                      if (list.statusCode == 200) {
+                        CashierVal.listProduct.value.val = jsonDecode(list.body);
+                        CashierVal.listProduct.refresh();
+                      }
                     },
                     child: Text(
                       "All",
@@ -52,7 +58,7 @@ class CashierCategoryView extends StatelessWidget {
                     ),
                   ),
                 ),
-                for (final cat in listCat)
+                for (final cat in CashierVal.listCategory)
                   MaterialButton(
                     // color: Colors.cyan,
                     onPressed: () async {
@@ -72,8 +78,8 @@ class CashierCategoryView extends StatelessWidget {
               ],
             ),
           ),
-        );
-      },
+        )
+      ],
     );
   }
 }

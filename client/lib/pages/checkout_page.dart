@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:propos/components/struk.dart';
 import 'package:propos/pages.dart';
+import 'package:propos/src/cashier/casier_val.dart';
 import 'package:propos/src/checkout/checkout_calculator_pad.dart';
 import 'package:propos/src/checkout/checkout_change.dart';
 import 'package:propos/src/checkout/checkout_drawer_view.dart';
 import 'package:propos/src/checkout/checkout_main_view.dart';
 import 'package:propos/src/checkout/checkout_val.dart';
+import 'package:propos/src/printers/printer_val.dart';
 import 'package:propos/utils/vl.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
@@ -15,7 +17,7 @@ class CheckoutPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // CheckoutVal.onload();
+    CheckoutVal.onload();
     return ResponsiveBuilder(
       builder: (context, media) {
         return SafeArea(
@@ -38,18 +40,41 @@ class CheckoutPage extends StatelessWidget {
                       ),
                       Visibility(
                         visible: media.isMobile,
-                        child: IconButton(
-                            onPressed: () {
-                              Get.dialog(
-                                SimpleDialog(
-                                  children: [
-                                    Struk(media: media),
-                                  ],
+                        child: PrinterVal.device.value.val.isEmpty
+                            ? MaterialButton(
+                                color: Colors.orange,
+                                onPressed: () {},
+                                child: Text(
+                                  "Set Printer",
+                                  style: TextStyle(color: Colors.white),
                                 ),
-                              );
-                            },
-                            icon: const Icon(Icons.feed_outlined)),
+                              )
+                            : Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Icon(Icons.print),
+                                  ),
+                                  Text(PrinterVal.device.value.val['name'].toString()),
+                                  Text(" / "),
+                                  Text(PrinterVal.device.value.val['id'].toString())
+                                ],
+                              ),
                       )
+                      // Visibility(
+                      //   visible: media.isMobile,
+                      //   child: IconButton(
+                      //       onPressed: () {
+                      //         Get.dialog(
+                      //           SimpleDialog(
+                      //             children: [
+                      //               Struk(media: media),
+                      //             ],
+                      //           ),
+                      //         );
+                      //       },
+                      //       icon: const Icon(Icons.feed_outlined)),
+                      // )
                     ],
                   ),
                 ),
@@ -76,7 +101,8 @@ class CheckoutPage extends StatelessWidget {
                                   (previousValue, element) =>
                                       int.parse(previousValue.toString()) + int.parse(element['value']));
 
-                              CheckoutChange.change.value = (total - CheckoutVal.totalBill).toString();
+                              CheckoutVal.change.value.val = (total - CashierVal.totalPrice.value.val).toString();
+                              CheckoutVal.change.refresh();
                               CheckoutVal.listPaymentWidget.refresh();
 
                               CheckoutVal.totalPayment.value.val = total.toString();

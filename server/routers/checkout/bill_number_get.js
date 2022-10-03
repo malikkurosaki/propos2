@@ -3,12 +3,13 @@ const Prisma = require('@prisma/client').PrismaClient;
 const prisma = new Prisma();
 
 module.exports = expressAsyncHandler(async (req, res) => {
-    const { userid, companyid, outletid } = req.headers;
     const data = await prisma.bill.count({
         where: {
-            userId: userid,
-            companyId: companyid,
-            outletId: outletid
+            outletId: req.outletId,
+            createdAt: {
+                gt: new Date(new Date().setDate(new Date().getDate() - 1)),
+                lt: new Date()
+            }
         }
     });
 

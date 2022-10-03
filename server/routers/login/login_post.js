@@ -19,8 +19,8 @@ module.exports = expressAsyncHandler(async (req, res) => {
     })
 
     if (data && password == data.password && data.isActive) {
-        const token = CryptoJS.AES.encrypt(data.id, "123456").toString();
-        res.status(201).send(token);
+        // const token = CryptoJS.AES.encrypt(data.id, "123456").toString();
+        res.status(201).send(data.id);
     } else {
         res.status(403).send('ops! wrong email or password')
     }

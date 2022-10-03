@@ -5,21 +5,21 @@ module.exports = handler(async (req, res) => {
 
     const body = JSON.parse(req.body.data)
 
-    const cod = await prisma.defaultPrefByUser.findUnique({
-        where: {
-            token: req.token
-        },
-        select: {
-            userId: true,
-            companyId: true,
-            outletId: true,
-            deviceId: true
-        }
-    })
+    // const cod = await prisma.defaultPrefByUser.findUnique({
+    //     where: {
+    //         token: req.token
+    //     },
+    //     select: {
+    //         userId: true,
+    //         companyId: true,
+    //         outletId: true,
+    //         deviceId: true
+    //     }
+    // })
 
     // body['companyId'] = cod.companyId;
     // body['outletId'] = cod.outletId;
-    body['userId'] = cod.userId;
+    body['userId'] = req.userId;
 
     const data = await prisma.customPrice.create({
         data: body

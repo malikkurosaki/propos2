@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:propos/menus.dart';
 import 'package:propos/pages.dart';
 import 'package:propos/rot.dart';
+import 'package:propos/src/home/home_val.dart';
 import 'package:propos/utils/img_def.dart';
 import 'package:propos/utils/val.dart';
 import 'package:propos/utils/val_def.dart';
@@ -24,79 +25,124 @@ class HomeDrawer extends StatelessWidget {
         child: ListView(
           controller: ScrollController(),
           children: [
-            FutureBuilder<http.Response>(
-              future: Rot.homeDrawerHeaderGet(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState != ConnectionState.done) {
-                  return DrawerHeader(
-                    decoration: BoxDecoration(color: Colors.blue),
-                    child: Text(""),
-                  );
-                }
-                final data = jsonDecode(snapshot.data!.body);
-                return Container(
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
+            DrawerHeader(
+              decoration: BoxDecoration(color: Colors.blue),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  SizedBox(
+                    height: 4,
+                    child: FutureBuilder<http.Response>(
+                      future: Rot.homeDrawerHeaderGet(),
+                      builder: (con, snap) {
+                        if (snap.connectionState != ConnectionState.done) return LinearProgressIndicator();
+                        if (snap.data!.statusCode == 200) {
+                          () async {
+                            await 0.1.delay();
+                            final data = jsonDecode(snap.data!.body);
+                            HomeVal.headerDrawer.assignAll(data);
+                          }();
+                        }
+
+                        return SizedBox.shrink();
+                      },
+                    ),
                   ),
-                  child: Column(
-                    children: [
-                      ListTile(
-                        trailing: Icon(
-                          Icons.arrow_forward_ios_outlined,
-                          color: Colors.white,
-                        ),
-                        dense: true,
-                        leading: Icon(Icons.account_circle, color: Colors.white),
-                        title: Text(
-                          data['User']['name'].toString().toUpperCase(),
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                      ListTile(
-                        trailing: Icon(
-                          Icons.arrow_forward_ios_outlined,
-                          color: Colors.white,
-                        ),
-                        dense: true,
-                        leading: Icon(Icons.business, color: Colors.white),
-                        title: Text(
-                          data['Company']['name'].toString().toUpperCase(),
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                      ListTile(
-                        trailing: Icon(
-                          Icons.arrow_forward_ios_outlined,
-                          color: Colors.white,
-                        ),
-                        dense: true,
-                        leading: Icon(Icons.store_mall_directory, color: Colors.white),
-                        title: Text(
-                          data['Outlet']['name'].toString().toUpperCase(),
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                      ListTile(
-                        trailing: Icon(
-                          Icons.arrow_forward_ios_outlined,
-                          color: Colors.white,
-                        ),
-                        dense: true,
-                        leading: Icon(Icons.devices, color: Colors.white),
-                        title: Text(
-                          data['Device']['name'].toString().toUpperCase(),
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      )
-                    ],
-                  ),
-                );
-              },
+                  Obx(
+                    () => HomeVal.headerDrawer.isEmpty
+                        ? SizedBox.shrink()
+                        : Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Icon(
+                                  Icons.store,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Text(
+                                HomeVal.headerDrawer['Outlet']['name']!.toString(),
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ],
+                          ),
+                  )
+                ],
+              ),
             ),
+            // FutureBuilder<http.Response>(
+            //   future: Rot.homeDrawerHeaderGet(),
+            //   builder: (context, snapshot) {
+            //     if (snapshot.connectionState != ConnectionState.done) {
+            //       return DrawerHeader(
+            //         decoration: BoxDecoration(color: Colors.blue),
+            //         child: Text(""),
+            //       );
+            //     }
+            //     final data = jsonDecode(snapshot.data!.body);
+            //     return Container(
+            //       decoration: BoxDecoration(
+            //         color: Colors.blue,
+            //       ),
+            //       child: Column(
+            //         children: [
+            //           ListTile(
+            //             trailing: Icon(
+            //               Icons.arrow_forward_ios_outlined,
+            //               color: Colors.white,
+            //             ),
+            //             dense: true,
+            //             leading: Icon(Icons.account_circle, color: Colors.white),
+            //             title: Text(
+            //               data['User']['name'].toString().toUpperCase(),
+            //               overflow: TextOverflow.ellipsis,
+            //               style: TextStyle(color: Colors.white),
+            //             ),
+            //           ),
+            //           ListTile(
+            //             trailing: Icon(
+            //               Icons.arrow_forward_ios_outlined,
+            //               color: Colors.white,
+            //             ),
+            //             dense: true,
+            //             leading: Icon(Icons.business, color: Colors.white),
+            //             title: Text(
+            //               data['Company']['name'].toString().toUpperCase(),
+            //               overflow: TextOverflow.ellipsis,
+            //               style: TextStyle(color: Colors.white),
+            //             ),
+            //           ),
+            //           ListTile(
+            //             trailing: Icon(
+            //               Icons.arrow_forward_ios_outlined,
+            //               color: Colors.white,
+            //             ),
+            //             dense: true,
+            //             leading: Icon(Icons.store_mall_directory, color: Colors.white),
+            //             title: Text(
+            //               data['Outlet']['name'].toString().toUpperCase(),
+            //               overflow: TextOverflow.ellipsis,
+            //               style: TextStyle(color: Colors.white),
+            //             ),
+            //           ),
+            //           ListTile(
+            //             trailing: Icon(
+            //               Icons.arrow_forward_ios_outlined,
+            //               color: Colors.white,
+            //             ),
+            //             dense: true,
+            //             leading: Icon(Icons.devices, color: Colors.white),
+            //             title: Text(
+            //               data['Device']['name'].toString().toUpperCase(),
+            //               overflow: TextOverflow.ellipsis,
+            //               style: TextStyle(color: Colors.white),
+            //             ),
+            //           )
+            //         ],
+            //       ),
+            //     );
+            //   },
+            // ),
             // DrawerHeader(
             //   decoration: BoxDecoration(color: Colors.blue),
             //   padding: EdgeInsets.zero,

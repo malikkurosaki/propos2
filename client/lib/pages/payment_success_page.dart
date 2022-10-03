@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:propos/components/struk.dart';
 import 'package:propos/pages.dart';
+import 'package:propos/src/checkout/checkout_val.dart';
+import 'package:propos/src/printers/printer_print_now.dart';
 import 'package:propos/utils/val.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:get/get.dart';
@@ -11,24 +13,25 @@ class PaymentSuccessPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ResponsiveBuilder(builder: (context, media) {
-      return Material(
-        child: SafeArea(
-          child: Row(
-            children: [
-              Visibility(
-                visible: !media.isMobile,
-                child: SizedBox(
-                  width: 360,
-                  child: ListView(
-                    children: [Struk(media: media)],
+    return ResponsiveBuilder(
+      builder: (context, media) {
+        return Material(
+          color: Colors.white,
+          child: SafeArea(
+            child: Row(
+              children: [
+                Visibility(
+                  visible: !media.isMobile,
+                  child: SizedBox(
+                    width: 360,
+                    child: ListView(
+                      children: [Struk(media: media)],
+                    ),
                   ),
                 ),
-              ),
-              Center(
-                child: SizedBox(
-                  width: media.isMobile ? Get.width : 360,
-                  child: Card(
+                Center(
+                  child: SizedBox(
+                    width: media.isMobile ? Get.width : 360,
                     child: ListView(
                       children: [
                         Center(
@@ -47,14 +50,10 @@ class PaymentSuccessPage extends StatelessWidget {
                                   children: [
                                     Text("Change"),
                                     Text(
-                                      Val.change.value.val.toString().isEmpty
+                                      CheckoutVal.change.value.val.isEmpty
                                           ? "0"
                                           : NumberFormat.currency(locale: 'id_ID', symbol: 'Rp', decimalDigits: 0)
-                                              .format(
-                                              int.parse(
-                                                Val.change.value.val.toString(),
-                                              ),
-                                            ),
+                                              .format(int.parse(CheckoutVal.change.value.val)),
                                       style: TextStyle(
                                         fontSize: 32,
                                         fontWeight: FontWeight.bold,
@@ -69,25 +68,26 @@ class PaymentSuccessPage extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.all(16),
                           child: Wrap(
-                            alignment: WrapAlignment.spaceBetween,
+                            alignment: WrapAlignment.center,
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: InkWell(
-                                  onTap: () {
-                                    Get.dialog(Dialog(
-                                      child: Struk(media: media, isPrintPreview: true),
-                                    ));
-                                  },
-                                  child: Column(
-                                    children: [
-                                      Icon(
-                                        Icons.print_outlined,
-                                        size: 42,
-                                        color: Colors.blue,
-                                      ),
-                                      Text("Print"),
-                                    ],
+                              Visibility(
+                                visible: media.isMobile,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: InkWell(
+                                    onTap: () {
+                                      PrinterPrintNow.load();
+                                    },
+                                    child: Column(
+                                      children: [
+                                        Icon(
+                                          Icons.print_outlined,
+                                          size: 42,
+                                          color: Colors.blue,
+                                        ),
+                                        Text("Print"),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -129,7 +129,7 @@ class PaymentSuccessPage extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: MaterialButton(
-                            color: Colors.cyan,
+                            color: Colors.blue,
                             child: Padding(
                               padding: EdgeInsets.all(10),
                               child: Text(
@@ -147,11 +147,11 @@ class PaymentSuccessPage extends StatelessWidget {
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 }

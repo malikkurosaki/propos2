@@ -1,64 +1,54 @@
+import 'dart:convert';
+
 import 'package:esc_pos_bluetooth/esc_pos_bluetooth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
+import 'package:propos/src/printers/printer_val.dart';
 import 'package:propos/utils/val.dart';
 import 'package:propos/utils/vl.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
 class SelectPrinterAndroid extends StatelessWidget {
-  SelectPrinterAndroid({Key? key}) : super(key: key);
-  final _printerManager = PrinterBluetoothManager();
-  final _listPrinter = [].obs;
-  final _selectedPrinter = {}.obs;
+  const SelectPrinterAndroid({Key? key}) : super(key: key);
 
-  _onLoad() async {
-    await 1.delay();
-
-    if (Vl.selectedPrinter.val.isNotEmpty) {
-      _selectedPrinter.assignAll(Vl.selectedPrinter.val);
-    }
-
-    if(Vl.listPrinter.val.isNotEmpty){
-      _listPrinter.assignAll(Vl.listPrinter.val);
-    }
-
+  _scanPrinter() async {
     SmartDialog.showLoading();
-    _printerManager.scanResults.listen((event) async {
-      final printers = event
+    FlutterBlue flutterBlue = FlutterBlue.instance;
+
+    // Start scanning
+    flutterBlue.startScan(timeout: Duration(seconds: 4));
+
+// Listen to scan results
+    var subscription = flutterBlue.scanResults.listen((results) {
+      final printers = results
           .map((e) => {
-                'name': e.name,
-                'address': e.address,
-                'type': e.type,
+                'name': e.device.name,
+                'address': e.device.id,
+                'type': e.device.type,
               })
           .toList();
-      _listPrinter.assignAll(printers);
-      Vl.listPrinter.val = printers;
-      // Val.listPrinter.value.val = event
-      //     .map((e) => {
-      //           'name': e.name,
-      //           'address': e.address,
-      //           'type': e.type,
-      //         })
-      //     .toList();
-      // Val.listPrinter.refresh();
-
-      // _printers.value.val = event;
-      // _printers.refresh();
-    }).onError((error) {
-      debugPrint(error.toString());
+      PrinterVal.listPrinter.value.val = printers;
+      PrinterVal.listPrinter.refresh();
+      // _listPrinter.assignAll(printers);
     });
 
-    _printerManager.startScan(const Duration(seconds: 4));
-
     await 4.delay();
-    debugPrint('stop scan');
+    flutterBlue.stopScan();
     SmartDialog.dismiss();
+  }
+
+  _onLoad2() async {
+    if (PrinterVal.device.value.val.isEmpty) {
+      _scanPrinter();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    _onLoad();
+    // _onLoad();
+    _onLoad2();
     return Material(
       child: SafeArea(
         child: ResponsiveBuilder(
@@ -66,7 +56,7 @@ class SelectPrinterAndroid extends StatelessWidget {
             return Obx(
               () => Column(
                 children: [
-                  _selectedPrinter.isEmpty
+                  PrinterVal.selectedPrinter.value.val.isEmpty
                       ? Text(
                           "Please Select Printer",
                           style: TextStyle(
@@ -93,7 +83,7 @@ class SelectPrinterAndroid extends StatelessWidget {
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Text(
-                                        _selectedPrinter['name'].toString(),
+                                        PrinterVal.selectedPrinter.value.val['name'].toString(),
                                         style: TextStyle(fontSize: 16),
                                       ),
                                     ),
@@ -111,27 +101,32 @@ class SelectPrinterAndroid extends StatelessWidget {
                         Text("Available Printer"),
                         IconButton(
                             onPressed: () {
-                              _onLoad();
+                              _scanPrinter();
                             },
                             icon: Icon(Icons.refresh)),
                       ],
                     ),
                   ),
-                  for (final itm in _listPrinter)
+                  for (final itm in PrinterVal.listPrinter.value.val)
                     Column(
                       children: [
                         ListTile(
-                          leading: _selectedPrinter.isNotEmpty && _selectedPrinter['address'] == itm['address']
+                          leading: PrinterVal.selectedPrinter.value.val.isNotEmpty &&
+                                  PrinterVal.selectedPrinter.value.val['address'] == itm['address']
                               ? Icon(
                                   Icons.check_circle,
                                   color: Colors.green,
                                 )
                               : Icon(Icons.check_circle),
                           title: Text(itm['name']),
-                          // subtitle: Text(itm.address!),
+                          subtitle: Text(itm['address'].toString()),
                           onTap: () async {
-                            _selectedPrinter.assignAll(itm);
-                            Vl.selectedPrinter.val = itm;
+                            PrinterVal.selectedPrinter.value.val.assignAll(itm);
+                            PrinterVal.device.value.val = itm;
+
+
+                            PrinterVal.device.refresh();
+                            PrinterVal.selectedPrinter.refresh();
                             // Val.printerDevice.value.val.assignAll(itm);
                             // Val.printerDevice.refresh();
                           },

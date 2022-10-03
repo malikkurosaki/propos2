@@ -43,7 +43,7 @@ class CashierSelectCutomer extends StatelessWidget {
                 items: [...CashierVal.listCustomer],
                 itemAsString: (value) => value['name'],
                 onChanged: (value) {
-                  CashierVal.selectedCustomer.value.val.assignAll(value!);
+                  CashierVal.selectedCustomer.value.val = value!;
                   CashierVal.selectedCustomer.refresh();
                 },
               ),

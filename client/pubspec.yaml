@@ -67,6 +67,8 @@ dependencies:
   json_table: ^2.0.1
   recase: ^4.0.0
   url_strategy: ^0.2.0
+  widgets_to_image: ^0.0.2
+  fast_image_resizer: ^0.0.2
   # blue_print_pos: ^0.0.14
 
 

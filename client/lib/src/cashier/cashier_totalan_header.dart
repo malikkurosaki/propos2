@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:propos/components/select_customer.dart';
+import 'package:get/get.dart';
 import 'package:propos/src/cashier/cashier_additional.dart';
 import 'package:propos/src/cashier/cashier_manual_order.dart';
 import 'package:propos/src/cashier/cashier_menu_item.dart';
 import 'package:propos/src/cashier/casier_val.dart';
 import 'package:propos/utils/val.dart';
 import 'package:responsive_builder/responsive_builder.dart';
-import 'package:get/get.dart';
 
 class CashierTotalanHeader extends StatelessWidget {
   const CashierTotalanHeader({Key? key}) : super(key: key);
@@ -42,24 +41,37 @@ class CashierTotalanHeader extends StatelessWidget {
               children: [
                 CashierManualOrder(),
                 CashierAdditional(),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: IconButton(
-                    tooltip: "menghapus multiple",
-                    onPressed: CashierVal.lsTampungan.isEmpty
-                        ? null
-                        : () {
-                            Get.dialog(AlertDialog(
-                              title: Text("Clean Order"),
-                              content: Text("Are you sure to delete order?"),
-                              actions: [
-                                MaterialButton(
-                                  child: Text("Cancel"),
-                                  onPressed: () {
-                                    Get.back();
-                                  },
-                                ),
-                                MaterialButton(
+                Visibility(
+                  visible: CashierVal.lsTampungan.isNotEmpty,
+                  child: Padding(
+                    padding: const EdgeInsets.all(2),
+                    child: MaterialButton(
+                      elevation: 0,
+                      color: Colors.orange,
+                      child: SizedBox(
+                        width: 100,
+                        child: Center(
+                          child: Text(
+                            "Delete",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                      onPressed: () {
+                        Get.dialog(
+                          AlertDialog(
+                            title: Text("Clean Order"),
+                            content: Text("Are you sure to delete order?"),
+                            actions: [
+                              MaterialButton(
+                                child: Text("Cancel"),
+                                onPressed: () {
+                                  Get.back();
+                                },
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(2),
+                                child: MaterialButton(
                                   child: Text("Delete"),
                                   onPressed: () {
                                     final lsTmp = List.from(Val.listorder.value.val);
@@ -70,57 +82,97 @@ class CashierTotalanHeader extends StatelessWidget {
                                     Get.back();
                                   },
                                 ),
-                              ],
-                            ));
-                          },
-                    icon: Icon(
-                      Icons.delete_sweep_sharp,
-                      color: CashierVal.lsTampungan.isEmpty ? Colors.grey : Colors.pink,
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                     ),
                   ),
-                )
+                ),
+                // Visibility(
+                //   visible: media.isMobile,
+                //   child: Padding(
+                //     padding: const EdgeInsets.all(2),
+                //     child: MaterialButton(
+                //       color: Colors.blue,
+                //       onPressed: () {
+                //         Get.dialog(
+                //           Dialog(
+                //             insetPadding: EdgeInsets.all(8),
+                //             child: Material(
+                //               child: Column(
+                //                 crossAxisAlignment: CrossAxisAlignment.start,
+                //                 children: [
+                //                   Row(
+                //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //                     children: [
+                //                       Padding(
+                //                         padding: const EdgeInsets.all(8.0),
+                //                         child: BackButton(),
+                //                       ),
+                //                       Padding(
+                //                         padding: const EdgeInsets.all(8.0),
+                //                         child: Text("Select Item"),
+                //                       )
+                //                     ],
+                //                   ),
+                //                   // Flexible(child: listMenuItem(media)),
+                //                   Flexible(child: CashierMenuItem()),
+                //                 ],
+                //               ),
+                //             ),
+                //           ),
+                //         );
+                //       },
+                //       child: SizedBox(
+                //         width: 100,
+                //         child: Center(
+                //           child: Text(
+                //             "Add",
+                //             style: TextStyle(
+                //               color: Colors.white,
+                //             ),
+                //           ),
+                //         ),
+                //       ),
+                //     ),
+                //   ),
+                // )
               ],
             ),
-            trailing: Visibility(
-              visible: media.isMobile,
-              child: IconButton(
-                tooltip: "tambah item order",
-                onPressed: () {
-                  Get.dialog(
-                    Dialog(
-                      insetPadding: EdgeInsets.all(8),
-                      child: Material(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: BackButton(),
+            trailing: !media.isMobile
+                ? null
+                : InkWell(
+                    onTap: () {
+                      showBottomSheet(context: context, builder: (context) => Material(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: BackButton(),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text("Select Item"),
+                                        )
+                                      ],
+                                    ),
+                                    // Flexible(child: listMenuItem(media)),
+                                    Flexible(child: CashierMenuItem()),
+                                  ],
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text("Select Item"),
-                                )
-                              ],
-                            ),
-                            // Flexible(child: listMenuItem(media)),
-                            Flexible(child: CashierMenuItem()),
-                          ],
-                        ),
-                      ),
+                              ));
+                    },
+                    child: Icon(
+                      Icons.add_box_rounded,
+                      color: Colors.blue,
                     ),
-                  );
-                },
-                icon: Icon(
-                  Icons.add_circle_outlined,
-                  size: 36,
-                  color: Colors.green,
-                ),
-              ),
-            ),
+                  ),
           ),
         ),
       ),

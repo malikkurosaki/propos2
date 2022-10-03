@@ -179,13 +179,28 @@ class ProductCreateSubmit extends StatelessWidget {
 
                     if (lsOutlet.isNotEmpty && isStock) {
                       for (final itm in lsOutlet) {
-                        lsStock.add({
-                          "companyId": body['companyId'],
-                          "minStock": body['minStock'],
-                          "outletId": itm['outletId'],
-                          "stock": body['stock'],
-                          "userId": mapDataId['userId'],
-                        });
+                        lsStock.add(
+                          {
+                            "companyId": body['companyId'],
+                            "minStock": body['minStock'],
+                            "outletId": itm['outletId'],
+                            "stock": body['stock'],
+                            "userId": mapDataId['userId'],
+                            "isActive": true
+                          },
+                        );
+                      }
+                    } else {
+                      for (final itm in lsOutlet) {
+                        lsStock.add(
+                          {
+                            "companyId": body['companyId'],
+                            "minStock": 0,
+                            "outletId": itm['outletId'],
+                            "stock": 0,
+                            "userId": mapDataId['userId'],
+                          },
+                        );
                       }
                     }
 
@@ -205,11 +220,9 @@ class ProductCreateSubmit extends StatelessWidget {
                       "productWeight": body['berat'],
                       "userId": mapDataId['userId'],
                       "sku": body['sku'],
-                      "ProductStock": lsStock.isEmpty
-                          ? null
-                          : {
-                              "createMany": {"data": lsStock}
-                            },
+                      "ProductStock": {
+                        "createMany": {"data": lsStock}
+                      },
                       "ProductCustomPrice": body['listCustomPrice'] == null
                           ? null
                           : {
@@ -226,9 +239,16 @@ class ProductCreateSubmit extends StatelessWidget {
 
                     Rot.productCreatePost(body: {"data": jsonEncode(bodyV2)}).then(
                       (res) {
-                        debugPrint(res.body);
+                        if (res.statusCode == 201) {
+                          SmartDialog.showToast("success");
+                          ProductVal.isReloadProduct.toggle();
+                        } else {
+                          SmartDialog.showToast(res.body);
+                        }
                       },
                     );
+
+                    ProductVal.isLoadingCreateButton.value = false;
                   },
                   child: const Padding(
                     padding: EdgeInsets.all(10.0),

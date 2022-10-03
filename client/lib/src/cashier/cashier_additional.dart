@@ -12,19 +12,22 @@ import 'package:propos/src/cashier/casier_val.dart';
 import 'package:propos/utils/router_api.dart';
 
 class CashierAdditional extends StatelessWidget {
-  CashierAdditional({Key? key}) : super(key: key);
-  // final _conPax = TextEditingController(text: "1");
-  // final _pax = "0".obs;
+  const CashierAdditional({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
+      padding: const EdgeInsets.all(2),
       child: MaterialButton(
         color: Colors.green,
-        child: Text(
-          "Additional",
-          style: TextStyle(color: Colors.white),
+        child: SizedBox(
+          width: 100,
+          child: Center(
+            child: Text(
+              "Additional",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
         ),
         // icon: Icon(Icons.keyboard_arrow_up_rounded),
         onPressed: () {
@@ -180,10 +183,12 @@ class CashierAdditional extends StatelessWidget {
                     () => ListTile(
                       leading: IconButton(
                         onPressed: () {
-                          CashierVal.pax.value -= 1;
-                          if (CashierVal.pax.value < 1) {
-                            CashierVal.pax.value = 1;
+                          CashierVal.pax.value.val -= 1;
+                          if (CashierVal.pax.value.val < 1) {
+                            CashierVal.pax.value.val = 1;
                           }
+
+                          CashierVal.pax.refresh();
                         },
                         icon: Icon(
                           Icons.remove_circle,
@@ -192,7 +197,8 @@ class CashierAdditional extends StatelessWidget {
                       ),
                       trailing: IconButton(
                         onPressed: () {
-                          CashierVal.pax.value += 1;
+                          CashierVal.pax.value.val += 1;
+                          CashierVal.pax.refresh();
                         },
                         icon: Icon(
                           Icons.add_circle,
@@ -213,12 +219,13 @@ class CashierAdditional extends StatelessWidget {
                                 TextFormField(
                                   onChanged: (value) {
                                     if (int.tryParse(value) == null) {
-                                      CashierVal.pax.value = 1;
+                                      CashierVal.pax.value.val = 1;
                                     }
 
-                                    CashierVal.pax.value = int.parse(value);
+                                    CashierVal.pax.value.val = int.parse(value);
+                                    CashierVal.pax.refresh();
                                   },
-                                  controller: TextEditingController(text: CashierVal.pax.value.toString()),
+                                  controller: TextEditingController(text: CashierVal.pax.value.val.toString()),
                                   decoration: InputDecoration(
                                     filled: true,
                                     isDense: true,

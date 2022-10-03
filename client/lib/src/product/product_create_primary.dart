@@ -14,7 +14,7 @@ class ProductCreatePrimary extends StatelessWidget {
       controller: ScrollController(),
       children: [
         Form(
-          key: ProductVal.keyForm,
+          // key: ProductVal.keyForm,
           child: Column(
             children: [
               Padding(

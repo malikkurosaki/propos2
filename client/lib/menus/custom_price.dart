@@ -1,17 +1,8 @@
-import 'dart:convert';
-import 'dart:js';
-
-import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
 import 'package:flutter/material.dart';
-import 'package:propos/components/input.dart';
-import 'package:propos/rot.dart';
+import 'package:get/get.dart';
 import 'package:propos/src/custom_price/custom_pfrice_display.dart';
 import 'package:propos/src/custom_price/custom_price_create.dart';
-import 'package:propos/utils/notif.dart';
-import 'package:propos/utils/router_api.dart';
 import 'package:responsive_builder/responsive_builder.dart';
-import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 
 class CustomPrice extends StatelessWidget {
   CustomPrice({Key? key}) : super(key: key);

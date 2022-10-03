@@ -5,6 +5,7 @@ import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
 import 'package:propos/pages.dart';
 import 'package:propos/rot.dart';
+import 'package:propos/src/login/login_cod_select.dart';
 import 'package:propos/src/login/login_dialog_select.dart';
 import 'package:propos/src/login/login_select_company.dart';
 import 'package:propos/src/login/login_val.dart';
@@ -20,10 +21,10 @@ class LoginPage extends StatelessWidget {
   final _bisaClick = true.obs;
 
   _load() async {
-    await 1.delay();
-    if (Vl.userId.val.isNotEmpty) {
-      Get.offAllNamed(Pages.homePage().route);
-    }
+    // await 1.delay();
+    // if (Vl.userId.val.isNotEmpty) {
+    //   Get.offAllNamed(Pages.homePage().route);
+    // }
 
     // final gt = await http.get(Uri.parse("https://jsonplaceholder.typicode.com/albums/1"));
     // debugPrint(gt.body);
@@ -65,7 +66,7 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
-                  width: 430,
+                  width: media.isMobile ? Get.width : 430,
                   height: Get.height,
                   child: _loginOwner(media),
                 )
@@ -176,143 +177,30 @@ class LoginPage extends StatelessWidget {
                                   }
 
                                   final res = await Rot.loginPost(body: {"data": jsonEncode(body)});
+                                  _bisaClick.value = true;
                                   if (res.statusCode == 201) {
-                                    Vl.token.val = res.body;
-                                    // LoginVal.listCompany.assignAll(jsonDecode(res.body));
+                                    Vl.userId.val = res.body;
 
-                                    Rot.lgnListCompanyByUserIdGet().then(
-                                      (res) {
-                                        if (res.statusCode == 200) {
-                                          LoginVal.listCompany.assignAll(jsonDecode(res.body));
+                                    if (Vl.deviceId.val.isEmpty) {
+                                      debugPrint('deviceid gk ada');
 
-                                          showBottomSheet(
-                                            context: context,
-                                            builder: (context) => Material(
-                                              color: Colors.grey.shade100,
-                                              child: Column(
-                                                children: [
-                                                  ListTile(
-                                                    title: Text(
-                                                      "Please Completer This Action First",
-                                                      style: TextStyle(fontSize: 24),
-                                                    ),
-                                                  ),
-                                                  ListTile(
-                                                    title: DropdownSearch<Map>(
-                                                      dropdownDecoratorProps: DropDownDecoratorProps(
-                                                        dropdownSearchDecoration: InputDecoration(
-                                                            filled: true,
-                                                            border: InputBorder.none,
-                                                            hintText: "Select Company"),
-                                                      ),
-                                                      items: [...LoginVal.listCompany],
-                                                      itemAsString: (value) => value['name'].toString(),
-                                                      onChanged: (value) async {
-                                                        LoginVal.selectedCompany.assignAll(value!);
+                                      Rot.loginListCompanyByUserIdGet(query: "userId=${Vl.userId.val}").then(
+                                        (res) {
+                                          if (res.statusCode == 200) {
+                                            LoginVal.listCompany.assignAll(jsonDecode(res.body));
 
-                                                        final listOutlet = await Rot.lgnListOutletByCompanyGet(
-                                                          query: "companyId=${value['id']}",
-                                                        );
-
-                                                        if (listOutlet.statusCode == 200) {
-                                                          LoginVal.listoutlet.assignAll(jsonDecode(listOutlet.body));
-                                                        }
-                                                      },
-                                                    ),
-                                                  ),
-                                                  Obx(
-                                                    () => ListTile(
-                                                      title: LoginVal.listoutlet.isEmpty
-                                                          ? Text("Select Outlet")
-                                                          : DropdownSearch<Map>(
-                                                              dropdownDecoratorProps: DropDownDecoratorProps(
-                                                                dropdownSearchDecoration: InputDecoration(
-                                                                    filled: true,
-                                                                    border: InputBorder.none,
-                                                                    hintText: "Select outlet"),
-                                                              ),
-                                                              items: [...LoginVal.listoutlet],
-                                                              itemAsString: (value) => value['name'].toString(),
-                                                              onChanged: (value) {
-                                                                LoginVal.selectedOutlet.assignAll(value!);
-                                                                Rot.lgnListDeviceByOutletGet(
-                                                                        query: "outletId=${value['id']}")
-                                                                    .then(
-                                                                  (value) {
-                                                                    // debugPrint(value.body.toString());
-                                                                    if (value.statusCode == 200) {
-                                                                      LoginVal.listDevice
-                                                                          .assignAll(jsonDecode(value.body));
-                                                                    }
-                                                                  },
-                                                                );
-                                                              },
-                                                            ),
-                                                    ),
-                                                  ),
-                                                  Obx(
-                                                    () => ListTile(
-                                                      title: LoginVal.listDevice.isEmpty
-                                                          ? Text("Select Device")
-                                                          : DropdownSearch<Map>(
-                                                              dropdownDecoratorProps: DropDownDecoratorProps(
-                                                                dropdownSearchDecoration: InputDecoration(
-                                                                    filled: true,
-                                                                    border: InputBorder.none,
-                                                                    hintText: "Select outlet"),
-                                                              ),
-                                                              items: [...LoginVal.listDevice],
-                                                              itemAsString: (value) => value['name'].toString(),
-                                                              onChanged: (value) {
-                                                                LoginVal.selectedDevice.assignAll(value!);
-                                                              },
-                                                            ),
-                                                    ),
-                                                  ),
-                                                  Obx(
-                                                    () => LoginVal.selectedCompany.isEmpty ||
-                                                            LoginVal.selectedOutlet.isEmpty ||
-                                                            LoginVal.selectedDevice.isEmpty
-                                                        ? SizedBox.shrink()
-                                                        : ListTile(
-                                                            title: MaterialButton(
-                                                              color: Colors.blue,
-                                                              onPressed: () async {
-                                                                final modelData = {
-                                                                  "token": Vl.token.val,
-                                                                  "deviceId": LoginVal.selectedDevice['id'],
-                                                                  "userId": null,
-                                                                  "companyId": LoginVal.selectedCompany['id'],
-                                                                  "outletId": LoginVal.selectedOutlet['id']
-                                                                };
-
-                                                                final data = await Rot.lgnSetDefaultPost(
-                                                                  body: {"data": jsonEncode(modelData)},
-                                                                );
-
-                                                                if (data.statusCode == 200) {
-                                                                  Get.offNamed(Pages.homePage().route);
-                                                                } else {
-                                                                  SmartDialog.showToast(data.body.toString());
-                                                                }
-                                                              },
-                                                              child: Padding(
-                                                                padding: const EdgeInsets.all(10.0),
-                                                                child: Text(
-                                                                  "Simpan",
-                                                                  style: TextStyle(color: Colors.white),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                          );
-                                        }
-                                      },
-                                    );
+                                            showBottomSheet(
+                                              context: context,
+                                              builder: (context) => LoginCodSelect(),
+                                            );
+                                          }else{
+                                            SmartDialog.showToast(res.body);
+                                          }
+                                        },
+                                      );
+                                    } else {
+                                      debugPrint("ternyata ada woi");
+                                    }
                                   } else {
                                     SmartDialog.showToast(res.body);
                                   }
@@ -406,147 +294,147 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  Widget _popupSelect(List<Map> listCompany, String userId, String userName) {
-    return Column(
-      children: [
-        Flexible(
-          child: ListView(
-            children: [
-              Row(
-                children: [BackButton()],
-              ),
-              ImgDef.wellcome(),
-              Column(
-                children: [
-                  ListTile(
-                    leading: Icon(Icons.business),
-                    subtitle: Text("company"),
-                    title: DropdownSearch<Map>(
-                      onChanged: (value) async {
-                        LoginVal.selectedCompany.assignAll(value!);
-                        final res = await Rot.lgnListOutletByCompanyGet(query: "companyId=${value['id']}");
-                        debugPrint(res.body);
+  // Widget _popupSelect(List<Map> listCompany, String userId, String userName) {
+  //   return Column(
+  //     children: [
+  //       Flexible(
+  //         child: ListView(
+  //           children: [
+  //             Row(
+  //               children: [BackButton()],
+  //             ),
+  //             ImgDef.wellcome(),
+  //             Column(
+  //               children: [
+  //                 ListTile(
+  //                   leading: Icon(Icons.business),
+  //                   subtitle: Text("company"),
+  //                   title: DropdownSearch<Map>(
+  //                     onChanged: (value) async {
+  //                       LoginVal.selectedCompany.assignAll(value!);
+  //                       final res = await Rot.lgnListOutletByCompanyGet(query: "companyId=${value['id']}");
+  //                       debugPrint(res.body);
 
-                        if (res.statusCode == 200) {
-                          LoginVal.listoutlet.assignAll(jsonDecode(res.body));
-                        }
-                      },
-                      items: listCompany,
-                      itemAsString: (value) => value['name'],
-                      dropdownBuilder: (context, value) => Text(value!['name'].toString()),
-                      selectedItem: LoginVal.selectedCompany,
-                      dropdownDecoratorProps: DropDownDecoratorProps(
-                        dropdownSearchDecoration: InputDecoration(
-                          filled: true,
-                          isDense: true,
-                          border: InputBorder.none,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Obx(
-                    () => ListTile(
-                      leading: Icon(Icons.store),
-                      subtitle: Text("outlet"),
-                      title: LoginVal.listoutlet.isEmpty
-                          ? Text(
-                              "Select Outlet",
-                              style: TextStyle(color: Colors.grey),
-                            )
-                          : DropdownSearch<Map>(
-                              items: [...LoginVal.listoutlet],
-                              onChanged: (value) async {
-                                LoginVal.selectedOutlet.assignAll(value!);
-                                final res = await Rot.lgnListDeviceByOutletGet(query: "outletId=${value['id']}");
-                                if (res.statusCode == 200) {
-                                  LoginVal.listDevice.assignAll(jsonDecode(res.body));
-                                }
-                              },
-                              dropdownDecoratorProps: DropDownDecoratorProps(
-                                dropdownSearchDecoration: InputDecoration(
-                                  filled: true,
-                                  isDense: true,
-                                  hintText: "Select Outlet",
-                                  border: InputBorder.none,
-                                ),
-                              ),
-                              itemAsString: (value) => value['name'],
-                            ),
-                    ),
-                  ),
-                  Obx(
-                    () => ListTile(
-                      leading: Icon(Icons.tablet),
-                      subtitle: Text("device"),
-                      title: LoginVal.listDevice.isEmpty
-                          ? Text(
-                              "Select Device",
-                              style: TextStyle(color: Colors.grey),
-                            )
-                          : DropdownSearch<Map>(
-                              items: [...LoginVal.listDevice],
-                              onChanged: (value) {
-                                LoginVal.selectedDevice.assignAll(value!);
-                              },
-                              dropdownDecoratorProps: DropDownDecoratorProps(
-                                dropdownSearchDecoration: InputDecoration(
-                                  filled: true,
-                                  isDense: true,
-                                  hintText: "Select Outlet",
-                                  border: InputBorder.none,
-                                ),
-                              ),
-                              itemAsString: (value) => value['name'],
-                            ),
-                    ),
-                  )
-                ],
-              )
-            ],
-          ),
-        ),
-        Obx(
-          () => !(() {
-            final com = LoginVal.selectedCompany.isNotEmpty;
-            final out = LoginVal.selectedOutlet.isNotEmpty;
-            final dev = LoginVal.selectedDevice.isNotEmpty;
+  //                       if (res.statusCode == 200) {
+  //                         LoginVal.listoutlet.assignAll(jsonDecode(res.body));
+  //                       }
+  //                     },
+  //                     items: listCompany,
+  //                     itemAsString: (value) => value['name'],
+  //                     dropdownBuilder: (context, value) => Text(value!['name'].toString()),
+  //                     selectedItem: LoginVal.selectedCompany,
+  //                     dropdownDecoratorProps: DropDownDecoratorProps(
+  //                       dropdownSearchDecoration: InputDecoration(
+  //                         filled: true,
+  //                         isDense: true,
+  //                         border: InputBorder.none,
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ),
+  //                 Obx(
+  //                   () => ListTile(
+  //                     leading: Icon(Icons.store),
+  //                     subtitle: Text("outlet"),
+  //                     title: LoginVal.listoutlet.isEmpty
+  //                         ? Text(
+  //                             "Select Outlet",
+  //                             style: TextStyle(color: Colors.grey),
+  //                           )
+  //                         : DropdownSearch<Map>(
+  //                             items: [...LoginVal.listoutlet],
+  //                             onChanged: (value) async {
+  //                               LoginVal.selectedOutlet.assignAll(value!);
+  //                               final res = await Rot.lgnListDeviceByOutletGet(query: "outletId=${value['id']}");
+  //                               if (res.statusCode == 200) {
+  //                                 LoginVal.listDevice.assignAll(jsonDecode(res.body));
+  //                               }
+  //                             },
+  //                             dropdownDecoratorProps: DropDownDecoratorProps(
+  //                               dropdownSearchDecoration: InputDecoration(
+  //                                 filled: true,
+  //                                 isDense: true,
+  //                                 hintText: "Select Outlet",
+  //                                 border: InputBorder.none,
+  //                               ),
+  //                             ),
+  //                             itemAsString: (value) => value['name'],
+  //                           ),
+  //                   ),
+  //                 ),
+  //                 Obx(
+  //                   () => ListTile(
+  //                     leading: Icon(Icons.tablet),
+  //                     subtitle: Text("device"),
+  //                     title: LoginVal.listDevice.isEmpty
+  //                         ? Text(
+  //                             "Select Device",
+  //                             style: TextStyle(color: Colors.grey),
+  //                           )
+  //                         : DropdownSearch<Map>(
+  //                             items: [...LoginVal.listDevice],
+  //                             onChanged: (value) {
+  //                               LoginVal.selectedDevice.assignAll(value!);
+  //                             },
+  //                             dropdownDecoratorProps: DropDownDecoratorProps(
+  //                               dropdownSearchDecoration: InputDecoration(
+  //                                 filled: true,
+  //                                 isDense: true,
+  //                                 hintText: "Select Outlet",
+  //                                 border: InputBorder.none,
+  //                               ),
+  //                             ),
+  //                             itemAsString: (value) => value['name'],
+  //                           ),
+  //                   ),
+  //                 )
+  //               ],
+  //             )
+  //           ],
+  //         ),
+  //       ),
+  //       Obx(
+  //         () => !(() {
+  //           final com = LoginVal.selectedCompany.isNotEmpty;
+  //           final out = LoginVal.selectedOutlet.isNotEmpty;
+  //           final dev = LoginVal.selectedDevice.isNotEmpty;
 
-            return com && out && dev;
-          })()
-              ? Text("...")
-              : Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: MaterialButton(
-                    color: Colors.blue,
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Center(
-                        child: Text(
-                          "Next",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ),
-                    onPressed: () {
-                      Vl.userId.val = userId;
-                      Vl.companyId.val = LoginVal.selectedCompany['id'];
-                      Vl.outletId.val = LoginVal.selectedOutlet['id'];
-                      Vl.deviceId.val = LoginVal.selectedDevice['id'];
+  //           return com && out && dev;
+  //         })()
+  //             ? Text("...")
+  //             : Padding(
+  //                 padding: const EdgeInsets.all(8.0),
+  //                 child: MaterialButton(
+  //                   color: Colors.blue,
+  //                   child: Padding(
+  //                     padding: const EdgeInsets.all(12),
+  //                     child: Center(
+  //                       child: Text(
+  //                         "Next",
+  //                         style: TextStyle(color: Colors.white),
+  //                       ),
+  //                     ),
+  //                   ),
+  //                   onPressed: () {
+  //                     Vl.userId.val = userId;
+  //                     Vl.companyId.val = LoginVal.selectedCompany['id'];
+  //                     Vl.outletId.val = LoginVal.selectedOutlet['id'];
+  //                     // Vl.deviceId.val = LoginVal.selectedDevice['id'];
 
-                      Vl.defUser.val = {"id": userId, "name": userName};
+  //                     Vl.defUser.val = {"id": userId, "name": userName};
 
-                      Vl.defCompany.val = LoginVal.selectedCompany;
-                      Vl.defOutlet.val = LoginVal.selectedOutlet;
-                      Vl.defDevice.val = LoginVal.selectedDevice;
+  //                     Vl.defCompany.val = LoginVal.selectedCompany;
+  //                     Vl.defOutlet.val = LoginVal.selectedOutlet;
+  //                     Vl.defDevice.val = LoginVal.selectedDevice;
 
-                      Get.toNamed(Pages.rootPage().route);
-                    },
-                  ),
-                ),
-        )
-      ],
-    );
-  }
+  //                     Get.toNamed(Pages.rootPage().route);
+  //                   },
+  //                 ),
+  //               ),
+  //       )
+  //     ],
+  //   );
+  // }
 
   Widget _cashier(BuildContext context) {
     final conDeviceId = TextEditingController();

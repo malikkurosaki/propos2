@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
       getPages: Pages.listPage,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.cyan,
+        primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       navigatorObservers: [FlutterSmartDialog.observer],

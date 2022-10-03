@@ -17,134 +17,142 @@ class CashierManualOrder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialButton(
-      color: Colors.blue,
-      onPressed: () {
-        showBottomSheet(
-          context: context,
-          builder: (c) {
-            return Card(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    color: Colors.blue,
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Row(
-                            children: [
-                              BackButton(
-                                color: Colors.white,
-                              ),
-                              Text(
-                                "Manual Order",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ],
-                          ),
-                        ),
-                        MaterialButton(
-                          color: Colors.white,
-                          child: Center(
-                            child: Text(
-                              "Save",
-                              style: TextStyle(color: Colors.blue, fontSize: 16),
+    return Padding(
+      padding: const EdgeInsets.all(2),
+      child: MaterialButton(
+        color: Colors.cyan,
+        onPressed: () {
+          showBottomSheet(
+            context: context,
+            builder: (c) {
+              return Card(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      color: Colors.blue,
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Row(
+                              children: [
+                                BackButton(
+                                  color: Colors.white,
+                                ),
+                                Text(
+                                  "Manual Order",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ],
                             ),
                           ),
-                          onPressed: () {
-                            if (_conName.text.isEmpty || _price.value.isEmpty) {
-                              SmartDialog.showToast("nama dan harga tidak boleh kosong");
-                              return;
-                            }
+                          MaterialButton(
+                            color: Colors.white,
+                            child: Center(
+                              child: Text(
+                                "Save",
+                                style: TextStyle(color: Colors.blue, fontSize: 16),
+                              ),
+                            ),
+                            onPressed: () {
+                              if (_conName.text.isEmpty || _price.value.isEmpty) {
+                                SmartDialog.showToast("nama dan harga tidak boleh kosong");
+                                return;
+                              }
 
-                            final adaData =
-                                Val.listorder.value.val.map((element) => element['name']).contains(_conName.text);
-                            if (adaData) {
-                              SmartDialog.showToast("data has already");
-                              return;
-                            }
+                              final adaData =
+                                  Val.listorder.value.val.map((element) => element['name']).contains(_conName.text);
+                              if (adaData) {
+                                SmartDialog.showToast("data has already");
+                                return;
+                              }
 
-                            final productId = const ShortUuid().generate();
+                              final productId = const ShortUuid().generate();
 
-                            // final lsData = [...CashierVal.listManualProduct.value.val];
-                            final data = [...Val.listorder.value.val];
-                            final prod = {};
-                            prod['id'] = productId;
-                            prod['qty'] = 1;
-                            prod['price'] = int.parse(_price.value);
-                            prod['note'] = "";
-                            prod['total'] = int.parse(_price.value);
-                            prod['isManual'] = true;
-                            prod['name'] = _conName.text;
-                            data.add(prod);
-                            SmartDialog.showToast("Added to cart", animationTime: Duration(milliseconds: 500));
+                              // final lsData = [...CashierVal.listManualProduct.value.val];
+                              final data = [...Val.listorder.value.val];
+                              final prod = {};
+                              prod['id'] = productId;
+                              prod['qty'] = 1;
+                              prod['price'] = int.parse(_price.value);
+                              prod['note'] = "";
+                              prod['total'] = int.parse(_price.value);
+                              prod['isManual'] = true;
+                              prod['name'] = _conName.text;
+                              data.add(prod);
+                              SmartDialog.showToast("Added to cart", animationTime: Duration(milliseconds: 500));
 
-                            Val.listorder.value.val = data;
-                            Val.listorder.refresh();
+                              Val.listorder.value.val = data;
+                              Val.listorder.refresh();
 
-                            // lsData.add({});
+                              // lsData.add({});
 
-                            // CashierVal.listManualProduct.value.val = lsData;
-                            // CashierVal.listManualProduct.refresh();
-                            Get.back();
-                          },
-                        )
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextFormField(
-                      controller: _conName,
-                      decoration: InputDecoration(
-                          hintText: "Name / Description",
-                          filled: true,
-                          isDense: true,
-                          border: OutlineInputBorder(borderSide: BorderSide.none)),
-                    ),
-                  ),
-                  Obx(
-                    () => Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Text(
-                        NumberFormat.simpleCurrency(locale: "id_ID", decimalDigits: 0).format(int.parse(_price.value)),
-                        style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                              // CashierVal.listManualProduct.value.val = lsData;
+                              // CashierVal.listManualProduct.refresh();
+                              Get.back();
+                            },
+                          )
+                        ],
                       ),
                     ),
-                  ),
-                  // Padding(
-                  //   padding: const EdgeInsets.all(8.0),
-                  //   child: TextFormField(
-                  //     controller: _conPrice,
-                  //     decoration: InputDecoration(
-                  //         hintText: "Price",
-                  //         filled: true,
-                  //         isDense: true,
-                  //         border: OutlineInputBorder(borderSide: BorderSide.none)),
-                  //   ),
-                  // ),
-                  Center(
-                    child: Padding(
+                    Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: CalculatorPad(
-                        color: Colors.blue,
-                        onChanged: (value) {
-                          _price.value = value;
-                        },
+                      child: TextFormField(
+                        controller: _conName,
+                        decoration: InputDecoration(
+                            hintText: "Name / Description",
+                            filled: true,
+                            isDense: true,
+                            border: OutlineInputBorder(borderSide: BorderSide.none)),
                       ),
                     ),
-                  )
-                ],
-              ),
-            );
-          },
-        );
-      },
-      child: Text(
-        "Manual Order",
-        style: TextStyle(color: Colors.white),
+                    Obx(
+                      () => Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Text(
+                          NumberFormat.simpleCurrency(locale: "id_ID", decimalDigits: 0).format(int.parse(_price.value)),
+                          style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                    // Padding(
+                    //   padding: const EdgeInsets.all(8.0),
+                    //   child: TextFormField(
+                    //     controller: _conPrice,
+                    //     decoration: InputDecoration(
+                    //         hintText: "Price",
+                    //         filled: true,
+                    //         isDense: true,
+                    //         border: OutlineInputBorder(borderSide: BorderSide.none)),
+                    //   ),
+                    // ),
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: CalculatorPad(
+                          color: Colors.blue,
+                          onChanged: (value) {
+                            _price.value = value;
+                          },
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              );
+            },
+          );
+        },
+        child: SizedBox(
+          width: 100,
+          child: Center(
+            child: Text(
+              "Manual Order",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ),
       ),
     );
   }

@@ -29,32 +29,43 @@ app.use(async (req, res, next) => {
     if (req.url.includes('login')) {
         return routers(req, res, next);
     } else {
-        const token = req.headers.token;
-        if (!token || token == "") return res.status(401).json({ message: 'Unauthorized' });
-        var bytes = CryptoJS.AES.decrypt(token, '123456');
-        var id = bytes.toString(CryptoJS.enc.Utf8);
-        const user = await prisma.user.findUnique({
+        const deviceId = req.headers.deviceid;
+        if (!deviceId || deviceId == "") {
+            console.log("Unauthorized A");
+            return res.status(401).json({ message: 'Unauthorized A' });
+        }
+        // var bytes = CryptoJS.AES.decrypt(token, '123456');
+        // var devId = bytes.toString(CryptoJS.enc.Utf8);
+        const dev = await prisma.defaultPreference.findUnique({
             where: {
-                id: id
+                deviceId: deviceId
             },
             select: {
-                id: true,
-                isActive: true,
-                DefaultPrefByUser: {
-                    select: {
-                        companyId: true,
-                        outletId: true,
-                        deviceId: true,
-                        userId: true
-                    }
-                }
+                userId: true,
+                companyId: true,
+                outletId: true,
+                deviceId: true
             }
-        });
+        })
 
-        if (!user || !user.isActive) return res.status(401).json({ message: 'Unauthorized' });
-        req.userId = user.id;
-        req.token = token;
-        req.cod = user.DefaultPrefByUser;
+        if (!dev) {
+            console.log("Unauthorized B");
+
+            return res.status(401).json({ message: 'Unauthorized B' });
+        }
+
+        req.userId = dev.userId;
+        req.companyId = dev.companyId;
+        req.outletId = dev.outletId;
+        req.deviceId = dev.deviceId;
+
+        req.token = deviceId;
+        req.cod = {
+            userId: dev.userId,
+            companyId: dev.companyId,
+            outletId: dev.outletId,
+            deviceId: dev.deviceId
+        };
         return routers(req, res, next);
     }
 });

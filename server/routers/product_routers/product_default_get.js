@@ -5,23 +5,26 @@ const prisma = new Prisma();
 
 module.exports = expressAsyncHandler(async (req, res) => {
 
-    const dataCom = await prisma.defaultPrefByUser.findUnique({
-        where: {
-            token: req.token
-        },
-        select: {
-            companyId: true
-        }
-    })
+    // const dataCom = await prisma.defaultPreference.findUnique({
+    //     where: {
+    //         deviceId: req.deviceId
+    //     },
+    //     select: {
+    //         companyId: true
+    //     }
+    // })
 
-    console.log(dataCom);
+    // console.log(dataCom);
 
 
     const data = await prisma.product.findMany({
         where: {
             companyId: {
-                equals: dataCom.companyId
+                equals: req.companyId
             }
+        },
+        orderBy: {
+            createdAt: "desc"
         }
     });
 

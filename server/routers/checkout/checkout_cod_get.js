@@ -3,9 +3,9 @@ const PrismaClient = require('@prisma/client').PrismaClient;
 const prisma = new PrismaClient();
 
 module.exports = handler(async (req, res) => {
-    const data = await prisma.defaultPrefByUser.findUnique({
+    const data = await prisma.defaultPreference.findUnique({
         where: {
-            token: req.token
+            deviceId: req.deviceId
         },
         select: {
             companyId: true,

@@ -7,7 +7,6 @@ const fs = require('fs');
 
 const pathFile = path.join('./xmakuro');
 const targetFile = fs.readFileSync(pathFile).toString();
-// const listMenu = ["builder","runChrome","runServer","generateRouter","flutterCommand","gitPush","prismaMigrate"];
 const listMenu = targetFile.match(/.*function.*\)/g).map(item => item.replace(/function\s+/g, '').replace(/\(.*\)/g, '')).filter(e => !e.includes("match"));
 
 // check argument if available
@@ -76,7 +75,7 @@ function generateRouter() {
             let host = "${Config.host}"
             let query = "${query??''}";
             let body = "body: body"
-            let data = `static Future<http.Response> ${_.camelCase(name)}({String? query, Map? body}) => http.${method}(Uri.parse("${host}/${_.kebabCase(name)}?${query}"), headers: {"token": Vl.token.val}, ${method != 'get' ? body : ''});`
+            let data = `static Future<http.Response> ${_.camelCase(name)}({String? query, Map? body}) => http.${method}(Uri.parse("${host}/${_.kebabCase(name)}?${query}"), headers: {"deviceId": Vl.deviceId.val}, ${method != 'get' ? body : ''});`
             listRouter.push(data);
         }
 
@@ -143,4 +142,24 @@ function commandClient() {
         if (!cmd) return console.log("ok gak ada");
         const exec = require('child_process').execSync(cmd, { stdio: "inherit", cwd: "./client" });
     });
+}
+
+function runAndroid() {
+    require('child_process').execSync(`flutter run`, { stdio: "inherit", cwd: "./client" })
+    console.log("run android cuccess");
+}
+
+function setIp() {
+    const ip = require('ip');
+    const fs = require('fs');
+    const path = require('path');
+
+    const tp = path.join(__dirname, './client/lib/utils/config.dart');
+    const tar = fs.readFileSync(tp).toString();
+
+
+    const rg = tar.replace(/static const host.*/g, `static const host = "http://${ip.address()}:3000";`)
+    console.log(ip.address());
+    fs.writeFileSync(tp, rg);
+    console.log("success");
 }
