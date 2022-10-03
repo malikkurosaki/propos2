@@ -34,7 +34,9 @@ module.exports = handler(async (req, res) => {
                 },
                 select: {
                     stock: true,
-                    id: true
+                    id: true,
+                    isActive: true,
+                    minStock: true
                 }
             }
         }

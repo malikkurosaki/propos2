@@ -1,17 +1,13 @@
 import 'dart:convert';
 
-import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-import 'package:propos/menus/cashier.dart';
+import 'package:get/get.dart';
 import 'package:propos/pages.dart';
 import 'package:propos/rot.dart';
-import 'package:get/get.dart';
 import 'package:propos/src/cashier/casier_val.dart';
-import 'package:propos/src/checkout/checkout_change.dart';
 import 'package:propos/src/checkout/checkout_val.dart';
 import 'package:propos/src/printers/print_struk_model.dart';
-import 'package:propos/src/printers/printer_print_now.dart';
 import 'package:propos/utils/val.dart';
 
 class CheckoutAction {
@@ -154,6 +150,26 @@ class CheckoutAction {
 
     final res = await Rot.checkoutBillCreatePost(body: body);
     if (res.statusCode == 201) {
+      final datanya = jsonDecode(res.body);
+
+      for (final p in datanya['Order']) {
+        final qty = p['quantity'];
+        final prod = p['Product'];
+        final List prodStock = prod['ProductStock'];
+
+        if (prodStock.isNotEmpty) {
+          final s = prodStock[0];
+          if (prod['id'] == s['productId'] && s['isActive']) {
+            final model = {
+              "where": {"id": s['id']},
+              "data": {"stock": s['stock'] - qty}
+            };
+
+            await Rot.checkoutStockUpdatePost(body: {"data": jsonEncode(model)});
+          }
+        }
+      }
+
       SmartDialog.showToast("success");
       Val.listorder.value.val = [];
       CashierVal.pax.value.val = 1;
@@ -165,7 +181,6 @@ class CheckoutAction {
       CashierVal.pax.value.val = 1;
       Val.listorder.refresh();
 
-      // Get.toNamed(Pages.homePage().route);
       Get.offNamed(Pages.paymentSuccessPage().route);
     } else {
       SmartDialog.showToast(res.body);

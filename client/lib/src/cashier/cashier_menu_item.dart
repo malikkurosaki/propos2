@@ -72,20 +72,39 @@ class CashierMenuItem extends StatelessWidget {
                           final data = List.from(Val.listorder.value.val);
                           final idx = data.indexWhere((element) => element['id'] == prod['id']);
 
+                          if ((prod['ProductStock'] as List).isNotEmpty &&
+                              prod['ProductStock'][0]['stock'] <= prod['ProductStock'][0]['minStock']) {
+                            SmartDialog.showToast("empty product");
+                            return;
+                          }
+
                           if (idx == -1) {
                             prod['qty'] = 1;
                             prod['note'] = '';
                             prod['total'] = prod['qty'] * prod['price'];
                             prod['isManual'] = false;
 
-                            try {
-                              prod['stock'] = prod['ProductStock'][0]['stock'];
-                            } catch (e) {
-                              
-                            }
                             data.add(prod);
                             SmartDialog.showToast("Added to cart", animationTime: Duration(milliseconds: 500));
+
+                            // if ((prod['ProductStock'] as List).isNotEmpty) {
+                            //   prod['stock'] = prod['ProductStock'][0]['stock'];
+
+                            //   if (prod['qty'] >= prod['stock']) {
+                            //     SmartDialog.showToast("error stock");
+                            //     return;
+                            //   }
+                            // }
                           } else {
+                            if ((data[idx]['ProductStock'] as List).isNotEmpty) {
+                              data[idx]['stock'] = data[idx]['ProductStock'][0]['stock'];
+
+                              if ((data[idx]['qty'] + 1) > data[idx]['stock']) {
+                                SmartDialog.showToast("error stock");
+                                return;
+                              }
+                            }
+
                             data[idx]['qty']++;
                           }
 
@@ -129,17 +148,40 @@ class CashierMenuItem extends StatelessWidget {
                                         () {
                                           try {
                                             return Ink(
-                                              color: Colors.green,
+                                              color: prod['ProductStock'][0]['stock'] <=
+                                                      prod['ProductStock'][0]['minStock']
+                                                  ? Colors.red
+                                                  : Colors.green,
                                               child: Row(
                                                 children: [
-                                                  Text("stock ", style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 12
-                                                  ),),
-                                                  Text(
-                                                    prod['ProductStock'][0]['stock'].toString(),
-                                                    style: TextStyle(fontSize: 12, color: Colors.white),
+                                                  Expanded(
+                                                    child: Row(
+                                                      children: [
+                                                        Text(
+                                                          "stk ",
+                                                          style: TextStyle(color: Colors.white, fontSize: 12),
+                                                        ),
+                                                        Text(
+                                                          prod['ProductStock'][0]['stock'].toString(),
+                                                          style: TextStyle(fontSize: 12, color: Colors.white),
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
+                                                  Expanded(
+                                                    child: Row(
+                                                      children: [
+                                                        Text(
+                                                          "m stk ",
+                                                          style: TextStyle(color: Colors.white, fontSize: 12),
+                                                        ),
+                                                        Text(
+                                                          prod['ProductStock'][0]['minStock'].toString(),
+                                                          style: TextStyle(fontSize: 12, color: Colors.white),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  )
                                                 ],
                                               ),
                                             );

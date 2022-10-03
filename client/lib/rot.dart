@@ -94,6 +94,12 @@ class Rot {
     }) => http.get(Uri.parse("${Config.host}/checkout-list-payment-method-get?${query??''}"), headers: {
         "deviceId": Vl.deviceId.val
     }, );
+    static Future < http.Response > checkoutStockUpdatePost({
+        String ? query,
+        Map ? body
+    }) => http.post(Uri.parse("${Config.host}/checkout-stock-update-post?${query??''}"), headers: {
+        "deviceId": Vl.deviceId.val
+    }, body: body);
     static Future < http.Response > customPriceCreatePost({
         String ? query,
         Map ? body

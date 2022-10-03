@@ -5,7 +5,32 @@ const prisma = new PrismaClient();
 module.exports = handler(async (req, res) => {
     const body = JSON.parse(req.body.data);
 
-    const data = await prisma.bill.create({ data: body });
+    const data = await prisma.bill.create({
+        data: body, select: {
+            Order: {
+                select: {
+                    quantity: true,
+                    Product: {
+                        select: {
+                            id: true,
+                            ProductStock: {
+                                where: {
+                                    isActive: true,
+                                    outletId: req.outletId
+                                },
+                                select: {
+                                    productId: true,
+                                    id: true,
+                                    stock: true,
+                                    isActive: true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    });
 
     res.status(data ? 201 : 401).json(data);
 
