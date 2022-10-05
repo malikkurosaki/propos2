@@ -25,8 +25,28 @@ module.exports = expressAsyncHandler(async (req, res) => {
         },
         orderBy: {
             createdAt: "desc"
+        },
+        select: {
+            id: true,
+            name: true,
+            createdAt: true,
+            isActive: true,
+            price: true,
+            ProductImage: {
+                select: {
+                    id: true,
+                    name: true,
+                    url: true
+                }
+            },
+            ProductStock: {
+                select: {
+                    id: true,
+                    stock: true
+                }
+            },
         }
-    });
+    },);
 
     res.status(200).json(data);
 })

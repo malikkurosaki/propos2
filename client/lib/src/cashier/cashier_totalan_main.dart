@@ -60,42 +60,43 @@ class CashierTotalanMain extends StatelessWidget {
                               color: Colors.orange,
                               size: 36,
                             ),
-                            onTap: () {
-                              final data = List.from(Val.listorder.value.val);
-                              final idx = data.indexWhere((element) => element['id'] == itm['id']);
-                              if (idx != -1) {
-                                if (data[idx]['qty'] > 1) {
-                                  data[idx]['qty']--;
-                                  data[idx]['total'] = data[idx]['qty'] * data[idx]['price'];
-                                } else {
-                                  Get.dialog(
-                                    AlertDialog(
-                                      title: Text("Warning"),
-                                      content: Text("Are you sure want to delete this item?"),
-                                      actions: [
-                                        MaterialButton(
-                                          child: Text("Yes"),
-                                          onPressed: () {
-                                            data.removeAt(idx);
-                                            Val.listorder.value.val = data;
-                                            Val.listorder.refresh();
-                                            Get.back();
-                                          },
-                                        ),
-                                        MaterialButton(
-                                          child: Text("No"),
-                                          onPressed: () {
-                                            Get.back();
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                }
-                              }
-                              Val.listorder.value.val = data;
-                              Val.listorder.refresh();
-                            },
+                            onTap: () => CashierVal.orderSubstract(itm),
+                            // onTap: () {
+                            //   final data = List.from(Val.listorder.value.val);
+                            //   final idx = data.indexWhere((element) => element['id'] == itm['id']);
+                            //   if (idx != -1) {
+                            //     if (data[idx]['qty'] > 1) {
+                            //       data[idx]['qty']--;
+                            //       data[idx]['total'] = data[idx]['qty'] * data[idx]['price'];
+                            //     } else {
+                            //       Get.dialog(
+                            //         AlertDialog(
+                            //           title: Text("Warning"),
+                            //           content: Text("Are you sure want to delete this item?"),
+                            //           actions: [
+                            //             MaterialButton(
+                            //               child: Text("Yes"),
+                            //               onPressed: () {
+                            //                 data.removeAt(idx);
+                            //                 Val.listorder.value.val = data;
+                            //                 Val.listorder.refresh();
+                            //                 Get.back();
+                            //               },
+                            //             ),
+                            //             MaterialButton(
+                            //               child: Text("No"),
+                            //               onPressed: () {
+                            //                 Get.back();
+                            //               },
+                            //             ),
+                            //           ],
+                            //         ),
+                            //       );
+                            //     }
+                            //   }
+                            //   Val.listorder.value.val = data;
+                            //   Val.listorder.refresh();
+                            // },
                           ),
                           title: Text(
                             itm['name'],
@@ -124,6 +125,20 @@ class CashierTotalanMain extends StatelessWidget {
                                       .format(itm['total'])),
                                 ],
                               ),
+                              itm['sisaStock'] == null
+                                  ? SizedBox.shrink()
+                                  : Row(
+                                    children: [
+                                      Text(
+                                        "fnl stk ",
+                                        style: TextStyle(color: Colors.orange),
+                                      ),
+                                      Text(
+                                        itm['sisaStock'].toString(),
+                                        style: TextStyle(color: Colors.orange),
+                                      ),
+                                    ],
+                                  ),
                               itm['note'].toString().isEmpty
                                   ? SizedBox.shrink()
                                   : Ink(
@@ -140,8 +155,7 @@ class CashierTotalanMain extends StatelessWidget {
                                             child: Text(itm['note']),
                                           ),
                                         ],
-                                      )
-                                      ),
+                                      )),
                               !itm['isManual']
                                   ? SizedBox.shrink()
                                   : Text(
@@ -159,28 +173,29 @@ class CashierTotalanMain extends StatelessWidget {
                               color: Colors.green,
                               size: 36,
                             ),
-                            onTap: () {
-                              final data = List.from(Val.listorder.value.val);
-                              final idx = data.indexWhere((element) => element['id'] == itm['id']);
-                              if (idx != -1) {
-                                data[idx]['qty']++;
-                                itm['total'] = itm['qty'] * itm['price'];
-                              } else {
-                                itm['qty'] = 1;
-                                itm['note'] = '';
-                                itm['total'] = itm['qty'] * itm['price'];
-                                data.add(itm);
-                              }
-                              Val.listorder.value.val = data;
-                              Val.listorder.refresh();
-                            },
+                            onTap: () => CashierVal.orderAdd(itm),
+                            // onTap: () {
+                            //   final data = List.from(Val.listorder.value.val);
+                            //   final idx = data.indexWhere((element) => element['id'] == itm['id']);
+                            //   if (idx != -1) {
+                            //     data[idx]['qty']++;
+                            //     itm['total'] = itm['qty'] * itm['price'];
+                            //   } else {
+                            //     itm['qty'] = 1;
+                            //     itm['note'] = '';
+                            //     itm['total'] = itm['qty'] * itm['price'];
+                            //     data.add(itm);
+                            //   }
+                            //   Val.listorder.value.val = data;
+                            //   Val.listorder.refresh();
+                            // },
                           ),
                         ),
                       ),
                       DottedLine(dashColor: Colors.grey.shade300)
                     ],
                   ),
-                  CashierTotalanDetail()
+                CashierTotalanDetail()
               ],
             ),
     );

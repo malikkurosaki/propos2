@@ -67,50 +67,44 @@ class CashierMenuItem extends StatelessWidget {
                   children: [
                     for (final prod in CashierVal.listProduct.value.val)
                       InkWell(
-                        onTap: () {
-                          // Val.listorder.value.val = [];
-                          final data = List.from(Val.listorder.value.val);
-                          final idx = data.indexWhere((element) => element['id'] == prod['id']);
+                        onTap: () => CashierVal.orderAdd(prod),
+                        // onTap: () {
+                        //   final data = List.from(Val.listorder.value.val);
+                        //   final idx = data.indexWhere((element) => element['id'] == prod['id']);
 
-                          if ((prod['ProductStock'] as List).isNotEmpty &&
-                              prod['ProductStock'][0]['stock'] <= prod['ProductStock'][0]['minStock']) {
-                            SmartDialog.showToast("empty product");
-                            return;
-                          }
+                        //   if (idx == -1) {
+                        //     prod['qty'] = 1;
+                        //     prod['note'] = '';
+                        //     prod['total'] = prod['qty'] * prod['price'];
+                        //     prod['isManual'] = false;
 
-                          if (idx == -1) {
-                            prod['qty'] = 1;
-                            prod['note'] = '';
-                            prod['total'] = prod['qty'] * prod['price'];
-                            prod['isManual'] = false;
+                        //     data.add(prod);
+                        //     SmartDialog.showToast("Added to cart", animationTime: Duration(milliseconds: 500));
 
-                            data.add(prod);
-                            SmartDialog.showToast("Added to cart", animationTime: Duration(milliseconds: 500));
+                        //     if ((prod['ProductStock'] as List).isNotEmpty) {
+                        //       prod['sisaStock'] = prod['ProductStock'][0]['stock'] - prod['qty'];
+                        //       if (prod['ProductStock'][0]['stock'] <= prod['ProductStock'][0]['minStock']) {
+                        //         SmartDialog.showToast("empty product");
+                        //         return;
+                        //       }
+                        //     }
+                        //   } else {
+                        //     if ((data[idx]['ProductStock'] as List).isNotEmpty) {
+                        //       data[idx]['stock'] = data[idx]['ProductStock'][0]['stock'];
+                        //       data[idx]['sisaStock'] = data[idx]['ProductStock'][0]['stock'] - data[idx]['qty'];
 
-                            // if ((prod['ProductStock'] as List).isNotEmpty) {
-                            //   prod['stock'] = prod['ProductStock'][0]['stock'];
+                        //       if ((data[idx]['qty'] + 1) > data[idx]['stock']) {
+                        //         SmartDialog.showToast("error stock");
+                        //         return;
+                        //       }
+                        //     }
 
-                            //   if (prod['qty'] >= prod['stock']) {
-                            //     SmartDialog.showToast("error stock");
-                            //     return;
-                            //   }
-                            // }
-                          } else {
-                            if ((data[idx]['ProductStock'] as List).isNotEmpty) {
-                              data[idx]['stock'] = data[idx]['ProductStock'][0]['stock'];
+                        //     data[idx]['qty']++;
+                        //   }
 
-                              if ((data[idx]['qty'] + 1) > data[idx]['stock']) {
-                                SmartDialog.showToast("error stock");
-                                return;
-                              }
-                            }
-
-                            data[idx]['qty']++;
-                          }
-
-                          Val.listorder.value.val = data;
-                          Val.listorder.refresh();
-                        },
+                        //   Val.listorder.value.val = data;
+                        //   Val.listorder.refresh();
+                        // },
                         child: Card(
                           borderOnForeground: true,
                           child: Stack(
@@ -172,7 +166,7 @@ class CashierMenuItem extends StatelessWidget {
                                                     child: Row(
                                                       children: [
                                                         Text(
-                                                          "m stk ",
+                                                          "min stk ",
                                                           style: TextStyle(color: Colors.white, fontSize: 12),
                                                         ),
                                                         Text(
