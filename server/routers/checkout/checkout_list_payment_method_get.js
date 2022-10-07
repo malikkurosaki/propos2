@@ -7,7 +7,8 @@ module.exports = handler(async (req, res) => {
         where: {
             userId: {
                 equals: req.userId
-            }
+            },
+            isActive: true
         },
         select: {
             id: true,

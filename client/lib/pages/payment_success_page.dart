@@ -19,16 +19,17 @@ class PaymentSuccessPage extends StatelessWidget {
           color: Colors.white,
           child: SafeArea(
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Visibility(
-                  visible: !media.isMobile,
-                  child: SizedBox(
-                    width: 360,
-                    child: ListView(
-                      children: [Struk(media: media)],
-                    ),
-                  ),
-                ),
+                // Visibility(
+                //   visible: !media.isMobile,
+                //   child: SizedBox(
+                //     width: 360,
+                //     child: ListView(
+                //       children: [Struk(media: media)],
+                //     ),
+                //   ),
+                // ),
                 Center(
                   child: SizedBox(
                     width: media.isMobile ? Get.width : 360,

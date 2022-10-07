@@ -28,13 +28,13 @@ class ProductVal {
 
   static final isCheckAll = false.obs;
   static final listSelected = [].obs;
-  static final lsProduct = [];
+  // static final lsProduct = [];
   static final isShowChecked = false.obs;
   static final company = {};
 
   static final listCompany = [].val("ProductVal.listCompany").obs;
   static final selectedCompany = {}.val("ProductVal.selectedCompany2").obs;
-  static final listProduct = [].obs;
+  // static final listProduct = [].val("ProductVal.listProduct").obs;
 
   static final listoutlet = [].obs;
   static final selectedOutlet = {}.obs;
@@ -48,47 +48,16 @@ class ProductVal {
   static final selectOutlet = {}.obs;
   static final selectedCategory = {}.obs;
 
-  static final listSelectProduct = [].obs;
+  static final listSelectProduct = [].val("ProductVal.listSelectedProduct").obs;
 
-  // static Future<void> loadListCompany() async {
-  //   final res = await Rot.productListCompanyGet();
-  //   if (res.statusCode == 200) listCompany.value.val = jsonDecode(res.body);
-  //   if (!listCompany.value.val.contains(selectedCompany.value.val)) {
-  //     selectedCompany.value.val = listCompany.value.val.where((element) => element['id'] == Vl.companyId.val).first;
-  //   }
+  // static Future<void> loadListOutlet() async {
+  //   final data = await Rot.productListOutletGet();
+
   // }
 
-  //  static Future<void> loadSelectCompanyList() async {
-  //   final res = await Rot.productListCompanyGet();
-  //   if (res.statusCode == 200) {
-  //     listSelectCompany.value.val = jsonDecode(res.body);
-  //     listSelectCompany.refresh();
-  //   }
+  // static Future<void> loadDefaultProduct() async {
+  //   final data = await Rot.productDefaultGet();
+  //   if (data.statusCode == 200) listSelectProduct.assignAll(jsonDecode((data.body)));
   // }
 
-  static Future<void> loadListOutlet() async {
-    final data = await Rot.productListOutletGet();
-    // if (data.statusCode == 200) listoutlet.assignAll(jsonDecode(data.body));
-    // if (!listoutlet.contains(selectedOutlet)) {
-    //   selectedOutlet.assignAll(listoutlet.where((p0) => p0['id'] == Vl.outletId.val).first);
-    // }
-  }
-
-  static Future<void> loadDefaultProduct() async {
-    final data = await Rot.productDefaultGet();
-    if (data.statusCode == 200) listSelectProduct.assignAll(jsonDecode((data.body)));
-  }
-
-  // static loadProduct() async {
-  //   final data = await RouterApi.productByUserId().getData();
-  //   if (data.statusCode == 200) {
-  //     ProductVal.listCompanyProduct.value = jsonDecode(data.body);
-  //   }
-  // }
-
-  // static onLoad() async {
-  //   loadProduct();
-  //   // final data = await RouterApi.productMenuGetPropertyByCompany().getData();
-  //   // if (data.statusCode == 200) _listPropertyCreate.assignAll(jsonDecode(data.body));
-  // }
 }

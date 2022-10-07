@@ -16,7 +16,11 @@ class PaymentMethodCreate extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Create paayment Method"),
+        ListTile(
+          title: Text("Create payment Method", style: TextStyle(
+            fontSize: 18
+          ),),
+        ),
         ListTile(
           leading: Icon(Icons.business),
           title: Column(

@@ -6,4 +6,27 @@ class CategoryVal {
   static final bodyCreate = {}.val("CategoryVal.name3").obs;
   static final listCategory = [].obs;
   static final isReload = false.obs;
+
+  static final bodyUpdate = CategoryModel().obs;
+}
+
+class CategoryModel {
+  String? id;
+  String? name;
+
+  CategoryModel({this.id, this.name});
+
+  CategoryModel.fromJson(Map json) {
+    id = json['id'];
+    name = json['name'];
+  }
+
+  Map toJson() {
+    final data = {};
+    data['id'] = id;
+    data['name'] = name;
+
+    data.removeWhere((key, value) => value == null);
+    return data;
+  }
 }

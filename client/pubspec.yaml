@@ -69,6 +69,8 @@ dependencies:
   url_strategy: ^0.2.0
   widgets_to_image: ^0.0.2
   fast_image_resizer: ^0.0.2
+  loader_skeleton: ^0.0.4
+  shimmer: ^2.0.0
   # blue_print_pos: ^0.0.14
 
 

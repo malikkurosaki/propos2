@@ -4,6 +4,8 @@ import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:propos/components/app_bar_image.dart';
+import 'package:propos/src/outlet/outlet_crete.dart';
+import 'package:propos/src/outlet/outlet_display.dart';
 import 'package:propos/utils/router_api.dart';
 import 'package:propos/utils/val_def.dart';
 import 'package:responsive_builder/responsive_builder.dart';
@@ -21,7 +23,7 @@ class Outlet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _loadOutlet();
+    // _loadOutlet();
     debugPrint('Outlet.build');
     return ResponsiveBuilder(
       builder: (context, media) {
@@ -33,9 +35,15 @@ class Outlet extends StatelessWidget {
                 child: Row(
                   children: [
                     Expanded(
-                      child: _listDisplay(media),
+                      child: OutletDisplay(),
                     ),
-                    Visibility(visible: !media.isMobile, child: Card(child: _create(media)))
+                    Visibility(
+                      visible: !media.isMobile,
+                      child: SizedBox(
+                        width: media.isMobile ? Get.width : 460,
+                        child: OutletCreate(),
+                      ),
+                    )
                   ],
                 ),
               ),

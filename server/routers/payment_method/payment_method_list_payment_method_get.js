@@ -8,8 +8,13 @@ module.exports = handler(async (req, res) => {
             userId: {
                 equals: req.userId
             }
+        },
+        select: {
+            id: true,
+            name: true,
+            isActive: true
         }
     })
-
+    
     res.status(200).json(data);
 });

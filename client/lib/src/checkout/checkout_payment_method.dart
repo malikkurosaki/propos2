@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:intl/intl.dart';
+import 'package:loader_skeleton/loader_skeleton.dart';
 import 'package:propos/rot.dart';
 import 'package:propos/src/cashier/casier_val.dart';
 import 'package:propos/src/checkout/checkout_calculator_pad.dart';
@@ -12,6 +14,7 @@ import 'package:propos/src/checkout/checkout_change.dart';
 import 'package:propos/src/checkout/checkout_val.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:shimmer/shimmer.dart';
 
 class CheckoutPaymentMethod extends StatelessWidget {
   const CheckoutPaymentMethod({Key? key}) : super(key: key);
@@ -53,16 +56,24 @@ class CheckoutPaymentMethod extends StatelessWidget {
                   ),
                 ),
         ),
-        FutureBuilder<http.Response>(
-          future: Rot.paymentMethodListPaymentMethodGet(),
-          builder: (con, snap) {
-            if (snap.connectionState != ConnectionState.done) return LinearProgressIndicator();
-            if (snap.data!.statusCode == 200) {
-              final lsData = jsonDecode(snap.data!.body);
-              Future.delayed(Duration(milliseconds: 100), () => CheckoutVal.listPaymentMethod.assignAll(lsData));
-            }
-            return SizedBox.shrink();
-          },
+        SizedBox(
+          height: 2,
+          child: FutureBuilder<http.Response>(
+            future: Rot.checkoutListPaymentMethodGet(),
+            builder: (con, snap) {
+              if (!snap.hasData) return LinearProgressIndicator();
+              debugPrint(snap.data!.body);
+
+              if (snap.data!.statusCode == 200) {
+                final lsData = jsonDecode(snap.data!.body);
+                () async {
+                  await 0.1.delay();
+                  CheckoutVal.listPaymentMethod.assignAll(lsData);
+                }();
+              }
+              return SizedBox.shrink();
+            },
+          ),
         ),
         Obx(
           () => Column(
@@ -135,40 +146,44 @@ class CheckoutPaymentMethod extends StatelessWidget {
             ],
           ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text("Add Payment Method"),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: IconButton(
-                onPressed: () {
-                  final lsData = [...CheckoutVal.listPaymentWidget.value.val];
-                  lsData.add(
-                    {
-                      "id": "${CheckoutVal.listPaymentWidget.value.val.length}-${DateTime.now().toString()}",
-                      "paymentId": "",
-                      "method": "",
-                      "value": "0",
-                      "selected": false,
-                    },
-                  );
+        Obx(() => CheckoutVal.listPaymentMethod.isEmpty
+            ? SizedBox(
+                height: 50,
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text("Add Payment Method"),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: IconButton(
+                      onPressed: () {
+                        final lsData = [...CheckoutVal.listPaymentWidget.value.val];
+                        lsData.add(
+                          {
+                            "id": "${CheckoutVal.listPaymentWidget.value.val.length}-${DateTime.now().toString()}",
+                            "paymentId": "",
+                            "method": "",
+                            "value": "0",
+                            "selected": false,
+                          },
+                        );
 
-                  CheckoutVal.listPaymentWidget.value.val = lsData;
-                  CheckoutVal.listPaymentWidget.refresh();
-                },
-                icon: Icon(
-                  Icons.add_box,
-                  size: 32,
-                  color: Colors.blue,
-                ),
-              ),
-            )
-          ],
-        )
+                        CheckoutVal.listPaymentWidget.value.val = lsData;
+                        CheckoutVal.listPaymentWidget.refresh();
+                      },
+                      icon: Icon(
+                        Icons.add_box,
+                        size: 32,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  )
+                ],
+              ))
       ],
     );
   }

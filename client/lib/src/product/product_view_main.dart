@@ -17,20 +17,22 @@ class ProductViewMain extends StatelessWidget {
 
   final _listWidth = [
     {"title": "No", "width": 70, "field": "no"},
-    {"title": "No", "width": 600, "field": "no"}
+    {"title": "Product Name", "width": 400, "field": "name"},
+    {"title": "Price", "width": 100, "field": "price"},
+    // {"title": "Action", "width": 100, "field": "act"}
   ];
 
-  _onLoad() {
-    Rot.productDefaultGet().then(
-      (res) {
-        // debugPrint(res.body);
-        if (res.statusCode == 200) {
-          ProductVal.listSelectProduct.assignAll(jsonDecode(res.body));
-          // ProductVal.listSelectProduct.refresh();
-        }
-      },
-    );
-  }
+  // _onLoad() {
+  //   Rot.productDefaultGet().then(
+  //     (res) {
+  //       // debugPrint(res.body);
+  //       if (res.statusCode == 200) {
+  //         ProductVal.listSelectProduct.assignAll(jsonDecode(res.body));
+  //         // ProductVal.listSelectProduct.refresh();
+  //       }
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -38,325 +40,263 @@ class ProductViewMain extends StatelessWidget {
 
     return ResponsiveBuilder(
       builder: (context, media) => Scaffold(
-        body: ListView(
-          children: [
-            // select Company
-            Card(
-              child: ExpansionTile(
-                title: Text("Details"),
-                children: [
-                  Column(
-                    children: [
-                      ListTile(
-                        leading: Icon(Icons.business),
-                        title: FutureBuilder<http.Response>(
-                          future: Rot.productListCompanyGet(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState != ConnectionState.done) return Text("loading ...");
-                            debugPrint(snapshot.data!.body);
-                            if (snapshot.data!.statusCode == 200) {
-                              ProductVal.listSelectCompany.assignAll(jsonDecode(snapshot.data!.body));
-                            }
-                            return ProductVal.listSelectCompany.isEmpty
-                                ? Text("empty")
+        body: Builder(
+          builder: (context) => ListView(
+            children: [
+              // select Company
+              Card(
+                child: ExpansionTile(
+                  title: Text("Details"),
+                  children: [
+                    Column(
+                      children: [
+                        ListTile(
+                          leading: Icon(Icons.business),
+                          title: FutureBuilder<http.Response>(
+                            future: Rot.productListCompanyGet(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState != ConnectionState.done) return Text("loading ...");
+                              debugPrint(snapshot.data!.body);
+                              if (snapshot.data!.statusCode == 200) {
+                                ProductVal.listSelectCompany.assignAll(jsonDecode(snapshot.data!.body));
+                              }
+                              return ProductVal.listSelectCompany.isEmpty
+                                  ? Text("empty")
+                                  : DropdownSearch<Map>(
+                                      items: [...ProductVal.listSelectCompany],
+                                      dropdownDecoratorProps: DropDownDecoratorProps(
+                                        dropdownSearchDecoration: InputDecoration(
+                                            isDense: false,
+                                            filled: true,
+                                            border: InputBorder.none,
+                                            hintText: "select company"),
+                                      ),
+                                      itemAsString: (value) => value['name'],
+                                      onChanged: (value) {
+                                        ProductVal.selectCompany.assignAll(value!);
+                                        ProductVal.listSelectOutlet.assignAll(value['Outlet']);
+                                        ProductVal.listSelectCategory.assignAll(value['Category']);
+                                        // ProductVal.selectCompany.refresh();
+
+                                        // Rot.lgnListOutletByCompanyGet(query: "companyId=${value['id']}").then(
+                                        //   (res) {
+                                        //     if (res.statusCode == 200) {
+                                        //       ProductVal.listSelectOutlet.assignAll(jsonDecode(res.body));
+                                        //       // ProductVal.listSelectOutlet.refresh();
+                                        //     }
+                                        //   },
+                                        // );
+
+                                        // Rot.productListCategoryByCompanyIdGet(query: "companyId=${value['id']}").then(
+                                        //   (res) {
+                                        //     if (res.statusCode == 200) {
+                                        //       ProductVal.listSelectCategory.assignAll(jsonDecode(res.body));
+                                        //       // ProductVal.listSelectCategory.refresh();
+                                        //     }
+                                        //   },
+                                        // );
+                                      },
+                                    );
+                            },
+                          ),
+                        ),
+
+                        // select outlet
+                        Obx(
+                          () => ListTile(
+                            leading: Icon(Icons.store),
+                            title: ProductVal.listSelectOutlet.isEmpty
+                                ? Text("Select Outlet")
                                 : DropdownSearch<Map>(
-                                    items: [...ProductVal.listSelectCompany],
+                                    items: [...ProductVal.listSelectOutlet],
+                                    enabled: ProductVal.selectCompany.isNotEmpty,
                                     dropdownDecoratorProps: DropDownDecoratorProps(
                                       dropdownSearchDecoration: InputDecoration(
                                           isDense: false,
                                           filled: true,
                                           border: InputBorder.none,
-                                          hintText: "select company"),
+                                          hintText: "select outlet"),
                                     ),
                                     itemAsString: (value) => value['name'],
                                     onChanged: (value) {
-                                      ProductVal.selectCompany.assignAll(value!);
-                                      ProductVal.listSelectOutlet.assignAll(value['Outlet']);
-                                      ProductVal.listSelectCategory.assignAll(value['Category']);
-                                      // ProductVal.selectCompany.refresh();
-
-                                      // Rot.lgnListOutletByCompanyGet(query: "companyId=${value['id']}").then(
-                                      //   (res) {
-                                      //     if (res.statusCode == 200) {
-                                      //       ProductVal.listSelectOutlet.assignAll(jsonDecode(res.body));
-                                      //       // ProductVal.listSelectOutlet.refresh();
-                                      //     }
-                                      //   },
-                                      // );
-
-                                      // Rot.productListCategoryByCompanyIdGet(query: "companyId=${value['id']}").then(
-                                      //   (res) {
-                                      //     if (res.statusCode == 200) {
-                                      //       ProductVal.listSelectCategory.assignAll(jsonDecode(res.body));
-                                      //       // ProductVal.listSelectCategory.refresh();
-                                      //     }
-                                      //   },
-                                      // );
+                                      ProductVal.selectOutlet.assignAll(value!);
+                                      // ProductVal.selectOutlet.refresh();
                                     },
-                                  );
-                          },
-                        ),
-                      ),
-
-                      // select outlet
-                      Obx(
-                        () => ListTile(
-                          leading: Icon(Icons.store),
-                          title: ProductVal.listSelectOutlet.isEmpty
-                              ? Text("Select Outlet")
-                              : DropdownSearch<Map>(
-                                  items: [...ProductVal.listSelectOutlet],
-                                  enabled: ProductVal.selectCompany.isNotEmpty,
-                                  dropdownDecoratorProps: DropDownDecoratorProps(
-                                    dropdownSearchDecoration: InputDecoration(
-                                        isDense: false,
-                                        filled: true,
-                                        border: InputBorder.none,
-                                        hintText: "select outlet"),
                                   ),
-                                  itemAsString: (value) => value['name'],
-                                  onChanged: (value) {
-                                    ProductVal.selectOutlet.assignAll(value!);
-                                    // ProductVal.selectOutlet.refresh();
-                                  },
-                                ),
+                          ),
                         ),
-                      ),
-                      // select category
-                      Obx(
-                        () => ListTile(
-                          leading: Icon(Icons.store),
-                          title: ProductVal.listSelectCategory.isEmpty
-                              ? Text("Select Category")
-                              : DropdownSearch<Map>(
-                                  items: [...ProductVal.listSelectCategory],
-                                  enabled: ProductVal.selectCompany.isNotEmpty,
-                                  dropdownDecoratorProps: DropDownDecoratorProps(
-                                    dropdownSearchDecoration: InputDecoration(
-                                        isDense: false,
-                                        filled: true,
-                                        border: InputBorder.none,
-                                        hintText: "select Category"),
+                        // select category
+                        Obx(
+                          () => ListTile(
+                            leading: Icon(Icons.store),
+                            title: ProductVal.listSelectCategory.isEmpty
+                                ? Text("Select Category")
+                                : DropdownSearch<Map>(
+                                    items: [...ProductVal.listSelectCategory],
+                                    enabled: ProductVal.selectCompany.isNotEmpty,
+                                    dropdownDecoratorProps: DropDownDecoratorProps(
+                                      dropdownSearchDecoration: InputDecoration(
+                                          isDense: false,
+                                          filled: true,
+                                          border: InputBorder.none,
+                                          hintText: "select Category"),
+                                    ),
+                                    itemAsString: (value) => value['name'],
+                                    onChanged: (value) {
+                                      ProductVal.selectedCategory.assignAll(value!);
+                                      // ProductVal.selectedCategory.refresh();
+                                    },
                                   ),
-                                  itemAsString: (value) => value['name'],
-                                  onChanged: (value) {
-                                    ProductVal.selectedCategory.assignAll(value!);
-                                    // ProductVal.selectedCategory.refresh();
-                                  },
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              MaterialButton(
+                                color: Colors.blue,
+                                child: Text(
+                                  "Cari",
+                                  style: TextStyle(color: Colors.white),
                                 ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            MaterialButton(
-                              color: Colors.blue,
-                              child: Text(
-                                "Cari",
-                                style: TextStyle(color: Colors.white),
+                                onPressed: () {},
                               ),
-                              onPressed: () {},
-                            ),
-                            SizedBox(
-                              width: 8,
-                            ),
-                            MaterialButton(
-                              color: Colors.orange,
-                              child: Text(
-                                "Atur Ulang",
-                                style: TextStyle(color: Colors.white),
+                              SizedBox(
+                                width: 8,
                               ),
-                              onPressed: () {
-                                ProductVal.listSelectOutlet.assignAll([]);
-                                ProductVal.listSelectCategory.assignAll([]);
-                              },
-                            )
-                          ],
+                              MaterialButton(
+                                color: Colors.orange,
+                                child: Text(
+                                  "Atur Ulang",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                onPressed: () {
+                                  ProductVal.listSelectOutlet.assignAll([]);
+                                  ProductVal.listSelectCategory.assignAll([]);
+                                },
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(14.0),
-                        child: TextFormField(
-                          decoration: InputDecoration(
-                              prefixIcon: Icon(Icons.search),
-                              // isDense: true,
-                              filled: true,
-                              border: InputBorder.none,
-                              hintText: "Search",
-                              suffixIcon: Icon(Icons.close)),
-                        ),
-                      )
-                    ],
-                  )
-                ],
-              ),
-            ),
-
-            Column(
-              children: [
-                SizedBox(
-                  height: 4,
-                  child: Obx(
-                    () {
-                      ProductVal.isReloadProduct.value;
-                      return FutureBuilder<http.Response>(
-                        future: Rot.productDefaultGet(),
-                        builder: (ctx, snap) {
-                          if (snap.connectionState != ConnectionState.done) return LinearProgressIndicator();
-                          if (snap.data!.statusCode == 200) {
-                            () async {
-                              await 0.1.delay();
-                              ProductVal.listSelectProduct.assignAll(jsonDecode(snap.data!.body));
-                            }();
-                          }
-
-                          return SizedBox.shrink();
-                        },
-                      );
-                    },
-                  ),
+                        Padding(
+                          padding: const EdgeInsets.all(14.0),
+                          child: TextFormField(
+                            decoration: InputDecoration(
+                                prefixIcon: Icon(Icons.search),
+                                // isDense: true,
+                                filled: true,
+                                border: InputBorder.none,
+                                hintText: "Search",
+                                suffixIcon: Icon(Icons.close)),
+                          ),
+                        )
+                      ],
+                    )
+                  ],
                 ),
-                Obx(
-                  () {
-                    return Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Card(
-                        margin: EdgeInsets.zero,
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: FittedBox(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  color: Colors.grey.shade200,
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 70,
-                                        child: Text("No"),
-                                      ),
-                                      SizedBox(
-                                        width: 600,
-                                        child: Text(
-                                          "Product Name",
-                                          style: TextStyle(fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 200,
-                                        child: Text(
-                                          "Price",
-                                          style: TextStyle(fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 100,
-                                        child: Text(
-                                          "Action",
-                                          style: TextStyle(fontWeight: FontWeight.bold),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                ...ProductVal.listSelectProduct
-                                    .map(
-                                      (e) => Row(
-                                        children: [
-                                          SizedBox(
-                                            width: 70,
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(8.0),
-                                              child: Text((ProductVal.listSelectProduct.indexOf(e) + 1).toString()),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 600,
-                                            child: Text(e['name']),
-                                          ),
-                                          SizedBox(
-                                            width: 200,
-                                            child: Text(
-                                              NumberFormat.currency(decimalDigits: 0, locale: "id_ID", symbol: "")
-                                                  .format(e['price']),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 100,
-                                            child: PopupMenuButton(
-                                              tooltip: "",
-                                              onSelected: (value) async {
-                                                // if (value == 'del') {
-                                                //   final dataDel = await Rot.productRemoveDelete(query: "id=${e['id']}");
-                                                //   if (dataDel.statusCode == 201) {
-                                                //     debugPrint("dataah berhasil dihapus");
-                                                //     ProductVal.isReloadProduct.toggle();
-                                                //   } else {
-                                                //     debugPrint("dataa gagal dihapus");
-                                                //   }
-                                                // }
-                                              },
-                                              itemBuilder: (context) => [
-                                                PopupMenuItem(
-                                                  value: "del",
+              ),
+
+              Column(
+                children: [
+                  SizedBox(
+                    height: 4,
+                    child: Obx(
+                      () {
+                        ProductVal.isReloadProduct.value;
+                        return FutureBuilder<http.Response>(
+                          future: Rot.productDefaultGet(),
+                          builder: (ctx, snap) {
+                            if (snap.connectionState != ConnectionState.done) return LinearProgressIndicator();
+                            if (snap.data!.statusCode == 200) {
+                              () async {
+                                await 0.1.delay();
+                                ProductVal.listSelectProduct.value.val = jsonDecode(snap.data!.body);
+                                ProductVal.listSelectProduct.refresh();
+                              }();
+                            }
+
+                            return SizedBox.shrink();
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                  Obx(
+                    () {
+                      return Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: Card(
+                          margin: EdgeInsets.zero,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                color: Colors.grey.shade100,
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(children: [
+                                  ..._listWidth.map(
+                                    (e) => SizedBox(
+                                      width: e['width'] as double,
+                                      child: Text(e['title'] as String),
+                                    ),
+                                  )
+                                ]),
+                              ),
+                              ...ProductVal.listSelectProduct.value.val
+                                  .map(
+                                    (e) => ListTile(
+                                      onTap: () {
+                                        showBottomSheet(
+                                          context: context,
+                                          builder: (context) => Material(
+                                            child: Column(
+                                              children: [
+                                                Container(
+                                                  color: Colors.grey.shade100,
+                                                  padding: EdgeInsets.all(8),
                                                   child: Row(
-                                                    children: [
-                                                      Expanded(child: Text("Delete")),
-                                                    ],
-                                                  ),
-                                                ),
-                                                PopupMenuItem(
-                                                  onTap: () {
-                                                    showBottomSheet(
-                                                      context: context,
-                                                      builder: (con) => ProductEdit(),
-                                                    );
-                                                  },
-                                                  value: "edit",
-                                                  child: Row(
-                                                    children: [
-                                                      Expanded(child: Text("Edit")),
-                                                    ],
-                                                  ),
-                                                ),
-                                                PopupMenuItem(
-                                                  value: "active",
-                                                  child: Row(
-                                                    children: [
-                                                      Expanded(child: Text("Active")),
-                                                    ],
-                                                  ),
-                                                ),
-                                                PopupMenuItem(
-                                                  value: "nonActive",
-                                                  child: Row(
-                                                    children: [
-                                                      Expanded(child: Text("Non Active")),
-                                                    ],
+                                                    children: [BackButton(), Text("Edit Product")],
                                                   ),
                                                 )
                                               ],
                                             ),
+                                          ),
+                                        );
+                                      },
+                                      title: Row(
+                                        children: [
+                                          ..._listWidth.map(
+                                            (el) => SizedBox(
+                                              width: el['width'] as double,
+                                              child: el['field'].toString() == "no"
+                                                  ? Text(
+                                                      (ProductVal.listSelectProduct.value.val.indexOf(e) + 1)
+                                                          .toString(),
+                                                    )
+                                                  : Text(
+                                                      e[el['field']].toString(),
+                                                      textAlign: el['field'].toString() == 'price'
+                                                          ? TextAlign.end
+                                                          : TextAlign.start,
+                                                    ),
+                                            ),
                                           )
                                         ],
                                       ),
-                                    )
-                                    .toList()
-                              ],
-                            ),
+                                    ),
+                                  )
+                                  .toList()
+                            ],
                           ),
                         ),
-                      ),
-                    );
-                  },
-                ),
-              ],
-            )
-          ],
+                      );
+                    },
+                  ),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );

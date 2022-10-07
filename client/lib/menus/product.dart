@@ -9,8 +9,8 @@ class Product extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ProductVal.loadListOutlet();
-    ProductVal.loadListOutlet();
+    // ProductVal.loadListOutlet();
+    // ProductVal.loadListOutlet();
     return ResponsiveBuilder(
       builder: (context, media) {
         return SafeArea(

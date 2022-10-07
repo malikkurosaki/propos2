@@ -136,6 +136,24 @@ class Rot {
     }) => http.get(Uri.parse("${Config.host}/customer-list-customer-get?${query??''}"), headers: {
         "deviceId": Vl.deviceId.val
     }, );
+    static Future < http.Response > employeeCreatePost({
+        String ? query,
+        Map ? body
+    }) => http.post(Uri.parse("${Config.host}/employee-create-post?${query??''}"), headers: {
+        "deviceId": Vl.deviceId.val
+    }, body: body);
+    static Future < http.Response > employeeListGet({
+        String ? query,
+        Map ? body
+    }) => http.get(Uri.parse("${Config.host}/employee-list-get?${query??''}"), headers: {
+        "deviceId": Vl.deviceId.val
+    }, );
+    static Future < http.Response > globalListCompanyGet({
+        String ? query,
+        Map ? body
+    }) => http.get(Uri.parse("${Config.host}/global-list-company-get?${query??''}"), headers: {
+        "deviceId": Vl.deviceId.val
+    }, );
     static Future < http.Response > homeCompanyGet({
         String ? query,
         Map ? body
@@ -194,6 +212,24 @@ class Rot {
         String ? query,
         Map ? body
     }) => http.post(Uri.parse("${Config.host}/login-set-default-pref-post?${query??''}"), headers: {
+        "deviceId": Vl.deviceId.val
+    }, body: body);
+    static Future < http.Response > outletCreatePost({
+        String ? query,
+        Map ? body
+    }) => http.post(Uri.parse("${Config.host}/outlet-create-post?${query??''}"), headers: {
+        "deviceId": Vl.deviceId.val
+    }, body: body);
+    static Future < http.Response > outletListOutletGet({
+        String ? query,
+        Map ? body
+    }) => http.get(Uri.parse("${Config.host}/outlet-list-outlet-get?${query??''}"), headers: {
+        "deviceId": Vl.deviceId.val
+    }, );
+    static Future < http.Response > paymentMethodActivatePut({
+        String ? query,
+        Map ? body
+    }) => http.put(Uri.parse("${Config.host}/payment-method-activate-put?${query??''}"), headers: {
         "deviceId": Vl.deviceId.val
     }, body: body);
     static Future < http.Response > paymentMethodCreatePost({
