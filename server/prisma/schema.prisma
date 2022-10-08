@@ -87,6 +87,7 @@ model Company {
   DefaultPreference     DefaultPreference[]
   OrderManual           OrderManual[]
   DefaultPrefByDevice   DefaultPrefByDevice[]
+  isActive              Boolean?                @default(true)
 }
 
 model DetailCompany {

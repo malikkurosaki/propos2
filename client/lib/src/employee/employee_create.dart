@@ -104,7 +104,7 @@ class EmployeeCreate extends StatelessWidget {
                 final res = await Rot.employeeCreatePost(body: {"data": jsonEncode(data)});
                 if (res.statusCode == 200) {
                   SmartDialog.showToast("success");
-                  EmployeeVal.isReloadList.toggle();
+                  EmployeeVal.reload.toggle();
                 } else {
                   SmartDialog.showToast(res.body);
                 }

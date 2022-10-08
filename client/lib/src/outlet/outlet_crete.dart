@@ -41,7 +41,7 @@ class OutletCreate extends StatelessWidget {
                 () async {
                   if (snap.data!.statusCode == 200) {
                     await 0.1.delay();
-                    OutletVal.listCompany.assignAll(jsonDecode(snap.data!.body));
+                    OutletVal.listCompanyCreate.assignAll(jsonDecode(snap.data!.body));
                   }
                 }();
                 return SizedBox.shrink();
@@ -51,13 +51,13 @@ class OutletCreate extends StatelessWidget {
           Obx(
             () {
               return ListTile(
-                title: OutletVal.listCompany.isEmpty
+                title: OutletVal.listCompanyCreate.isEmpty
                     ? Text("Select Company")
                     : DropdownSearch<Map>(
                         dropdownDecoratorProps: DropDownDecoratorProps(
                             dropdownSearchDecoration:
                                 InputDecoration(filled: true, border: InputBorder.none, hintText: 'Select Company')),
-                        items: [...OutletVal.listCompany],
+                        items: [...OutletVal.listCompanyCreate],
                         itemAsString: (value) => value['name'].toString(),
                         onChanged: (val) {
                           OutletVal.companyId = val!['id'];

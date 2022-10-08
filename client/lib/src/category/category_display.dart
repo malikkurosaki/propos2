@@ -21,22 +21,23 @@ class CategoryDisplay extends StatelessWidget {
             children: [
               Obx(
                 () {
-                  CategoryVal.isReload.value;
-                  return FutureBuilder<http.Response>(
-                    future: Rot.categoryListGet(),
-                    builder: (con, snap) {
-                      if (snap.connectionState != ConnectionState.done) return LinearProgressIndicator();
+                  CategoryVal.reload.value;
+                  return SizedBox(
+                    height: 4,
+                    child: FutureBuilder<http.Response>(
+                      future: Rot.categoryListGet(),
+                      builder: (con, snap) {
+                        if (snap.connectionState != ConnectionState.done) return LinearProgressIndicator();
 
-                      if (snap.data!.statusCode == 200) {
-                        Future.delayed(
-                          Duration(microseconds: 1),
-                          () => CategoryVal.listCategory.assignAll(
-                            jsonDecode(snap.data!.body),
-                          ),
-                        );
-                      }
-                      return SizedBox.shrink();
-                    },
+                        if (snap.data!.statusCode == 200) {
+                          Future.delayed(
+                            Duration(microseconds: 1),
+                            () => CategoryVal.listCategory.value.val = jsonDecode(snap.data!.body),
+                          );
+                        }
+                        return SizedBox.shrink();
+                      },
+                    ),
                   );
                 },
               ),
@@ -44,13 +45,15 @@ class CategoryDisplay extends StatelessWidget {
                 child: Obx(
                   () => ListView(
                     children: [
-                      ...CategoryVal.listCategory.map(
+                      ...CategoryVal.listCategory.value.val.map(
                         (element) => ListTile(
                           onTap: () {
                             debugPrint(element.toString());
 
-                            CategoryVal.bodyUpdate.value = CategoryModel.fromJson(element);
-
+                            // CategoryVal.bodyUpdate.value = CategoryModel.fromJson(element);
+                            // final mapData = Map.from(element);
+                            // todo : benerin dulu ini
+                            CategoryVal.mapData.assignAll(element);
                             showBottomSheet(
                               context: context,
                               builder: (context) => Material(
@@ -65,36 +68,72 @@ class CategoryDisplay extends StatelessWidget {
                                         ),
                                       ),
                                     ),
-                                    ListTile(
-                                      title: TextFormField(
-                                        onChanged: (value) => CategoryVal.bodyUpdate.value.name = value,
-                                        controller: TextEditingController(text: CategoryVal.bodyUpdate.value.name),
-                                        decoration:
-                                            InputDecoration(filled: true, border: InputBorder.none, labelText: 'Name'),
-                                      ),
+                                    ...CategoryVal.mapData.keys.map(
+                                      (e) => !['name', 'isActive'].contains(e)
+                                          ? SizedBox.shrink()
+                                          : e == 'isActive'
+                                              ? ListTile(
+                                                  title: CheckboxListTile(
+                                                    value: CategoryVal.mapData['isActive'],
+                                                    onChanged: (val) {},
+                                                  ),
+                                                )
+                                              : ListTile(
+                                                  title: TextFormField(
+                                                    onChanged: (value) => CategoryVal.mapData[e] = value,
+                                                    controller: TextEditingController(text: CategoryVal.mapData[e]),
+                                                    decoration: InputDecoration(
+                                                        filled: true, border: InputBorder.none, labelText: 'Name'),
+                                                  ),
+                                                ),
                                     ),
-                                    ListTile(
-                                      title: MaterialButton(
-                                        color: Colors.blue,
-                                        onPressed: () {
-                                          debugPrint(CategoryVal.bodyUpdate.value.toJson().toString());
-                                          
-                                        },
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(10.0),
-                                          child: Text(
-                                            "Save",
-                                            style: TextStyle(color: Colors.white),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                            child: ListTile(
+                                          title: MaterialButton(
+                                            color: Colors.pink,
+                                            onPressed: () {},
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(10.0),
+                                              child: Text(
+                                                "Delete",
+                                                style: TextStyle(color: Colors.white),
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ),
+                                        )),
+                                        Expanded(
+                                            child: ListTile(
+                                          title: MaterialButton(
+                                            color: Colors.orange,
+                                            onPressed: () async {
+                                              final res = await Rot.categoryUpdatePost(
+                                                  body: {"data": jsonEncode(CategoryVal.mapData)});
+                                              if (res.statusCode == 201) {
+                                                SmartDialog.showToast("success");
+                                                CategoryVal.reload.toggle();
+                                              } else {
+                                                SmartDialog.showToast(res.body);
+                                              }
+                                            },
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(10.0),
+                                              child: Text(
+                                                "Update",
+                                                style: TextStyle(color: Colors.white),
+                                              ),
+                                            ),
+                                          ),
+                                        ))
+                                      ],
                                     )
                                   ],
                                 ),
                               ),
                             );
                           },
-                          leading: Text((CategoryVal.listCategory.indexOf(element) + 1).toString()),
+                          leading: Text((CategoryVal.listCategory.value.val.indexOf(element) + 1).toString()),
                           title: Text(
                             element['name'].toString(),
                           ),

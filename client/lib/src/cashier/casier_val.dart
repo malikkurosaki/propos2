@@ -33,6 +33,14 @@ class CashierVal {
     final data = List.from(Val.listorder.value.val);
     final idx = data.indexWhere((element) => element['id'] == prod['id']);
 
+     if ((prod['ProductStock'] as List).isNotEmpty) {
+      // prod['sisaStock'] = prod['ProductStock'][0]['stock'] - prod['qty'];
+      if (prod['ProductStock'][0]['stock'] == 0) {
+        SmartDialog.showToast("empty product");
+        return;
+      }
+    }
+
     if (idx == -1) {
       prod['qty'] = 1;
       prod['note'] = '';
@@ -44,7 +52,7 @@ class CashierVal {
 
       if ((prod['ProductStock'] as List).isNotEmpty) {
         prod['sisaStock'] = prod['ProductStock'][0]['stock'] - prod['qty'];
-        if (prod['ProductStock'][0]['stock'] <= prod['ProductStock'][0]['minStock']) {
+        if (prod['ProductStock'][0]['stock'] == 0) {
           SmartDialog.showToast("empty product");
           return;
         }

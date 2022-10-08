@@ -94,7 +94,7 @@ class CategoryCreate extends StatelessWidget {
                   CategoryVal.bodyCreate.value.val['name'] = "";
                   CategoryVal.bodyCreate.refresh();
                   SmartDialog.showToast("Success");
-                  CategoryVal.isReload.toggle();
+                  CategoryVal.reload.toggle();
                 } else {
                   SmartDialog.showToast("failed");
                 }

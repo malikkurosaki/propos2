@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:propos/rot.dart';
@@ -25,27 +26,30 @@ class EmployeeDisplay extends StatelessWidget {
         body: Builder(builder: (context) {
           return Column(
             children: [
-              Obx(
-                () {
-                  EmployeeVal.isReloadList.value;
-                  return SizedBox(
-                    height: 4,
-                    child: FutureBuilder<http.Response>(
-                      future: Rot.employeeListGet(),
-                      builder: (con, snap) {
-                        if (!snap.hasData) return LinearProgressIndicator();
-                        () async {
-                          if (snap.data!.statusCode == 200) {
-                            await 0.1.delay();
-                            EmployeeVal.listEmployee.value.val = jsonDecode(snap.data!.body);
-                            EmployeeVal.listEmployee.refresh();
-                          }
-                        }();
-                        return Container();
-                      },
-                    ),
-                  );
-                },
+              SizedBox(
+                height: 4,
+                child: Obx(
+                  () {
+                    EmployeeVal.reload.value;
+                    return SizedBox(
+                      height: 4,
+                      child: FutureBuilder<http.Response>(
+                        future: Rot.employeeListGet(),
+                        builder: (con, snap) {
+                          if (!snap.hasData) return LinearProgressIndicator();
+                          () async {
+                            if (snap.data!.statusCode == 200) {
+                              await 0.1.delay();
+                              EmployeeVal.listEmployee.value.val = jsonDecode(snap.data!.body);
+                              EmployeeVal.listEmployee.refresh();
+                            }
+                          }();
+                          return Container();
+                        },
+                      ),
+                    );
+                  },
+                ),
               ),
               Flexible(
                 child: Obx(
@@ -53,104 +57,185 @@ class EmployeeDisplay extends StatelessWidget {
                     return Card(
                       child: ListView(
                         children: [
-                          // Padding(
-                          //   padding: const EdgeInsets.all(8.0),
-                          //   child: Row(
-                          //     children: [
-                          //       ..._ls.map(
-                          //         (e) => SizedBox(
-                          //           width: e['wid'] as double,
-                          //           child: Text(
-                          //             e['tit'] as String,
-                          //             style: TextStyle(fontWeight: FontWeight.bold),
-                          //           ),
-                          //         ),
-                          //       ),
-                          //     ],
-                          //   ),
-                          // ),
-                          ...EmployeeVal.listEmployee.value.val.map(
-                            (el) => InkWell(
-                              onTap: () {
-                                EmployeeVal.bodyEdit.value = EmployeeModel.fromJson(el);
-                                showBottomSheet(
-                                  context: context,
-                                  builder: (context) => Material(
-                                    child: ListView(
-                                      children: [
-                                        Container(
-                                          padding: EdgeInsets.all(8),
-                                          color: Colors.grey.shade100,
-                                          child: Row(
-                                            children: [BackButton(), Text("Edit Employee")],
-                                          ),
-                                        ),
-                                        ListTile(
-                                          title: TextFormField(
-                                            controller: TextEditingController(text: EmployeeVal.bodyEdit.value.name),
-                                            decoration: InputDecoration(
-                                              labelText: 'Name',
-                                              filled: true,
-                                              border: InputBorder.none,
-                                            ),
-                                          ),
-                                        ),
-                                        ListTile(
-                                          title: TextFormField(
-                                            controller:
-                                                TextEditingController(text: EmployeeVal.bodyEdit.value.password),
-                                            decoration: InputDecoration(
-                                              labelText: 'Password',
-                                              filled: true,
-                                              border: InputBorder.none,
-                                            ),
-                                          ),
-                                        ),
-                                        Obx(() => ListTile(
-                                              title: CheckboxListTile(
-                                                title: Text("Active"),
-                                                value: EmployeeVal.bodyEdit.value.isActive,
-                                                onChanged: (value) {
-                                                  EmployeeVal.bodyEdit.value.isActive = value;
-                                                  EmployeeVal.bodyEdit.refresh();
-                                                },
-                                              ),
-                                            )),
-                                        ListTile(
-                                          title: MaterialButton(
-                                            color: Colors.blue,
-                                            onPressed: () {},
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(10.0),
-                                              child: Text(
-                                                "Save",
-                                                style: TextStyle(color: Colors.white),
-                                              ),
-                                            ),
-                                          ),
-                                        )
-                                      ],
+                          ...EmployeeVal.listEmployee.value.val.map((el) => ListTile(
+                                    leading: Text((EmployeeVal.listEmployee.value.val.indexOf(el) + 1).toString()),
+                                    trailing: Icon(
+                                      Icons.check_box,
+                                      color: el['isActive'] ? Colors.green : Colors.grey,
                                     ),
-                                  ),
-                                );
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  children: [
-                                    ..._ls.map(
-                                      (e) => SizedBox(
-                                        width: e['wid'] as double,
-                                        child: (e['fid'] as String) == "no"
-                                            ? Text((EmployeeVal.listEmployee.value.val.indexOf(el) + 1).toString())
-                                            : Text(el[e['fid']] ?? ""),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          )
+                                    title: Text(el['name'].toString()),
+                                    onTap: () {
+                                      EmployeeVal.mapData.assignAll(el);
+                                      showBottomSheet(
+                                        context: context,
+                                        builder: (context) => Material(
+                                          child: ListView(
+                                            children: [
+                                              Container(
+                                                color: Colors.grey.shade100,
+                                                padding: EdgeInsets.all(8),
+                                                child: Row(
+                                                  children: [BackButton(), Text("Edit Employee")],
+                                                ),
+                                              ),
+                                              ...EmployeeVal.mapData.keys.map(
+                                                (e) => !['name', 'password', 'isActive'].contains(e)
+                                                    ? SizedBox.shrink()
+                                                    : e == 'isActive'
+                                                        ? Obx(() {
+                                                            return ListTile(
+                                                              title: CheckboxListTile(
+                                                                title: Text("Is Active ?"),
+                                                                value: EmployeeVal.mapData['isActive'],
+                                                                onChanged: (val) {
+                                                                  EmployeeVal.mapData['isActive'] = val;
+                                                                  EmployeeVal.mapData.refresh();
+                                                                },
+                                                              ),
+                                                            );
+                                                          },)
+                                                        : ListTile(
+                                                            title: TextFormField(
+                                                              controller: TextEditingController(
+                                                                text: EmployeeVal.mapData[e].toString(),
+                                                              ),
+                                                              decoration: InputDecoration(
+                                                                  filled: true, border: InputBorder.none, labelText: e),
+                                                            ),
+                                                          ),
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: ListTile(
+                                                      title: MaterialButton(
+                                                        color: Colors.pink,
+                                                        onPressed: () {},
+                                                        child: Padding(
+                                                          padding: const EdgeInsets.all(10.0),
+                                                          child: Text(
+                                                            "Delete",
+                                                            style: TextStyle(color: Colors.white),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    child: ListTile(
+                                                      title: MaterialButton(
+                                                        color: Colors.orange,
+                                                        onPressed: () async{
+                                                          final body = Map.from(EmployeeVal.mapData);
+                                                          body.removeWhere((key, value) => value == null);
+                                                          final res = await Rot.employeeUpdatePost(body: {"data": jsonEncode(body)});
+                                                          if(res.statusCode == 201){
+                                                            SmartDialog.showToast("success");
+                                                            EmployeeVal.reload.toggle();
+                                                            Get.back();
+                                                          }else{
+                                                            SmartDialog.showToast(res.body);
+                                                          }
+                                                        },
+                                                        child: Padding(
+                                                          padding: const EdgeInsets.all(10.0),
+                                                          child: Text(
+                                                            "Update",
+                                                            style: TextStyle(color: Colors.white),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  )
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  )
+                              // InkWell(
+                              //   onTap: () {
+                              //     EmployeeVal.bodyEdit.value = EmployeeModel.fromJson(el);
+                              //     showBottomSheet(
+                              //       context: context,
+                              //       builder: (context) => Material(
+                              //         child: ListView(
+                              //           children: [
+                              //             Container(
+                              //               padding: EdgeInsets.all(8),
+                              //               color: Colors.grey.shade100,
+                              //               child: Row(
+                              //                 children: [BackButton(), Text("Edit Employee")],
+                              //               ),
+                              //             ),
+                              //             ListTile(
+                              //               title: TextFormField(
+                              //                 controller: TextEditingController(text: EmployeeVal.bodyEdit.value.name),
+                              //                 decoration: InputDecoration(
+                              //                   labelText: 'Name',
+                              //                   filled: true,
+                              //                   border: InputBorder.none,
+                              //                 ),
+                              //               ),
+                              //             ),
+                              //             ListTile(
+                              //               title: TextFormField(
+                              //                 controller:
+                              //                     TextEditingController(text: EmployeeVal.bodyEdit.value.password),
+                              //                 decoration: InputDecoration(
+                              //                   labelText: 'Password',
+                              //                   filled: true,
+                              //                   border: InputBorder.none,
+                              //                 ),
+                              //               ),
+                              //             ),
+                              //             Obx(() => ListTile(
+                              //                   title: CheckboxListTile(
+                              //                     title: Text("Active"),
+                              //                     value: EmployeeVal.bodyEdit.value.isActive,
+                              //                     onChanged: (value) {
+                              //                       EmployeeVal.bodyEdit.value.isActive = value;
+                              //                       EmployeeVal.bodyEdit.refresh();
+                              //                     },
+                              //                   ),
+                              //                 )),
+                              //             ListTile(
+                              //               title: MaterialButton(
+                              //                 color: Colors.blue,
+                              //                 onPressed: () {},
+                              //                 child: Padding(
+                              //                   padding: const EdgeInsets.all(10.0),
+                              //                   child: Text(
+                              //                     "Save",
+                              //                     style: TextStyle(color: Colors.white),
+                              //                   ),
+                              //                 ),
+                              //               ),
+                              //             )
+                              //           ],
+                              //         ),
+                              //       ),
+                              //     );
+                              //   },
+                              //   child: Padding(
+                              //     padding: const EdgeInsets.all(8.0),
+                              //     child: Row(
+                              //       children: [
+                              //         ..._ls.map(
+                              //           (e) => SizedBox(
+                              //             width: e['wid'] as double,
+                              //             child: (e['fid'] as String) == "no"
+                              //                 ? Text((EmployeeVal.listEmployee.value.val.indexOf(el) + 1).toString())
+                              //                 : Text(el[e['fid']] ?? ""),
+                              //           ),
+                              //         )
+                              //       ],
+                              //     ),
+                              //   ),
+                              // ),
+                              )
                         ],
                       ),
                     );

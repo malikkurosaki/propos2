@@ -2,11 +2,15 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 class OutletVal {
-  static final listCompany = [].obs;
+  static final listCompanyCreate = [].obs;
+  static final listCompanyDisplay = [].obs;
   static final bodyCreate = OutletModel().obs;
   static final bodyUpdate = OutletModel().obs;
   static String companyId = "";
   static final listoutlet = [].val('OutletVal.listOutlet').obs;
+
+  static final reload = false.obs;
+  static final mapData = {}.obs;
 }
 
 class OutletModel {

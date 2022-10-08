@@ -13,9 +13,10 @@ class EmployeeVal {
   static final listEmployee = [].val("EmployeeVal.listEmployee").obs;
 
   static final bodyCreate = EmployeeModel().obs;
-  static final isReloadList = false.obs;
+  static final reload = false.obs;
 
   static final bodyEdit = EmployeeModel().obs;
+  static final mapData = {}.obs;
 }
 
 class EmployeeModel {

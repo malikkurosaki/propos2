@@ -4,10 +4,12 @@ import 'package:get_storage/get_storage.dart';
 class CategoryVal {
   static final listCompany = [].obs;
   static final bodyCreate = {}.val("CategoryVal.name3").obs;
-  static final listCategory = [].obs;
-  static final isReload = false.obs;
+  static final listCategory = [].val("CategoryVal.listCategory").obs;
+  static final reload = false.obs;
 
-  static final bodyUpdate = CategoryModel().obs;
+  // static final bodyUpdate = CategoryModel().obs;
+
+  static final mapData = {}.obs;
 }
 
 class CategoryModel {

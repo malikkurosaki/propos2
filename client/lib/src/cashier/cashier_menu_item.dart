@@ -142,9 +142,11 @@ class CashierMenuItem extends StatelessWidget {
                                         () {
                                           try {
                                             return Ink(
-                                              color: prod['ProductStock'][0]['stock'] <=
+                                              color:  prod['ProductStock'][0]['stock'] == 0
+                                                  ? Colors.pink
+                                                  : prod['ProductStock'][0]['stock'] <=
                                                       prod['ProductStock'][0]['minStock']
-                                                  ? Colors.red
+                                                  ? Colors.orange
                                                   : Colors.green,
                                               child: Row(
                                                 children: [
@@ -159,23 +161,28 @@ class CashierMenuItem extends StatelessWidget {
                                                           prod['ProductStock'][0]['stock'].toString(),
                                                           style: TextStyle(fontSize: 12, color: Colors.white),
                                                         ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    child: Row(
-                                                      children: [
-                                                        Text(
-                                                          "min stk ",
-                                                          style: TextStyle(color: Colors.white, fontSize: 12),
-                                                        ),
+                                                        Text("/", style: TextStyle(color: Colors.white, fontSize: 12),),
                                                         Text(
                                                           prod['ProductStock'][0]['minStock'].toString(),
                                                           style: TextStyle(fontSize: 12, color: Colors.white),
-                                                        ),
+                                                        )
                                                       ],
                                                     ),
-                                                  )
+                                                  ),
+                                                  // Expanded(
+                                                  //   child: Row(
+                                                  //     children: [
+                                                  //       Text(
+                                                  //         "min stk ",
+                                                  //         style: TextStyle(color: Colors.white, fontSize: 12),
+                                                  //       ),
+                                                  //       Text(
+                                                  //         prod['ProductStock'][0]['minStock'].toString(),
+                                                  //         style: TextStyle(fontSize: 12, color: Colors.white),
+                                                  //       ),
+                                                  //     ],
+                                                  //   ),
+                                                  // )
                                                 ],
                                               ),
                                             );

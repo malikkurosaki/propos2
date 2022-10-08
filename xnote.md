@@ -52,4 +52,25 @@ __note__:
 ### alpha4 next log
 - [] saat pilih payment method , jika sudah terpilih harusnya tidak bisa terpilih ulang
 - [] jika ada stock tampil di piihan item menu
-- 
+
+
+
+Assallamualaikum mbk ana , Dengan berat hati sy harus menyampaikan ini ,
+Soadara saya open startup project dan saya disuru join , dan saya terlanjur menyanggupinya 
+jadi dengan sangat terpaksa saya mengajukan surat ini,
+
+namun sebagai ucapan rasa syukur dan terimakasih saya
+karena telah diberi kesempatan untuk belajar dan berkarya 
+saya akan terus support probus jika diijinkan
+
+1. support dari abis isak sampai jam 11 malam , minggu ada kemungkinan full
+2. project propos yang masih ada akan terus berjalan sampe selesai ada 2 tahap ( owner dan cashier), untuk owner uda sekitar 70% dari alur , kebutuhan data dan lainnya sudah memenuhi target,  dan saat ini stabil dari stock , gambar sampai print bug kecil kemungkinan masih akan ada karena masih versi aplha ( pengembangan )
+3. support design grafis 
+4. support mobile app
+5. dan support lainnya
+
+mohon maaf jika selama ini ada yg kurang berkenan , insyaallah saya sudah berusaha semaksimal mungkin,
+untuk keputusan ini pun saya sangat berat hati dan harus saya timbang berulang ulang namun keadaan lebih mengarahkan saya ke bagian yang lain, sangat tidak menutup kemungkinan untuk saya selalu menjadi bagian dari probus jika diijinkan untuk terus mensupport
+
+semua hanyalah masalah waktu dan jarak relatifitas , tetap fokus dan berjuang dan jangan menyerah
+misi , visi dan prioritas adalah kunci dan arah tujuan
