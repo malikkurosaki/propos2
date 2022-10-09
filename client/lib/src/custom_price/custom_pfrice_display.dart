@@ -56,35 +56,35 @@ class CustomPriceDisplay extends StatelessWidget {
           ),
           Flexible(
             child: Obx(
-              () => CustomPriceVal.lisCustomPrice.isEmpty
-                  ? Center(
-                      child: Text("data is empty"),
-                    )
-                  : ListView(
+              () => ListView(
                       children: [
                         ...CustomPriceVal.lisCustomPrice.map(
-                          (element) => Column(
-                            children: [
-                              ListTile(
-                                leading: Icon(Icons.money),
-                                dense: true,
-                                title: Text(
-                                  element['name'].toString(),
-                                ),
-                                trailing: PopupMenuButton(
-                                  itemBuilder: (context) => [
-                                    PopupMenuItem(
-                                      child: Text("Delete"),
-                                    ),
-                                    PopupMenuItem(
-                                      child: Text("Edit"),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              DottedLine()
-                            ],
-                          ),
+                          (element) => ListTile(
+                            title: Text(element['name'].toString()),
+                          )
+                          // Column(
+                          //   children: [
+                          //     ListTile(
+                          //       leading: Icon(Icons.money),
+                          //       dense: true,
+                          //       title: Text(
+                          //         element['name'].toString(),
+                          //       ),
+                          //       trailing: PopupMenuButton(
+                          //         itemBuilder: (context) => [
+                          //           PopupMenuItem(
+                          //             child: Text("Delete"),
+                          //           ),
+                          //           PopupMenuItem(
+                          //             child: Text("Edit"),
+                          //           )
+                          //         ],
+                          //       ),
+                          //     ),
+                          //     DottedLine()
+                          //   ],
+                          // ),
+
                         )
                       ],
                     ),

@@ -3,7 +3,9 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 class EmployeeVal {
-  static final listCompany = [].obs;
+  static final listCompanyCreate = [].obs;
+  static final listCompanyDisplay = [].obs;
+
   static final selectedCompany = {}.obs;
 
   static final listOutlet = [].obs;

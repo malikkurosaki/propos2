@@ -30,7 +30,8 @@ class LoginCodSelect extends StatelessWidget {
             title: DropdownSearch<Map>(
               dropdownDecoratorProps: DropDownDecoratorProps(
                 dropdownSearchDecoration:
-                    InputDecoration(filled: true, border: InputBorder.none, hintText: "Select Company"),
+                    InputDecoration(
+                      filled: true, border: InputBorder.none, hintText: "Select Company", labelText: 'Company' ),
               ),
               items: [...LoginVal.listCompany],
               itemAsString: (value) => value['name'].toString(),
@@ -54,7 +55,7 @@ class LoginCodSelect extends StatelessWidget {
                   : DropdownSearch<Map>(
                       dropdownDecoratorProps: DropDownDecoratorProps(
                         dropdownSearchDecoration:
-                            InputDecoration(filled: true, border: InputBorder.none, hintText: "Select outlet"),
+                            InputDecoration(filled: true, border: InputBorder.none, hintText: "Select outlet", labelText: 'Outlet'),
                       ),
                       items: [...LoginVal.listoutlet],
                       itemAsString: (value) => value['name'].toString(),
@@ -80,7 +81,7 @@ class LoginCodSelect extends StatelessWidget {
                   : DropdownSearch<Map>(
                       dropdownDecoratorProps: DropDownDecoratorProps(
                         dropdownSearchDecoration:
-                            InputDecoration(filled: true, border: InputBorder.none, hintText: "Select outlet"),
+                            InputDecoration(filled: true, border: InputBorder.none, hintText: "Select outlet", labelText: 'Device'),
                       ),
                       items: [...LoginVal.listDevice],
                       itemAsString: (value) => value['name'].toString(),

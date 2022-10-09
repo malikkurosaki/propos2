@@ -4,7 +4,8 @@ const prisma = new (require('@prisma/client').PrismaClient)();
 module.exports = handler(async (req, res) => {
     const data = await prisma.company.findMany({
         where: {
-            userId: req.userId
+            userId: req.userId,
+            isActive: true
         }
     })
 

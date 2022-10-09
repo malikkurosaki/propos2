@@ -5,7 +5,8 @@ const prisma = new PrismaClient();
 module.exports = handler(async (req, res) => {
     const data = await prisma.company.findMany({
         where: {
-            userId: req.userId
+            userId: req.userId,
+            isActive: true
         },
         select: {
             id: true,

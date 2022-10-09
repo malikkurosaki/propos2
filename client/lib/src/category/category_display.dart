@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -19,6 +20,46 @@ class CategoryDisplay extends StatelessWidget {
         builder: (context) => Card(
           child: Column(
             children: [
+              SizedBox(
+                height: 4,
+                child: FutureBuilder<http.Response>(
+                  future: Rot.globalListCompanyGet(),
+                  builder: (context, snap) {
+                    if (!snap.hasData) return LinearProgressIndicator();
+                    () async {
+                      if (snap.data!.statusCode == 200) {
+                        await 0.1.delay();
+                        CategoryVal.listCompanyDisplay.assignAll(jsonDecode(snap.data!.body));
+                      }
+                    }();
+                    return Container();
+                  },
+                ),
+              ),
+              Obx(
+                () => ListTile(
+                  title: DropdownSearch<Map>(
+                    itemAsString: (val) => val['name'].toString(),
+                    items: [...CategoryVal.listCompanyDisplay],
+                    dropdownDecoratorProps: DropDownDecoratorProps(
+                      dropdownSearchDecoration: InputDecoration(
+                        filled: true,
+                        border: InputBorder.none,
+                        hintText: 'Select Company',
+                      ),
+                    ),
+                    onChanged: (val) async {
+                      final res = await Rot.categoryListByCompanyIdGet(query: 'companyId=${val!["id"]}');
+                      if (res.statusCode == 200) {
+                        CategoryVal.listCategory.value.val = jsonDecode(res.body);
+                        CategoryVal.listCategory.refresh();
+                      } else {
+                        SmartDialog.showToast(res.body);
+                      }
+                    },
+                  ),
+                ),
+              ),
               Obx(
                 () {
                   CategoryVal.reload.value;
@@ -30,10 +71,11 @@ class CategoryDisplay extends StatelessWidget {
                         if (snap.connectionState != ConnectionState.done) return LinearProgressIndicator();
 
                         if (snap.data!.statusCode == 200) {
-                          Future.delayed(
-                            Duration(microseconds: 1),
-                            () => CategoryVal.listCategory.value.val = jsonDecode(snap.data!.body),
-                          );
+                          () async {
+                            await 0.1.delay();
+                            CategoryVal.listCategory.value.val = jsonDecode(snap.data!.body);
+                            CategoryVal.listCategory.refresh();
+                          }();
                         }
                         return SizedBox.shrink();
                       },
@@ -43,68 +85,71 @@ class CategoryDisplay extends StatelessWidget {
               ),
               Flexible(
                 child: Obx(
-                  () => ListView(
-                    children: [
-                      ...CategoryVal.listCategory.value.val.map(
-                        (element) => ListTile(
-                          onTap: () {
-                            debugPrint(element.toString());
-
-                            // CategoryVal.bodyUpdate.value = CategoryModel.fromJson(element);
-                            // final mapData = Map.from(element);
-                            // todo : benerin dulu ini
-                            CategoryVal.mapData.assignAll(element);
-                            showBottomSheet(
-                              context: context,
-                              builder: (context) => Material(
-                                child: ListView(
-                                  children: [
-                                    Ink(
-                                      color: Colors.grey.shade100,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Row(
-                                          children: [BackButton(), Text("Edit")],
-                                        ),
+                  () =>
+                  ListView(
+                  children: [
+                    ...CategoryVal.listCategory.value.val.map(
+                      (element) => ListTile(
+                        onTap: () {
+                          debugPrint(element.toString());
+                          CategoryVal.mapData.assignAll(element);
+                          showBottomSheet(
+                            context: context,
+                            builder: (context) => Material(
+                              child: ListView(
+                                children: [
+                                  Ink(
+                                    color: Colors.grey.shade100,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Row(
+                                        children: [BackButton(), Text("Edit")],
                                       ),
                                     ),
-                                    ...CategoryVal.mapData.keys.map(
-                                      (e) => !['name', 'isActive'].contains(e)
-                                          ? SizedBox.shrink()
-                                          : e == 'isActive'
-                                              ? ListTile(
+                                  ),
+                                  ...CategoryVal.mapData.keys.map(
+                                    (e) => !['name', 'isActive'].contains(e)
+                                        ? SizedBox.shrink()
+                                        : e == 'isActive'
+                                            ? Obx(
+                                                () => ListTile(
                                                   title: CheckboxListTile(
+                                                    title: Text("Is Active ?"),
                                                     value: CategoryVal.mapData['isActive'],
-                                                    onChanged: (val) {},
-                                                  ),
-                                                )
-                                              : ListTile(
-                                                  title: TextFormField(
-                                                    onChanged: (value) => CategoryVal.mapData[e] = value,
-                                                    controller: TextEditingController(text: CategoryVal.mapData[e]),
-                                                    decoration: InputDecoration(
-                                                        filled: true, border: InputBorder.none, labelText: 'Name'),
+                                                    onChanged: (val) {
+                                                      CategoryVal.mapData['isActive'] = val;
+                                                      // CategoryVal.mapData.refresh();
+                                                    },
                                                   ),
                                                 ),
-                                    ),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                            child: ListTile(
-                                          title: MaterialButton(
-                                            color: Colors.pink,
-                                            onPressed: () {},
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(10.0),
-                                              child: Text(
-                                                "Delete",
-                                                style: TextStyle(color: Colors.white),
+                                              )
+                                            : ListTile(
+                                                title: TextFormField(
+                                                  onChanged: (value) => CategoryVal.mapData[e] = value,
+                                                  controller: TextEditingController(text: CategoryVal.mapData[e]),
+                                                  decoration: InputDecoration(
+                                                      filled: true, border: InputBorder.none, labelText: 'Name'),
+                                                ),
                                               ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                          child: ListTile(
+                                        title: MaterialButton(
+                                          color: Colors.pink,
+                                          onPressed: () {},
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(10.0),
+                                            child: Text(
+                                              "Delete",
+                                              style: TextStyle(color: Colors.white),
                                             ),
                                           ),
-                                        )),
-                                        Expanded(
-                                            child: ListTile(
+                                        ),
+                                      )),
+                                      Expanded(
+                                        child: ListTile(
                                           title: MaterialButton(
                                             color: Colors.orange,
                                             onPressed: () async {
@@ -113,6 +158,7 @@ class CategoryDisplay extends StatelessWidget {
                                               if (res.statusCode == 201) {
                                                 SmartDialog.showToast("success");
                                                 CategoryVal.reload.toggle();
+                                                Get.back();
                                               } else {
                                                 SmartDialog.showToast(res.body);
                                               }
@@ -125,23 +171,29 @@ class CategoryDisplay extends StatelessWidget {
                                               ),
                                             ),
                                           ),
-                                        ))
-                                      ],
-                                    )
-                                  ],
-                                ),
+                                        ),
+                                      )
+                                    ],
+                                  )
+                                ],
                               ),
-                            );
-                          },
-                          leading: Text((CategoryVal.listCategory.value.val.indexOf(element) + 1).toString()),
-                          title: Text(
-                            element['name'].toString(),
-                          ),
+                            ),
+                          );
+                        },
+                        leading: Text((CategoryVal.listCategory.value.val.indexOf(element) + 1).toString()),
+                        title: Text(
+                          element['name'].toString(),
                         ),
-                      )
-                    ],
-                  ),
+                        trailing: Icon(
+                          Icons.check_box,
+                          color: element['isActive'] ? Colors.green : Colors.grey,
+                        ),
+                      ),
+                    )
+                  ],
                 ),
+                )
+                
               )
             ],
           ),

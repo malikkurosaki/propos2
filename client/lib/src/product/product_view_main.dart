@@ -53,7 +53,7 @@ class ProductViewMain extends StatelessWidget {
                         ListTile(
                           leading: Icon(Icons.business),
                           title: FutureBuilder<http.Response>(
-                            future: Rot.productListCompanyGet(),
+                            future: Rot.globalListCompanyGet(),
                             builder: (context, snapshot) {
                               if (snapshot.connectionState != ConnectionState.done) return Text("loading ...");
                               debugPrint(snapshot.data!.body);

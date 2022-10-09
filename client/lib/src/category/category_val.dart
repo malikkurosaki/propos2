@@ -2,7 +2,8 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 class CategoryVal {
-  static final listCompany = [].obs;
+  static final listCompanyCreate = [].obs;
+  static final listCompanyDisplay = [].obs;
   static final bodyCreate = {}.val("CategoryVal.name3").obs;
   static final listCategory = [].val("CategoryVal.listCategory").obs;
   static final reload = false.obs;

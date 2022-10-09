@@ -31,7 +31,7 @@ class EmployeeCreate extends StatelessWidget {
                 () async {
                   if (snap.data!.statusCode == 200) {
                     await 0.1.delay();
-                    EmployeeVal.listCompany.assignAll(jsonDecode(snap.data!.body));
+                    EmployeeVal.listCompanyCreate.assignAll(jsonDecode(snap.data!.body));
                   }
                 }();
                 return SizedBox.shrink();
@@ -40,13 +40,13 @@ class EmployeeCreate extends StatelessWidget {
           ),
           Obx(
             () => ListTile(
-              title: EmployeeVal.listCompany.isEmpty
+              title: EmployeeVal.listCompanyCreate.isEmpty
                   ? Text("Select Company")
                   : DropdownSearch<Map>(
                       dropdownDecoratorProps: DropDownDecoratorProps(
                           dropdownSearchDecoration:
                               InputDecoration(filled: true, border: InputBorder.none, hintText: 'Select Company')),
-                      items: [...EmployeeVal.listCompany],
+                      items: [...EmployeeVal.listCompanyCreate],
                       itemAsString: (value) => value['name'].toString(),
                       onChanged: (value) {
                         EmployeeVal.bodyCreate.value.companyId = value!['id'];

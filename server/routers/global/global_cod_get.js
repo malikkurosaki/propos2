@@ -7,14 +7,23 @@ module.exports = require('express-async-handler')(async (req, res) => {
         select: {
             id: true,
             name: true,
+            isActive: true,
             Outlet: {
                 select: {
                     id: true,
-                    name: true
+                    name: true,
+                    isActive: true,
+                    Device: {
+                        select: {
+                            id: true,
+                            name: true,
+                            isActive: true
+                        }
+                    }
                 }
             }
         }
     })
 
-    res.status(200).json(data);
-});
+    res.status(200).json(data)
+})

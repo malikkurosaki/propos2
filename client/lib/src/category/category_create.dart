@@ -33,7 +33,7 @@ class CategoryCreate extends StatelessWidget {
               if (snp.data!.statusCode == 200) {
                 Future.delayed(
                   Duration(microseconds: 1),
-                  () => CategoryVal.listCompany.assignAll(
+                  () => CategoryVal.listCompanyCreate.assignAll(
                     jsonDecode(snp.data!.body),
                   ),
                 );
@@ -48,7 +48,7 @@ class CategoryCreate extends StatelessWidget {
                 Visibility(
                   visible: false,
                   child: Text(
-                    CategoryVal.listCompany.toString(),
+                    CategoryVal.listCompanyCreate.toString(),
                   ),
                 ),
                 ListTile(
@@ -56,7 +56,7 @@ class CategoryCreate extends StatelessWidget {
                     dropdownDecoratorProps: DropDownDecoratorProps(
                         dropdownSearchDecoration:
                             InputDecoration(filled: true, border: InputBorder.none, hintText: 'Select Company')),
-                    items: [...CategoryVal.listCompany],
+                    items: [...CategoryVal.listCompanyCreate],
                     itemAsString: (value) => value['name'].toString(),
                     onChanged: (value) {
                       CategoryVal.bodyCreate.value.val['companyId'] = value!['id'];

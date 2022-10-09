@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:propos/pages.dart';
 import 'package:propos/rot.dart';
 import 'package:propos/src/login/login_cod_select.dart';
-import 'package:propos/src/login/login_dialog_select.dart';
 import 'package:propos/src/login/login_select_company.dart';
 import 'package:propos/src/login/login_val.dart';
 import 'package:propos/utils/img_def.dart';

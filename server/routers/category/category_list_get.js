@@ -8,7 +8,8 @@ module.exports = handler(async (req, res) => {
         },
         select: {
             id: true,
-            name: true
+            name: true,
+            isActive: true
         }
     })
 

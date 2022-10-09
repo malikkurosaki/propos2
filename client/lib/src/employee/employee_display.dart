@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
@@ -26,6 +27,42 @@ class EmployeeDisplay extends StatelessWidget {
         body: Builder(builder: (context) {
           return Column(
             children: [
+              SizedBox(
+                height: 4,
+                child: FutureBuilder<http.Response>(
+                  future: Rot.globalListCompanyGet(),
+                  builder: (con, snap) {
+                    if (!snap.hasData) return LinearProgressIndicator();
+                    if (snap.data!.statusCode == 200) {
+                      () async {
+                        await 0.1.delay();
+                        EmployeeVal.listCompanyDisplay.assignAll(jsonDecode(snap.data!.body));
+                      }();
+                    }
+                    return Container();
+                  },
+                ),
+              ),
+              Obx(
+                () => ListTile(
+                  title: DropdownSearch<Map>(
+                    dropdownDecoratorProps: DropDownDecoratorProps(
+                        dropdownSearchDecoration:
+                            InputDecoration(filled: true, border: InputBorder.none, hintText: 'Select Company')),
+                    items: [...EmployeeVal.listCompanyDisplay],
+                    itemAsString: (val) => val['name'].toString(),
+                    onChanged: (val) async {
+                      final res = await Rot.employeeListByCompanyIdGet(query: "companyId=${val!['id']}");
+                      if (res.statusCode == 200) {
+                        EmployeeVal.listEmployee.value.val = jsonDecode(res.body);
+                        EmployeeVal.listEmployee.refresh();
+                      } else {
+                        SmartDialog.showToast(res.body);
+                      }
+                    },
+                  ),
+                ),
+              ),
               SizedBox(
                 height: 4,
                 child: Obx(
@@ -82,8 +119,7 @@ class EmployeeDisplay extends StatelessWidget {
                                                 (e) => !['name', 'password', 'isActive'].contains(e)
                                                     ? SizedBox.shrink()
                                                     : e == 'isActive'
-                                                        ? Obx(() {
-                                                            return ListTile(
+                                                        ? Obx(() => ListTile(
                                                               title: CheckboxListTile(
                                                                 title: Text("Is Active ?"),
                                                                 value: EmployeeVal.mapData['isActive'],
@@ -92,10 +128,10 @@ class EmployeeDisplay extends StatelessWidget {
                                                                   EmployeeVal.mapData.refresh();
                                                                 },
                                                               ),
-                                                            );
-                                                          },)
+                                                            ),)
                                                         : ListTile(
                                                             title: TextFormField(
+                                                              onChanged: (val) => EmployeeVal.mapData[e] = val,
                                                               controller: TextEditingController(
                                                                 text: EmployeeVal.mapData[e].toString(),
                                                               ),
@@ -125,15 +161,16 @@ class EmployeeDisplay extends StatelessWidget {
                                                     child: ListTile(
                                                       title: MaterialButton(
                                                         color: Colors.orange,
-                                                        onPressed: () async{
+                                                        onPressed: () async {
                                                           final body = Map.from(EmployeeVal.mapData);
                                                           body.removeWhere((key, value) => value == null);
-                                                          final res = await Rot.employeeUpdatePost(body: {"data": jsonEncode(body)});
-                                                          if(res.statusCode == 201){
+                                                          final res = await Rot.employeeUpdatePost(
+                                                              body: {"data": jsonEncode(body)});
+                                                          if (res.statusCode == 201) {
                                                             SmartDialog.showToast("success");
                                                             EmployeeVal.reload.toggle();
                                                             Get.back();
-                                                          }else{
+                                                          } else {
                                                             SmartDialog.showToast(res.body);
                                                           }
                                                         },

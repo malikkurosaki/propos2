@@ -43,7 +43,7 @@ class CustomerCreate extends StatelessWidget {
                   if (snapshot.connectionState != ConnectionState.done) return LinearProgressIndicator();
                   debugPrint(snapshot.data!.body);
                   final data = jsonDecode(snapshot.data!.body);
-                  Future.delayed(Duration(microseconds: 100), () => CustomerVal.listCompany.assignAll(data));
+                  Future.delayed(Duration(microseconds: 100), () => CustomerVal.listCompanyCreate.assignAll(data));
                   return SizedBox.shrink();
                 },
               ),
@@ -53,7 +53,7 @@ class CustomerCreate extends StatelessWidget {
                     dropdownSearchDecoration:
                         InputDecoration(filled: true, border: InputBorder.none, hintText: 'select company'),
                   ),
-                  items: [...CustomerVal.listCompany],
+                  items: [...CustomerVal.listCompanyCreate],
                   itemAsString: (value) => value['name'].toString(),
                   onChanged: (value) {
                     CustomerVal.selectedCompany.assignAll(value!);
@@ -78,46 +78,47 @@ class CustomerCreate extends StatelessWidget {
                     ),
                   ),
                 ),
+              ),
+              ListTile(
+                title: MaterialButton(
+                  color: Colors.blue,
+                  onPressed: () async {
+                    if (listBody['name'].toString().isEmpty) {
+                      SmartDialog.showToast("no empty name");
+                      return;
+                    }
+
+                    if (CustomerVal.selectedCompany.isEmpty) {
+                      SmartDialog.showToast("please select company");
+                      return;
+                    }
+
+                    listBody['companyId'] = CustomerVal.selectedCompany['id'];
+                    listBody.removeWhere((key, value) => value.toString().isEmpty);
+
+                    final data = await Rot.customerCreatePost(body: {"data": jsonEncode(listBody)});
+                    if (data.statusCode == 201) {
+                      SmartDialog.showToast("success");
+                      CustomerVal.reload.toggle();
+                      return;
+                    }
+
+                    SmartDialog.showToast(data.body);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Center(
+                      child: Text(
+                        "Save",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
               )
             ],
           ),
         ),
-        ListTile(
-          title: MaterialButton(
-            color: Colors.blue,
-            onPressed: () async {
-              if (listBody['name'].toString().isEmpty) {
-                SmartDialog.showToast("no empty name");
-                return;
-              }
-
-              if (CustomerVal.selectedCompany.isEmpty) {
-                SmartDialog.showToast("please select company");
-                return;
-              }
-
-              listBody['companyId'] = CustomerVal.selectedCompany['id'];
-              listBody.removeWhere((key, value) => value.toString().isEmpty);
-
-              final data = await Rot.customerCreatePost(body: {"data": jsonEncode(listBody)});
-              if (data.statusCode == 201) {
-                SmartDialog.showToast("success");
-                return;
-              }
-
-              SmartDialog.showToast(data.body);
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Center(
-                child: Text(
-                  "Save",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
-          ),
-        )
       ],
     );
   }
