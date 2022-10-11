@@ -5,6 +5,8 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:propos/components/company_select.dart';
 import 'package:propos/components/input.dart';
 import 'package:propos/components/search_view_with_checkbox.dart';
+import 'package:propos/src/discount/discount_create.dart';
+import 'package:propos/src/discount/discount_display.dart';
 import 'package:propos/utils/notif.dart';
 import 'package:propos/utils/router_api.dart';
 import 'package:propos/utils/vl.dart';
@@ -26,13 +28,15 @@ class Discount extends StatelessWidget {
                 child: Row(
                   children: [
                     Expanded(
-                      child: Card(child: _listDisplay()),
+                      child: Card(child: DiscountDisplay()),
                     ),
                     Visibility(
                       visible: !media.isMobile,
                       child: SizedBox(
-                        width: 360,
-                        child: Card(child: _create()),
+                        width: 460,
+                        child: Card(
+                          child: DiscountCreate(),
+                        ),
                       ),
                     )
                   ],

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:propos/src/custom_price/custom_pfrice_display.dart';
+import 'package:propos/src/custom_price/custom_price_display.dart';
 import 'package:propos/src/custom_price/custom_price_create.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 

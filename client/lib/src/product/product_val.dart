@@ -48,7 +48,9 @@ class ProductVal {
   static final selectOutlet = {}.obs;
   static final selectedCategory = {}.obs;
 
-  static final listSelectProduct = [].val("ProductVal.listSelectedProduct").obs;
+  static final listProduct = [].val("ProductVal.listProduct").obs;
+
+  static final mapData = {}.obs;
 
   // static Future<void> loadListOutlet() async {
   //   final data = await Rot.productListOutletGet();

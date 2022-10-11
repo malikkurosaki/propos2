@@ -19,9 +19,7 @@ module.exports = expressAsyncHandler(async (req, res) => {
 
     const data = await prisma.product.findMany({
         where: {
-            companyId: {
-                equals: req.companyId
-            }
+            companyId: req.companyId
         },
         orderBy: {
             createdAt: "desc"
@@ -45,6 +43,17 @@ module.exports = expressAsyncHandler(async (req, res) => {
                     stock: true
                 }
             },
+            ProductOutlet: {
+                where: {
+                    outletId: req.outletId
+                },
+                select: {
+                    id: true,
+                    isActive: true,
+                    outletId: true,
+                    productId: true
+                }
+            }
         }
     },);
 

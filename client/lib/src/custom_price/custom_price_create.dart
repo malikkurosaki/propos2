@@ -112,7 +112,7 @@ class CustomPriceCreate extends StatelessWidget {
 
                             if (data.statusCode == 201) {
                               SmartDialog.showToast("Success");
-                              CustomPriceVal.reeload.value++;
+                              CustomPriceVal.reeload.toggle();
                               return;
                             }
 

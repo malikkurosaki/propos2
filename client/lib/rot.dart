@@ -148,6 +148,12 @@ class Rot {
     }) => http.get(Uri.parse("${Config.host}/custom-price-list-get?${query??''}"), headers: {
         "deviceId": Vl.deviceId.val
     }, );
+    static Future < http.Response > customPriceUpdatePost({
+        String ? query,
+        Map ? body
+    }) => http.post(Uri.parse("${Config.host}/custom-price-update-post?${query??''}"), headers: {
+        "deviceId": Vl.deviceId.val
+    }, body: body);
     static Future < http.Response > customerCreatePost({
         String ? query,
         Map ? body
@@ -188,6 +194,36 @@ class Rot {
         String ? query,
         Map ? body
     }) => http.post(Uri.parse("${Config.host}/device-update-post?${query??''}"), headers: {
+        "deviceId": Vl.deviceId.val
+    }, body: body);
+    static Future < http.Response > discountCreatePost({
+        String ? query,
+        Map ? body
+    }) => http.post(Uri.parse("${Config.host}/discount-create-post?${query??''}"), headers: {
+        "deviceId": Vl.deviceId.val
+    }, body: body);
+    static Future < http.Response > discountDelete({
+        String ? query,
+        Map ? body
+    }) => http.delete(Uri.parse("${Config.host}/discount-delete?${query??''}"), headers: {
+        "deviceId": Vl.deviceId.val
+    }, body: body);
+    static Future < http.Response > discountListGet({
+        String ? query,
+        Map ? body
+    }) => http.get(Uri.parse("${Config.host}/discount-list-get?${query??''}"), headers: {
+        "deviceId": Vl.deviceId.val
+    }, );
+    static Future < http.Response > discountModelGet({
+        String ? query,
+        Map ? body
+    }) => http.get(Uri.parse("${Config.host}/discount-model-get?${query??''}"), headers: {
+        "deviceId": Vl.deviceId.val
+    }, );
+    static Future < http.Response > discountUpdatePost({
+        String ? query,
+        Map ? body
+    }) => http.post(Uri.parse("${Config.host}/discount-update-post?${query??''}"), headers: {
         "deviceId": Vl.deviceId.val
     }, body: body);
     static Future < http.Response > employeeCreatePost({

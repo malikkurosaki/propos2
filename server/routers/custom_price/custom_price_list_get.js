@@ -9,10 +9,10 @@ module.exports = handler(async (req, res) => {
             userId: req.userId
         },
         select: {
+            id: true,
+            name: true,
             des: true,
             isActive: true,
-            name: true,
-            id: true
         }
     })
 

@@ -211,8 +211,8 @@ class ProductViewMain extends StatelessWidget {
                             if (snap.data!.statusCode == 200) {
                               () async {
                                 await 0.1.delay();
-                                ProductVal.listSelectProduct.value.val = jsonDecode(snap.data!.body);
-                                ProductVal.listSelectProduct.refresh();
+                                ProductVal.listProduct.value.val = jsonDecode(snap.data!.body);
+                                ProductVal.listProduct.refresh();
                               }();
                             }
 
@@ -223,76 +223,120 @@ class ProductViewMain extends StatelessWidget {
                     ),
                   ),
                   Obx(
-                    () {
-                      return Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Card(
-                          margin: EdgeInsets.zero,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                color: Colors.grey.shade100,
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(children: [
-                                  ..._listWidth.map(
-                                    (e) => SizedBox(
-                                      width: e['width'] as double,
-                                      child: Text(e['title'] as String),
-                                    ),
-                                  )
-                                ]),
-                              ),
-                              ...ProductVal.listSelectProduct.value.val
-                                  .map(
-                                    (e) => ListTile(
-                                      onTap: () {
-                                        showBottomSheet(
-                                          context: context,
-                                          builder: (context) => Material(
-                                            child: Column(
-                                              children: [
-                                                Container(
-                                                  color: Colors.grey.shade100,
-                                                  padding: EdgeInsets.all(8),
-                                                  child: Row(
-                                                    children: [BackButton(), Text("Edit Product")],
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                      title: Row(
-                                        children: [
-                                          ..._listWidth.map(
-                                            (el) => SizedBox(
-                                              width: el['width'] as double,
-                                              child: el['field'].toString() == "no"
-                                                  ? Text(
-                                                      (ProductVal.listSelectProduct.value.val.indexOf(e) + 1)
-                                                          .toString(),
-                                                    )
-                                                  : Text(
-                                                      e[el['field']].toString(),
-                                                      textAlign: el['field'].toString() == 'price'
-                                                          ? TextAlign.end
-                                                          : TextAlign.start,
-                                                    ),
-                                            ),
-                                          )
-                                        ],
+                    () => Column(
+                      children: [
+                        ...ProductVal.listProduct.value.val.map(
+                          (e) => ListTile(
+                            leading: Text((ProductVal.listProduct.value.val.indexOf(e) + 1).toString()),
+                            title: Text(e['name'].toString()),
+                            trailing: Icon(
+                              Icons.check_box,
+                              color: e['ProductOutlet'][0]['isActive'] ? Colors.green : Colors.grey,
+                            ),
+                            onTap: () {
+                              ProductVal.mapData.assignAll(e);
+                              showBottomSheet(
+                                context: context,
+                                builder: (context) => Material(
+                                  child: ListView(
+                                    controller: ScrollController(),
+                                    children: [
+                                      Container(
+                                        color: Colors.grey.shade100,
+                                        padding: EdgeInsets.all(8),
+                                        child: Row(
+                                          children: [BackButton(), Text("Edit Product")],
+                                        ),
                                       ),
-                                    ),
-                                  )
-                                  .toList()
-                            ],
+                                      ...ProductVal.mapData.keys.map(
+                                        (el) => ListTile(
+                                          title: TextFormField(
+                                            decoration: InputDecoration(
+                                                filled: true, border: InputBorder.none, labelText: el.toString()),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
                           ),
-                        ),
-                      );
-                    },
-                  ),
+                        )
+                      ],
+                    ),
+                  )
+                  // Obx(
+                  //   () {
+                  //     return Padding(
+                  //       padding: const EdgeInsets.all(8),
+                  //       child: Card(
+                  //         margin: EdgeInsets.zero,
+                  //         child: Column(
+                  //           crossAxisAlignment: CrossAxisAlignment.start,
+                  //           children: [
+                  //             Container(
+                  //               color: Colors.grey.shade100,
+                  //               padding: const EdgeInsets.all(8.0),
+                  //               child: Row(children: [
+                  //                 ..._listWidth.map(
+                  //                   (e) => SizedBox(
+                  //                     width: e['width'] as double,
+                  //                     child: Text(e['title'] as String),
+                  //                   ),
+                  //                 )
+                  //               ]),
+                  //             ),
+                  //             ...ProductVal.listSelectProduct.value.val
+                  //                 .map(
+                  //                   (e) => ListTile(
+                  //                     onTap: () {
+                  //                       showBottomSheet(
+                  //                         context: context,
+                  //                         builder: (context) => Material(
+                  //                           child: Column(
+                  //                             children: [
+                  //                               Container(
+                  //                                 color: Colors.grey.shade100,
+                  //                                 padding: EdgeInsets.all(8),
+                  //                                 child: Row(
+                  //                                   children: [BackButton(), Text("Edit Product")],
+                  //                                 ),
+                  //                               )
+                  //                             ],
+                  //                           ),
+                  //                         ),
+                  //                       );
+                  //                     },
+                  //                     title: Row(
+                  //                       children: [
+                  //                         ..._listWidth.map(
+                  //                           (el) => SizedBox(
+                  //                             width: el['width'] as double,
+                  //                             child: el['field'].toString() == "no"
+                  //                                 ? Text(
+                  //                                     (ProductVal.listSelectProduct.value.val.indexOf(e) + 1)
+                  //                                         .toString(),
+                  //                                   )
+                  //                                 : Text(
+                  //                                     e[el['field']].toString(),
+                  //                                     textAlign: el['field'].toString() == 'price'
+                  //                                         ? TextAlign.end
+                  //                                         : TextAlign.start,
+                  //                                   ),
+                  //                           ),
+                  //                         )
+                  //                       ],
+                  //                     ),
+                  //                   ),
+                  //                 )
+                  //                 .toList()
+                  //           ],
+                  //         ),
+                  //       ),
+                  //     );
+                  //   },
+                  // ),
                 ],
               )
             ],
