@@ -6,11 +6,15 @@ module.exports = handler(async (req, res) => {
     // const { userid, companyid, outletid } = req.headers;
     const data = await prisma.discount.findMany({
         where: {
-            companyId: req.companyId
+            companyId: req.companyId,
+            isActive: true
         },
         select: {
             id: true,
-            name: true
+            name: true,
+            isPercentage: true,
+            value: true,
+            percentage: true
         }
     },)
 

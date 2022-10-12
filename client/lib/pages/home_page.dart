@@ -1,16 +1,19 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:propos/menus.dart';
 import 'package:propos/src/home/home_drawer.dart';
 import 'package:propos/src/printers/printer_val.dart';
+import 'package:propos/utils/vl.dart';
 import 'package:responsive_builder/responsive_builder.dart';
+import 'package:http/http.dart' as http;
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
   final _drawerOpen = true.val("HomePage.drawerOpen").obs;
   final _userData = {}.obs;
-
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +72,16 @@ class HomePage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                FutureBuilder<http.Response>(builder: (con, snap) {
+                  if (!snap.hasData) return LinearProgressIndicator();
+                  if (snap.data!.statusCode == 200) {
+                    () async {
+                      await 0.1.delay();
+                      Vl.cod.value.val = jsonDecode(snap.data!.body);
+                    }();
+                  }
+                  return Container();
+                }),
                 Visibility(
                   visible: !media.isMobile,
                   child: AppBar(

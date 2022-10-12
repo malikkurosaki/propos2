@@ -229,37 +229,28 @@ class ProductViewMain extends StatelessWidget {
                           (e) => ListTile(
                             leading: Text((ProductVal.listProduct.value.val.indexOf(e) + 1).toString()),
                             title: Text(e['name'].toString()),
-                            trailing: Icon(
-                              Icons.check_box,
-                              color: e['ProductOutlet'][0]['isActive'] ? Colors.green : Colors.grey,
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(NumberFormat.simpleCurrency(decimalDigits: 0, locale: 'id_ID', name: "")
+                                    .format(e['price'])),
+                                Builder(builder: (context) {
+                                  try {
+                                    final stk = e['ProductStock'][0]['stock'].toString();
+                                    return Text(stk.toString());
+                                  } catch (e) {
+                                    return Text("");
+                                  }
+                                })
+                              ],
                             ),
+                            // trailing: Icon(
+                            //   Icons.check_box,
+                            //   color: e['ProductOutlet'][0]['isActive'] ? Colors.green : Colors.grey,
+                            // ),
                             onTap: () {
-                              ProductVal.mapData.assignAll(e);
-                              showBottomSheet(
-                                context: context,
-                                builder: (context) => Material(
-                                  child: ListView(
-                                    controller: ScrollController(),
-                                    children: [
-                                      Container(
-                                        color: Colors.grey.shade100,
-                                        padding: EdgeInsets.all(8),
-                                        child: Row(
-                                          children: [BackButton(), Text("Edit Product")],
-                                        ),
-                                      ),
-                                      ...ProductVal.mapData.keys.map(
-                                        (el) => ListTile(
-                                          title: TextFormField(
-                                            decoration: InputDecoration(
-                                                filled: true, border: InputBorder.none, labelText: el.toString()),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              );
+                              ProductVal.mapData.value.val = e;
+                              showBottomSheet(context: context, builder: (context) => ProductEdit());
                             },
                           ),
                         )

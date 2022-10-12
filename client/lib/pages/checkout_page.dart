@@ -82,7 +82,27 @@ class CheckoutPage extends StatelessWidget {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Visibility(visible: !media.isMobile, child: CheckoutDrawerView()),
+                      // Visibility(visible: !media.isMobile, child: CheckoutDrawerView()),
+                      Visibility(
+                        visible: !media.isMobile,
+                        child: SizedBox(
+                          width: 340,
+                          child: Card(
+                            child: ListView(
+                              children: [
+                                ...CashierVal.orderDetail.value.val.keys.map(
+                                  (e) => ListTile(
+                                    title: Text(
+                                      e.toString().paramCase.toString().replaceAll("-", " ").toString(),
+                                    ),
+                                   subtitle: Text(CashierVal.orderDetail.value.val[e].toString())
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
                       Expanded(
                         child: CheckoutMainView(),
                       ),

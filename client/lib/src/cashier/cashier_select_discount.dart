@@ -16,7 +16,7 @@ class CashierSelectDiscount extends StatelessWidget {
   _onLoad() {
     Rot.cashierListDiscountGet().then(
       (res) {
-        debugPrint(res.body);
+        // debugPrint(res.body);
         if (res.statusCode == 200) {
           listDiscount.assignAll(jsonDecode(res.body));
         }

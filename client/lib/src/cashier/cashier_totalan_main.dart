@@ -11,6 +11,7 @@ import 'package:propos/src/cashier/casier_val.dart';
 import 'package:get/get.dart';
 import 'package:propos/utils/img_def.dart';
 import 'package:propos/utils/val.dart';
+import 'package:get_storage/get_storage.dart';
 
 class CashierTotalanMain extends StatelessWidget {
   const CashierTotalanMain({Key? key}) : super(key: key);
@@ -48,10 +49,10 @@ class CashierTotalanMain extends StatelessWidget {
                             // CashierVal.isMultipleSelect.toggle();
                           },
                           onTap: () {
-                            // dialog add note
+                            final rxItm = Map.from(itm).val("CasierTotalan.rxItm").obs;
                             showBottomSheet(
                               context: context,
-                              builder: (context) => CashierTotalanAddNote(itm: itm),
+                              builder: (context) => CashierTotalanAddNote(itm: rxItm),
                             );
                           },
                           leading: InkWell(
@@ -61,42 +62,6 @@ class CashierTotalanMain extends StatelessWidget {
                               size: 36,
                             ),
                             onTap: () => CashierVal.orderSubstract(itm),
-                            // onTap: () {
-                            //   final data = List.from(Val.listorder.value.val);
-                            //   final idx = data.indexWhere((element) => element['id'] == itm['id']);
-                            //   if (idx != -1) {
-                            //     if (data[idx]['qty'] > 1) {
-                            //       data[idx]['qty']--;
-                            //       data[idx]['total'] = data[idx]['qty'] * data[idx]['price'];
-                            //     } else {
-                            //       Get.dialog(
-                            //         AlertDialog(
-                            //           title: Text("Warning"),
-                            //           content: Text("Are you sure want to delete this item?"),
-                            //           actions: [
-                            //             MaterialButton(
-                            //               child: Text("Yes"),
-                            //               onPressed: () {
-                            //                 data.removeAt(idx);
-                            //                 Val.listorder.value.val = data;
-                            //                 Val.listorder.refresh();
-                            //                 Get.back();
-                            //               },
-                            //             ),
-                            //             MaterialButton(
-                            //               child: Text("No"),
-                            //               onPressed: () {
-                            //                 Get.back();
-                            //               },
-                            //             ),
-                            //           ],
-                            //         ),
-                            //       );
-                            //     }
-                            //   }
-                            //   Val.listorder.value.val = data;
-                            //   Val.listorder.refresh();
-                            // },
                           ),
                           title: Text(
                             itm['name'],
@@ -128,34 +93,86 @@ class CashierTotalanMain extends StatelessWidget {
                               itm['sisaStock'] == null
                                   ? SizedBox.shrink()
                                   : Row(
-                                    children: [
-                                      Text(
-                                        "fnl stk ",
-                                        style: TextStyle(color: Colors.orange),
-                                      ),
-                                      Text(
-                                        itm['sisaStock'].toString(),
-                                        style: TextStyle(color: Colors.orange),
-                                      ),
-                                    ],
-                                  ),
+                                      children: [
+                                        Text(
+                                          "fnl stk ",
+                                          style: TextStyle(color: Colors.orange),
+                                        ),
+                                        Text(
+                                          itm['sisaStock'].toString(),
+                                          style: TextStyle(color: Colors.orange),
+                                        ),
+                                      ],
+                                    ),
                               itm['note'].toString().isEmpty
                                   ? SizedBox.shrink()
-                                  : Ink(
-                                      color: Colors.grey.shade100,
-                                      child: Row(
+                                  : ListTile(
+                                      dense: true,
+                                      leading: Icon(
+                                        Icons.edit,
+                                        // size: 16,
+                                        color: Colors.green,
+                                      ),
+                                      title: Text(
+                                        itm['note'],
+                                        style: TextStyle(color: Colors.green),
+                                      ),
+                                    ),
+                              // Row(
+                              //     children: [
+                              //       Icon(
+                              //         Icons.edit,
+                              //         // size: 16,
+                              //         color: Colors.green,
+                              //       ),
+                              //       Padding(
+                              //         padding: const EdgeInsets.all(8.0),
+                              //         child: Text(
+                              //           itm['note'],
+                              //           style: TextStyle(color: Colors.green),
+                              //         ),
+                              //       ),
+                              //     ],
+                              //   ),
+                              !(itm['isDiscount'] ?? false)
+                                  ? Container()
+                                  : ListTile(
+                                      dense: true,
+                                      leading: Icon(
+                                        Icons.discount,
+                                        color: Colors.orange,
+                                        // size: 1
+                                      ),
+                                      title: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Icon(
-                                            Icons.edit,
-                                            size: 16,
-                                            color: Colors.green,
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(itm['note']),
+                                          Text(itm['discountName'].toString()),
+                                          Text(
+                                            itm['isPercentage']
+                                                ? "${itm['percentage']}%"
+                                                : NumberFormat.simpleCurrency(
+                                                        decimalDigits: 0, locale: 'id_ID', name: "")
+                                                    .format(
+                                                    itm['value'],
+                                                  ),
                                           ),
                                         ],
-                                      )),
+                                      ),
+                                      subtitle: Builder(builder: (context) {
+                                        int result = 0;
+                                        if (itm['isPercentage']) {
+                                          result = itm['total'] -
+                                              ((itm['percentage'] / 100 * itm['total']) as double).round();
+                                        } else {
+                                          result = itm['total'] - itm['value'];
+                                        }
+
+                                        itm['totalDiscount'] = result;
+                                        return Text(
+                                            NumberFormat.simpleCurrency(decimalDigits: 0, locale: 'id_ID', name: "")
+                                                .format(result));
+                                      }),
+                                    ),
                               !itm['isManual']
                                   ? SizedBox.shrink()
                                   : Text(

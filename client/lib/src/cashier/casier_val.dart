@@ -28,6 +28,7 @@ class CashierVal {
   static final listorder = [].val("CashierVal.listOrder").obs;
 
   static final listCategory = [].obs;
+  static final orderDetail = {}.val("CashierVal.orderDetail").obs;
 
   static orderAdd(Map prod) {
     final data = List.from(Val.listorder.value.val);
@@ -61,7 +62,7 @@ class CashierVal {
       if ((data[idx]['ProductStock'] as List).isNotEmpty) {
         data[idx]['stock'] = data[idx]['ProductStock'][0]['stock'];
         data[idx]['sisaStock'] = data[idx]['ProductStock'][0]['stock'] - data[idx]['qty'];
-
+        
         if ((data[idx]['qty'] + 1) > data[idx]['stock']) {
           SmartDialog.showToast("error stock");
           return;
@@ -69,6 +70,7 @@ class CashierVal {
       }
 
       data[idx]['qty']++;
+      data[idx]['total'] = data[idx]['qty'] * data[idx]['price'];
     }
 
     Val.listorder.value.val = data;

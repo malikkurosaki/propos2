@@ -416,6 +416,7 @@ model Order {
   number     Int?
   Discount   Discount? @relation(fields: [discountId], references: [id])
   discountId String?
+  isDiscount Boolean?  @default(false)
 }
 
 model OrderManual {

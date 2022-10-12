@@ -1,4 +1,5 @@
 import 'package:get_storage/get_storage.dart';
+import 'package:get/get.dart';
 
 class Vl {
   static final userId = "".val('Vl.userId2');
@@ -18,6 +19,8 @@ class Vl {
   static final headers = {'userId': Vl.userId.val, 'companyId': companyId.val, 'outletId': outletId.val};
 
   static final deviceId = "".val("Vl.deviceId1");
+
+  static final cod = {}.val("Vl.cod").obs;
 
   static void clear() {
     userId.val = "";

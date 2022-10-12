@@ -262,6 +262,12 @@ class Rot {
     }) => http.get(Uri.parse("${Config.host}/global-list-company-get?${query??''}"), headers: {
         "deviceId": Vl.deviceId.val
     }, );
+    static Future < http.Response > globalListOutletByProductIdGet({
+        String ? query,
+        Map ? body
+    }) => http.get(Uri.parse("${Config.host}/global-list-outlet-by-product-id-get?${query??''}"), headers: {
+        "deviceId": Vl.deviceId.val
+    }, );
     static Future < http.Response > globalOutletListByCompanyIdGet({
         String ? query,
         Map ? body
@@ -418,10 +424,22 @@ class Rot {
     }) => http.get(Uri.parse("${Config.host}/product-list-outlet-get?${query??''}"), headers: {
         "deviceId": Vl.deviceId.val
     }, );
+    static Future < http.Response > productListStockByProductIdByOutletIdGet({
+        String ? query,
+        Map ? body
+    }) => http.get(Uri.parse("${Config.host}/product-list-stock-by-product-id-by-outlet-id-get?${query??''}"), headers: {
+        "deviceId": Vl.deviceId.val
+    }, );
     static Future < http.Response > productRemoveDelete({
         String ? query,
         Map ? body
     }) => http.delete(Uri.parse("${Config.host}/product-remove-delete?${query??''}"), headers: {
+        "deviceId": Vl.deviceId.val
+    }, body: body);
+    static Future < http.Response > productUpdateOutletPost({
+        String ? query,
+        Map ? body
+    }) => http.post(Uri.parse("${Config.host}/product-update-outlet-post?${query??''}"), headers: {
         "deviceId": Vl.deviceId.val
     }, body: body);
     static Future < http.Response > reportListGet({

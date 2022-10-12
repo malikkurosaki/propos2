@@ -39,7 +39,9 @@ class CheckoutAction {
             "companyId": cod['companyId'],
             "note": e['note'],
             "total": e['total'],
-            "userId": cod['userId']
+            "userId": cod['userId'],
+            "discountId": e['discountId'],
+            "isDiscount": e['isDiscount']
           },
         )
         .toList();
@@ -55,6 +57,8 @@ class CheckoutAction {
             "productId": e['id'],
             "total": e['total'],
             "quantity": e['qty'],
+            "discountId": e['discountId'],
+            "isDiscount": e['isDiscount']
             // "discountId": "undefined",
           },
         )

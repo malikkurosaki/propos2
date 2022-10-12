@@ -4,6 +4,11 @@ module.exports = require('express-async-handler')(async(req, res) => {
         where: {
             companyId: req.query.companyId,
             isActive: true
+        },
+        select: {
+            id: true,
+            name: true,
+            companyId: true
         }
     })
 

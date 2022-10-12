@@ -50,7 +50,7 @@ class ProductVal {
 
   static final listProduct = [].val("ProductVal.listProduct").obs;
 
-  static final mapData = {}.obs;
+  static final mapData = {}.val("ProductVal.mapData").obs;
 
   // static Future<void> loadListOutlet() async {
   //   final data = await Rot.productListOutletGet();
