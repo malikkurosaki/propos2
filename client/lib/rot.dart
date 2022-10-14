@@ -436,6 +436,24 @@ class Rot {
     }) => http.delete(Uri.parse("${Config.host}/product-remove-delete?${query??''}"), headers: {
         "deviceId": Vl.deviceId.val
     }, body: body);
+    static Future < http.Response > productSearchByCompanyGet({
+        String ? query,
+        Map ? body
+    }) => http.get(Uri.parse("${Config.host}/product-search-by-company-get?${query??''}"), headers: {
+        "deviceId": Vl.deviceId.val
+    }, );
+    static Future < http.Response > productUpdateAvailableStockPost({
+        String ? query,
+        Map ? body
+    }) => http.post(Uri.parse("${Config.host}/product-update-available-stock-post?${query??''}"), headers: {
+        "deviceId": Vl.deviceId.val
+    }, body: body);
+    static Future < http.Response > productUpdateDefaultPost({
+        String ? query,
+        Map ? body
+    }) => http.post(Uri.parse("${Config.host}/product-update-default-post?${query??''}"), headers: {
+        "deviceId": Vl.deviceId.val
+    }, body: body);
     static Future < http.Response > productUpdateOutletPost({
         String ? query,
         Map ? body

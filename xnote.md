@@ -74,3 +74,9 @@ untuk keputusan ini pun saya sangat berat hati dan harus saya timbang berulang u
 
 semua hanyalah masalah waktu dan jarak relatifitas , tetap fokus dan berjuang dan jangan menyerah
 misi , visi dan prioritas adalah kunci dan arah tujuan
+
+```
+---------------------
+NOT FOR HUMAN READ
+---------------------
+```

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:propos/rot.dart';
 import 'package:propos/src/product/product_edit_outlet.dart';
 import 'package:propos/src/product/product_edit_stock.dart';
@@ -17,6 +18,7 @@ class ProductEdit extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       child: ListView(
+        addAutomaticKeepAlives: true,
         controller: ScrollController(),
         children: [
           Container(
@@ -34,6 +36,7 @@ class ProductEdit extends StatelessWidget {
                 ? Container()
                 : ListTile(
                     title: TextFormField(
+                      onChanged: (val) => ProductVal.mapData.value.val[el] = val,
                       controller: TextEditingController(text: ProductVal.mapData.value.val[el].toString()),
                       decoration: InputDecoration(
                         filled: true,
@@ -66,7 +69,28 @@ class ProductEdit extends StatelessWidget {
                 child: ListTile(
                   title: MaterialButton(
                     color: Colors.orange,
-                    onPressed: () {},
+                    onPressed: () async {
+                      debugPrint(ProductVal.mapData.value.val.toString());
+
+                      final res = await Rot.productUpdateDefaultPost(
+                        body: {
+                          "data": jsonEncode(
+                            {
+                              "id": ProductVal.mapData.value.val['id'],
+                              "name": ProductVal.mapData.value.val['name'],
+                              "price": int.parse(ProductVal.mapData.value.val['price'].toString())
+                            },
+                          )
+                        },
+                      );
+
+                      if (res.statusCode == 201) {
+                        SmartDialog.showToast("success");
+                        ProductVal.reloadProduct.toggle();
+                      } else {
+                        SmartDialog.showToast(res.body);
+                      }
+                    },
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: Center(

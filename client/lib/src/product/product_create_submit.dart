@@ -241,7 +241,7 @@ class ProductCreateSubmit extends StatelessWidget {
                       (res) {
                         if (res.statusCode == 201) {
                           SmartDialog.showToast("success");
-                          ProductVal.isReloadProduct.toggle();
+                          ProductVal.reloadProduct.toggle();
                         } else {
                           SmartDialog.showToast(res.body);
                         }

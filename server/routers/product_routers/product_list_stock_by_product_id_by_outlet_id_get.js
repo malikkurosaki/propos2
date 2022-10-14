@@ -1,15 +1,29 @@
 module.exports = require('express-async-handler')(async (req, res) => {
     const productId = req.query.productId;
-    const outletId = req.query.outletId;
 
     console.log(productId);
-    console.log(outletId);
-    
-    if (!productId || !outletId) return res.status(401).send('401');
-    const data = await new (require('@prisma/client').PrismaClient)().productStock.findMany({
+
+    if (!productId) return res.status(401).send('401');
+    const data = await new (require('@prisma/client').PrismaClient)().product.findUnique({
         where: {
-            productId: productId,
-            outletId: outletId
+            id: productId
+        },
+        select: {
+            id: true,
+            name: true,
+            ProductStock: {
+                where: {
+                    isActive: true
+                },
+                select: {
+                    stock: true,
+                    isActive: true,
+                    minStock: true,
+                    outletId: true,
+                    productId: true,
+                    id: true
+                }
+            }
         }
     })
 

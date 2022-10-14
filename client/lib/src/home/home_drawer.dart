@@ -29,7 +29,20 @@ class HomeDrawer extends StatelessWidget {
               decoration: BoxDecoration(color: Colors.blue),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Obx(
+                    () => Vl.cod.value.val.isEmpty
+                        ? Text("loading ...")
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(Vl.cod.value.val['Company']['name'].toString()),
+                              Text(Vl.cod.value.val['Outlet']['name'].toString()),
+                              Text(Vl.cod.value.val['Device']['name'].toString()),
+                            ],
+                          ),
+                  ),
                   SizedBox(
                     height: 4,
                     child: FutureBuilder<http.Response>(

@@ -69,8 +69,11 @@ class ProductEditOutlet extends StatelessWidget {
                 (e) => ListTile(
                   title: CheckboxListTile(
                     title: Text(e['name'].toString()),
-                    value: listAvailable.map((ee) => ee['outletId']).contains(e['id'] ),
+                    value: listAvailable.map((ee) => ee['outletId']).contains(e['id']),
                     onChanged: (val) async {
+                      SmartDialog.showLoading();
+                      Future.delayed(Duration(seconds: 1), () => SmartDialog.dismiss());
+                      
                       final idx = listAvailable.map((e) => e['outletId']).toList().indexOf(e['id']);
 
                       final body = {

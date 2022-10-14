@@ -1,25 +1,25 @@
 module.exports = require('express-async-handler')(async (req, res) => {
-    const data = await new (require('@prisma/client').PrismaClient)().company.findMany({
+    const data = await new (require('@prisma/client').PrismaClient)().defaultPreference.findUnique({
         where: {
-            userId: req.userId,
-            isActive: true
+            deviceId: req.deviceId
         },
         select: {
-            id: true,
-            name: true,
-            isActive: true,
+            Company: {
+                select: {
+                    id: true,
+                    name: true
+                }
+            },
             Outlet: {
                 select: {
                     id: true,
-                    name: true,
-                    isActive: true,
-                    Device: {
-                        select: {
-                            id: true,
-                            name: true,
-                            isActive: true
-                        }
-                    }
+                    name: true
+                }
+            },
+            Device: {
+                select: {
+                    id: true,
+                    name: true
                 }
             }
         }

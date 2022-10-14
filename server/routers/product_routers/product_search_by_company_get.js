@@ -1,27 +1,12 @@
-const expressAsyncHandler = require("express-async-handler");
-const { ModelHeader } = require("../../utils");
-const Prisma = require('@prisma/client').PrismaClient;
-const prisma = new Prisma();
-
-module.exports = expressAsyncHandler(async (req, res) => {
-
-    // const dataCom = await prisma.defaultPreference.findUnique({
-    //     where: {
-    //         deviceId: req.deviceId
-    //     },
-    //     select: {
-    //         companyId: true
-    //     }
-    // })
-
-    // console.log(dataCom);
-
-
-    const data = await prisma.product.findMany({
+module.exports = require('express-async-handler')(async(req, res)=> {
+    const {name} = req.query; 
+    const data = await new (require('@prisma/client').PrismaClient)().product.findMany({
         where: {
             companyId: req.companyId,
-        },
-        orderBy: {
+            name: {
+                contains: name
+            }
+        }, orderBy: {
             createdAt: "desc"
         },
         select: {
@@ -59,7 +44,7 @@ module.exports = expressAsyncHandler(async (req, res) => {
             },
 
         }
-    },);
+    })
 
     res.status(200).json(data);
 })

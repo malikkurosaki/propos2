@@ -8,7 +8,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:propos/utils/vl.dart';
 
 class ProductVal {
-  static final isReloadProduct = false.obs;
+  static final reloadProduct = false.obs;
 
   // static final keyForm = GlobalKey<FormState>();
   static final productImage = <String, dynamic>{"id": "null", "name": "null"}.obs;
@@ -51,6 +51,7 @@ class ProductVal {
   static final listProduct = [].val("ProductVal.listProduct").obs;
 
   static final mapData = {}.val("ProductVal.mapData").obs;
+  
 
   // static Future<void> loadListOutlet() async {
   //   final data = await Rot.productListOutletGet();

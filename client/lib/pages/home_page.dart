@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:propos/menus.dart';
+import 'package:propos/rot.dart';
 import 'package:propos/src/home/home_drawer.dart';
 import 'package:propos/src/printers/printer_val.dart';
 import 'package:propos/utils/vl.dart';
@@ -72,16 +73,22 @@ class HomePage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                FutureBuilder<http.Response>(builder: (con, snap) {
-                  if (!snap.hasData) return LinearProgressIndicator();
-                  if (snap.data!.statusCode == 200) {
-                    () async {
-                      await 0.1.delay();
-                      Vl.cod.value.val = jsonDecode(snap.data!.body);
-                    }();
-                  }
-                  return Container();
-                }),
+                SizedBox(
+                  height: 1,
+                  child: FutureBuilder<http.Response>(
+                    future: Rot.globalCodGet(),
+                    builder: (con, snap) {
+                    if (!snap.hasData) return LinearProgressIndicator();
+                    if (snap.data!.statusCode == 200) {
+                      () async {
+                        await 0.1.delay();
+                        Vl.cod.value.val = jsonDecode(snap.data!.body);
+                        Vl.cod.refresh();
+                      }();
+                    }
+                    return Container();
+                  }),
+                ),
                 Visibility(
                   visible: !media.isMobile,
                   child: AppBar(
