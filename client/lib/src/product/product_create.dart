@@ -40,9 +40,9 @@ class ProductCreate extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(
+            ListTile(
+              leading: media.isMobile? BackButton(): null,
+              title: Text(
                 "Create Product",
                 style: TextStyle(
                   fontSize: 18,

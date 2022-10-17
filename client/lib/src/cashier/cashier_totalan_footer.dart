@@ -21,7 +21,7 @@ class CashierTotalanFooter extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(4.0),
           child: MaterialButton(
-            color: Colors.blue,
+            color: Colors.orange,
             onPressed: Val.listorder.value.val.isEmpty
                 ? null
                 : () {
@@ -34,9 +34,15 @@ class CashierTotalanFooter extends StatelessWidget {
             // ),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text(
-                "Save",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.save, color: Colors.white,),
+                  Text(
+                    "Save",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
+                  ),
+                ],
               ),
             ),
           ),

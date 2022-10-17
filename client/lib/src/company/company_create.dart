@@ -23,6 +23,7 @@ class CompanyCreate extends StatelessWidget {
               child: ListView(
                 children: [
                   ListTile(
+                    leading: media.isMobile? BackButton(): null,
                     title: Text(
                       "Create Company",
                       style: TextStyle(fontSize: 24),

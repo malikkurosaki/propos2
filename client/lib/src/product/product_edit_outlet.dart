@@ -34,12 +34,20 @@ class ProductEditOutlet extends StatelessWidget {
                 future: Rot.globalListOutletByProductIdGet(query: "id=${ProductVal.mapData.value.val['id']}"),
                 builder: (con, snap) {
                   if (!snap.hasData) return LinearProgressIndicator();
-                  () async {
-                    if (snap.data!.statusCode == 200) {
-                      await 0.1.delay();
-                      listAvailable.assignAll(jsonDecode(snap.data!.body));
-                    }
-                  }();
+                  Future.delayed(
+                    Duration(microseconds: 1),
+                    () {
+                      if (snap.data!.statusCode == 200) {
+                        listAvailable.assignAll(jsonDecode(snap.data!.body));
+                      }
+                    },
+                  );
+                  // () async {
+                  //   if (snap.data!.statusCode == 200) {
+                  //     await 0.1.delay();
+                  //     listAvailable.assignAll(jsonDecode(snap.data!.body));
+                  //   }
+                  // }();
                   return Container();
                 },
               ),
@@ -52,12 +60,20 @@ class ProductEditOutlet extends StatelessWidget {
             future: Rot.globalOutletListByCompanyIdGet(query: "companyId=${ProductVal.mapData.value.val['companyId']}"),
             builder: (con, snap) {
               if (!snap.hasData) return LinearProgressIndicator();
-              if (snap.data!.statusCode == 200) {
-                () async {
-                  await 0.1.delay();
-                  listOutlet.assignAll(jsonDecode(snap.data!.body));
-                }();
-              }
+              Future.delayed(
+                Duration(microseconds: 1),
+                () {
+                  if (snap.data!.statusCode == 200) {
+                    listOutlet.assignAll(jsonDecode(snap.data!.body));
+                  }
+                },
+              );
+              // if (snap.data!.statusCode == 200) {
+              //   () async {
+              //     await 0.1.delay();
+              //     listOutlet.assignAll(jsonDecode(snap.data!.body));
+              //   }();
+              // }
               return Container();
             },
           ),
@@ -73,7 +89,7 @@ class ProductEditOutlet extends StatelessWidget {
                     onChanged: (val) async {
                       SmartDialog.showLoading();
                       Future.delayed(Duration(seconds: 1), () => SmartDialog.dismiss());
-                      
+
                       final idx = listAvailable.map((e) => e['outletId']).toList().indexOf(e['id']);
 
                       final body = {

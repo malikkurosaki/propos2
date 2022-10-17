@@ -41,7 +41,10 @@ class Device extends StatelessWidget {
                 Expanded(
                   child: DeviceDisplay(),
                 ),
-                DeviceCreate()
+                Visibility(
+                  visible: !media.isMobile,
+                  child: DeviceCreate(),
+                )
                 // _create(media)
               ],
             ),
@@ -167,7 +170,7 @@ class Device extends StatelessWidget {
   //                                                         onPressed: (){
   //                                                           FlutterClipboard.copy(e['deviceId'])
   //                                                                 .then((value) => SmartDialog.showToast(e['deviceId']));
-  //                                                         }, 
+  //                                                         },
   //                                                         icon: Icon(Icons.copy)
   //                                                       )
   //                                                     ],
@@ -282,6 +285,5 @@ class Device extends StatelessWidget {
   //     ),
   //   );
   // }
-
 
 }

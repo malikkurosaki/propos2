@@ -184,6 +184,12 @@ class Rot {
     }) => http.post(Uri.parse("${Config.host}/device-create-post?${query??''}"), headers: {
         "deviceId": Vl.deviceId.val
     }, body: body);
+    static Future < http.Response > deviceListCompanyGet({
+        String ? query,
+        Map ? body
+    }) => http.get(Uri.parse("${Config.host}/device-list-company-get?${query??''}"), headers: {
+        "deviceId": Vl.deviceId.val
+    }, );
     static Future < http.Response > deviceListGet({
         String ? query,
         Map ? body
@@ -272,6 +278,12 @@ class Rot {
         String ? query,
         Map ? body
     }) => http.get(Uri.parse("${Config.host}/global-outlet-list-by-company-id-get?${query??''}"), headers: {
+        "deviceId": Vl.deviceId.val
+    }, );
+    static Future < http.Response > homeCodGet({
+        String ? query,
+        Map ? body
+    }) => http.get(Uri.parse("${Config.host}/home-cod-get?${query??''}"), headers: {
         "deviceId": Vl.deviceId.val
     }, );
     static Future < http.Response > homeCompanyGet({

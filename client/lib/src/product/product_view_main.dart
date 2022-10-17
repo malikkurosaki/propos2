@@ -3,10 +3,13 @@ import 'dart:ui';
 
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:json_table/json_table.dart';
 import 'package:propos/rot.dart';
+import 'package:propos/src/developer/developer_val.dart';
+import 'package:propos/src/product/product_create.dart';
 import 'package:propos/src/product/product_edit.dart';
 import 'package:propos/src/product/product_val.dart';
 import 'package:responsive_builder/responsive_builder.dart';
@@ -40,6 +43,14 @@ class ProductViewMain extends StatelessWidget {
 
     return ResponsiveBuilder(
       builder: (context, media) => Scaffold(
+        floatingActionButton: !media.isMobile
+            ? null
+            : FloatingActionButton(
+                onPressed: () {
+                  showBottomSheet(context: context, builder: (context) => ProductCreate());
+                },
+                child: Icon(Icons.add),
+              ),
         body: Builder(
           builder: (context) => SingleChildScrollView(
             controller: ScrollController(),
@@ -79,7 +90,7 @@ class ProductViewMain extends StatelessWidget {
                                           ProductVal.listSelectOutlet.assignAll(value['Outlet']);
                                           ProductVal.listSelectCategory.assignAll(value['Category']);
                                           // ProductVal.selectCompany.refresh();
-          
+
                                           // Rot.lgnListOutletByCompanyGet(query: "companyId=${value['id']}").then(
                                           //   (res) {
                                           //     if (res.statusCode == 200) {
@@ -88,7 +99,7 @@ class ProductViewMain extends StatelessWidget {
                                           //     }
                                           //   },
                                           // );
-          
+
                                           // Rot.productListCategoryByCompanyIdGet(query: "companyId=${value['id']}").then(
                                           //   (res) {
                                           //     if (res.statusCode == 200) {
@@ -102,7 +113,7 @@ class ProductViewMain extends StatelessWidget {
                               },
                             ),
                           ),
-          
+
                           // select outlet
                           Obx(
                             () => ListTile(
@@ -190,16 +201,26 @@ class ProductViewMain extends StatelessWidget {
                                 },
                                 controller: TextEditingController(text: searchVal),
                                 decoration: InputDecoration(
-                                    prefixIcon: Icon(Icons.search),
-                                    // isDense: true,
-                                    filled: true,
-                                    border: InputBorder.none,
-                                    hintText: "Search",
-                                    suffixIcon: Icon(Icons.close)),
+                                  prefixIcon: Icon(Icons.search),
+                                  // isDense: true,
+                                  filled: true,
+                                  border: InputBorder.none,
+                                  hintText: "Search",
+                                  suffixIcon: InkWell(
+                                    onTap: () async {
+                                      final data = await Rot.productDefaultGet();
+                                      ProductVal.listProduct.value.val = jsonDecode(data.body);
+                                      ProductVal.listProduct.refresh();
+                                    },
+                                    child: Icon(Icons.close),
+                                  ),
+                                ),
                               ),
                               trailing: MaterialButton(
                                 color: Colors.blue,
                                 onPressed: () async {
+                                  SmartDialog.showLoading();
+                                  Future.delayed(Duration(seconds: 1), () => SmartDialog.dismiss());
                                   final data = await Rot.productSearchByCompanyGet(query: "name=$searchVal");
                                   if (data.statusCode == 200) {
                                     ProductVal.listProduct.value.val = jsonDecode(data.body);
@@ -221,7 +242,7 @@ class ProductViewMain extends StatelessWidget {
                     ],
                   ),
                 ),
-          
+
                 Column(
                   children: [
                     SizedBox(
@@ -229,6 +250,7 @@ class ProductViewMain extends StatelessWidget {
                       child: Obx(
                         () {
                           ProductVal.reloadProduct.value;
+
                           return FutureBuilder<http.Response>(
                             future: Rot.productDefaultGet(),
                             builder: (ctx, snap) {
@@ -240,7 +262,7 @@ class ProductViewMain extends StatelessWidget {
                                   ProductVal.listProduct.refresh();
                                 }();
                               }
-          
+
                               return SizedBox.shrink();
                             },
                           );
@@ -257,16 +279,19 @@ class ProductViewMain extends StatelessWidget {
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  !DeveloperVal.showId.value.val ? Container() : Text(e['id'].toString()),
                                   Text(NumberFormat.simpleCurrency(decimalDigits: 0, locale: 'id_ID', name: "")
                                       .format(e['price'])),
-                                  Builder(builder: (context) {
-                                    try {
-                                      final stk = e['ProductStock'][0]['stock'].toString();
-                                      return Text(stk.toString());
-                                    } catch (e) {
-                                      return Text("");
-                                    }
-                                  })
+                                  Builder(
+                                    builder: (context) {
+                                      try {
+                                        final stk = e['ProductStock'][0]['stock'].toString();
+                                        return Text(stk.toString());
+                                      } catch (e) {
+                                        return Text("");
+                                      }
+                                    },
+                                  ),
                                 ],
                               ),
                               // trailing: Icon(
@@ -275,6 +300,7 @@ class ProductViewMain extends StatelessWidget {
                               // ),
                               onTap: () {
                                 ProductVal.mapData.value.val = e;
+
                                 showBottomSheet(context: context, builder: (context) => ProductEdit());
                               },
                             ),

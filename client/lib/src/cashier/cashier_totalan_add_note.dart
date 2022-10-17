@@ -28,46 +28,36 @@ class CashierTotalanAddNote extends StatelessWidget {
       // title: Text("Note"),
       child: Column(
         children: [
-          Container(
-            color: Colors.orange,
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                BackButton(
-                  color: Colors.white,
-                ),
-                Expanded(
-                  child: Text(
-                    itm.value.val['name'].toString(),
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-                MaterialButton(
-                  color: Colors.white,
-                  onPressed: () {
-                    final data = List.from(Val.listorder.value.val);
-                    final idx = data.indexWhere((element) => element['id'] == itm.value.val['id']);
-                    data[idx]['note'] = itm.value.val['note'];
-                    data[idx]['isNote'] = itm.value.val['isNote'];
-                    data[idx]['isDiscount'] = itm.value.val['isDiscount'];
-                    data[idx]['isPercentage'] = itm.value.val['isPercentage'];
-                    data[idx]['percentage'] = itm.value.val['percentage'];
-                    data[idx]['value'] = itm.value.val['value'];
-                    data[idx]['discountId'] = itm.value.val['discountId'];
-                    data[idx]['discountName'] = itm.value.val['discountName'];
-                    data[idx]['discountMap'] = itm.value.val['discountMap'];
-                    Val.listorder.value.val = data;
-                    Val.listorder.refresh();
-                    SmartDialog.showToast("Saved");
-                    Get.back();
-                  },
-                  child: Text(
-                    "Save",
-                    style: TextStyle(color: Colors.orange),
-                  ),
-                )
-              ],
+          ListTile(
+            leading: BackButton(),
+            title: Text(
+              itm.value.val['name'].toString(),
+              overflow: TextOverflow.ellipsis,
+            ),
+            subtitle: Text(NumberFormat.simpleCurrency(locale: 'id_ID', decimalDigits: 0, name: "").format(itm.value.val['price'])),
+            trailing: MaterialButton(
+              color: Colors.orange,
+              onPressed: () {
+                final data = List.from(Val.listorder.value.val);
+                final idx = data.indexWhere((element) => element['id'] == itm.value.val['id']);
+                data[idx]['note'] = itm.value.val['note'];
+                data[idx]['isNote'] = itm.value.val['isNote'];
+                data[idx]['isDiscount'] = itm.value.val['isDiscount'];
+                data[idx]['isPercentage'] = itm.value.val['isPercentage'];
+                data[idx]['percentage'] = itm.value.val['percentage'];
+                data[idx]['value'] = itm.value.val['value'];
+                data[idx]['discountId'] = itm.value.val['discountId'];
+                data[idx]['discountName'] = itm.value.val['discountName'];
+                data[idx]['discountMap'] = itm.value.val['discountMap'];
+                Val.listorder.value.val = data;
+                Val.listorder.refresh();
+                SmartDialog.showToast("Saved");
+                Get.back();
+              },
+              child: Text(
+                "Save",
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ),
           Obx(() {
@@ -93,7 +83,6 @@ class CashierTotalanAddNote extends StatelessWidget {
                 : ListTile(
                     leading: Icon(Icons.edit),
                     title: TextField(
-                      
                       onChanged: (val) => itm.value.val['note'] = val,
                       controller: TextEditingController(text: itm.value.val['note']),
                       decoration: InputDecoration(
@@ -151,9 +140,11 @@ class CashierTotalanAddNote extends StatelessWidget {
                                 builder: (con, snap) {
                                   if (!snap.hasData) return LinearProgressIndicator();
                                   List lsdata = jsonDecode(snap.data!.body);
+
                                   return ListTile(
+                                    // munculkan list discount
                                     title: DropdownSearch<Map>(
-                                      selectedItem: itm.value.val['isDiscount']? itm.value.val['discountMap']: {},
+                                      selectedItem: itm.value.val['isDiscount'] ? itm.value.val['discountMap'] : {},
                                       dropdownDecoratorProps: DropDownDecoratorProps(
                                           dropdownSearchDecoration: InputDecoration(
                                               filled: true, border: InputBorder.none, hintText: "select discount")),

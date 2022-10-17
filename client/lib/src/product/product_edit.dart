@@ -1,15 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:get/get.dart';
 import 'package:propos/rot.dart';
 import 'package:propos/src/product/product_edit_outlet.dart';
 import 'package:propos/src/product/product_edit_stock.dart';
 import 'package:propos/src/product/product_val.dart';
-import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 
 class ProductEdit extends StatelessWidget {
   const ProductEdit({Key? key}) : super(key: key);

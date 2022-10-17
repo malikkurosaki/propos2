@@ -28,10 +28,13 @@ class Category extends StatelessWidget {
                 Expanded(
                   child: CategoryDisplay(),
                 ),
-                SizedBox(
-                  width: media.isMobile ? Get.width : 460,
-                  child: CategoryCreate()
-                  ,
+                Visibility(
+                  visible: !media.isMobile,
+                  child: SizedBox(
+                    width: media.isMobile ? Get.width : 460,
+                    child: CategoryCreate()
+                    ,
+                  ),
                 )
               ],
             ),

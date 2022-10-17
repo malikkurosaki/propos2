@@ -1,6 +1,7 @@
 import 'package:get/route_manager.dart';
 import './pages/business_detail_page.dart';
 import './pages/checkout_page.dart';
+import './pages/developer_page.dart';
 import './pages/emp_home_page.dart';
 import './pages/forgot_password_page.dart';
 import './pages/home_page.dart';
@@ -14,6 +15,7 @@ import './pages/test_page.dart';
 
 import './pages/business_detail_page.dart';
 import './pages/checkout_page.dart';
+import './pages/developer_page.dart';
 import './pages/emp_home_page.dart';
 import './pages/forgot_password_page.dart';
 import './pages/home_page.dart';
@@ -29,6 +31,7 @@ class Pages {
 
   Pages.businessDetailPage(): route = "/business_detail_page";
   Pages.checkoutPage(): route = "/checkout_page";
+  Pages.developerPage(): route = "/developer_page";
   Pages.empHomePage(): route = "/emp_home_page";
   Pages.forgotPasswordPage(): route = "/forgot_password_page";
   Pages.homePage(): route = "/home_page";
@@ -48,6 +51,10 @@ class Pages {
     GetPage(
       name: "/checkout_page",
       page: () => CheckoutPage(),
+    ),
+    GetPage(
+      name: "/developer_page",
+      page: () => DeveloperPage(),
     ),
     GetPage(
       name: "/emp_home_page",
@@ -82,7 +89,7 @@ class Pages {
       page: () => RootPage(),
     ),
     GetPage(
-      name: "/store",
+      name: "/store_page",
       page: () => StorePage(),
     ),
     GetPage(

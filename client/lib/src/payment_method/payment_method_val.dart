@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 class PaymentMethodVal {
   static final listComapany = [].obs;
@@ -9,5 +10,7 @@ class PaymentMethodVal {
   static final listPaymentMethod = [].obs;
 
   static final reaload = false.obs;
+
+  static final mapData = {}.val("PaymentMethodVal.mapData").obs;
 
 }

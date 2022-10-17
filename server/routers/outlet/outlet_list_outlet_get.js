@@ -1,7 +1,7 @@
 module.exports = require('express-async-handler')(async (req, res) => {
     const data = await new (require('@prisma/client').PrismaClient)().outlet.findMany({
         where: {
-            userId: req.userId
+            companyId: req.companyId
         },
         select: {
             id: true,

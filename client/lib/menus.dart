@@ -107,7 +107,8 @@ class Menus {
             "title": "CustomPrice",
             "display": CustomPrice(),
             "icon": Icons.pix_rounded,
-        }
+        },
+        
     ];
 
     static Widget display() => Obx(

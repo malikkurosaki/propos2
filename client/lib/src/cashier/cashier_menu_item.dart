@@ -166,13 +166,18 @@ class CashierMenuItem extends StatelessWidget {
                             (e) => Padding(
                               padding: const EdgeInsets.only(right: 8),
                               child: MaterialButton(
-                                color: Colors.cyan,
-                                child: Container(
+                                color: Colors.orange,
+                                child: SizedBox(
                                   width: 100,
-                                  child: Text(
-                                    e['name'].toString(),
-                                    style: TextStyle(color: Colors.white),
-                                    overflow: TextOverflow.ellipsis,
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.save, size: 16, color: Colors.white,),
+                                      Text(
+                                        e['name'].toString(),
+                                        style: TextStyle(color: Colors.white),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 onPressed: () {

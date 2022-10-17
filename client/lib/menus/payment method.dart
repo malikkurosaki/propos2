@@ -39,10 +39,11 @@ class PaymentMethod extends StatelessWidget {
                 child: PaymentMethodDisplay(),
               ),
             ),
-            SizedBox(
-              width: 360,
-              child: PaymentMethodCreate(),
-            )
+            Visibility(
+              visible: !media.isMobile,
+              child: SizedBox(
+                width: media.isMobile? Get.width: 460,
+                child: PaymentMethodCreate()))
           ],
         )
             // Column(

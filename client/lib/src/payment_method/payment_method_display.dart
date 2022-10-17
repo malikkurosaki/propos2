@@ -5,8 +5,11 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:http/http.dart' as http;
 import 'package:propos/rot.dart';
+import 'package:propos/src/payment_method/payment_method_create.dart';
+import 'package:propos/src/payment_method/payment_method_edit.dart';
 import 'package:propos/src/payment_method/payment_method_val.dart';
 import 'package:get/get.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 
 class PaymentMethodDisplay extends StatelessWidget {
   PaymentMethodDisplay({Key? key}) : super(key: key);
@@ -20,126 +23,162 @@ class PaymentMethodDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Obx(
-          () => Column(
-            children: [
-              Visibility(
-                visible: false,
-                child: Text(
-                  PaymentMethodVal.reaload.value.toString(),
-                ),
+    return ResponsiveBuilder(builder: (context, media) {
+      return Scaffold(
+        floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
+        floatingActionButton: !media.isMobile
+            ? null
+            : FloatingActionButton(
+                onPressed: () {
+                  showBottomSheet(
+                    context: context,
+                    builder: (context) => PaymentMethodCreate(),
+                  );
+                },
+                child: Icon(Icons.add),
               ),
-              SizedBox(
-                height: 2,
-                child: FutureBuilder<http.Response>(
-                  future: Rot.paymentMethodListPaymentMethodGet(),
-                  builder: (con, snap) {
-                    if (snap.connectionState != ConnectionState.done) return LinearProgressIndicator();
-                    if (snap.data!.statusCode == 200) {
-                      final lsData = jsonDecode(snap.data!.body);
-                      Future.delayed(
-                          Duration(milliseconds: 100), () => PaymentMethodVal.listPaymentMethod.assignAll(lsData));
-                    }
-                    return SizedBox.shrink();
+        body: Builder(builder: (context) {
+          return SingleChildScrollView(
+            controller: ScrollController(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Obx(
+                  () {
+                    PaymentMethodVal.reaload.value;
+                    return SizedBox(
+                      height: 4,
+                      child: FutureBuilder<http.Response>(
+                        future: Rot.paymentMethodListPaymentMethodGet(),
+                        builder: (con, snap) {
+                          if (snap.connectionState != ConnectionState.done) return LinearProgressIndicator();
+                          if (snap.data!.statusCode == 200) {
+                            final lsData = jsonDecode(snap.data!.body);
+                            Future.delayed(Duration(milliseconds: 100),
+                                () => PaymentMethodVal.listPaymentMethod.assignAll(lsData));
+                          }
+                          return SizedBox.shrink();
+                        },
+                      ),
+                    );
                   },
                 ),
-              )
-            ],
-          ),
-        ),
-        Flexible(
-          child: Obx(
-            () {
-              PaymentMethodVal.listPaymentMethod.value;
-              return Card(
-                child: ListView(
-                  children: [
-                    Ink(
-                      color: Colors.grey.shade100,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: [
-                            ..._ls.map(
-                              (e) => SizedBox(
-                                width: e['wid'],
-                                child: Text(
-                                  e['title'],
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            )
-                          ],
+                Obx(
+                  () => Column(
+                    children: [
+                      ...PaymentMethodVal.listPaymentMethod.map(
+                        (e) => ListTile(
+                          leading: Text((PaymentMethodVal.listPaymentMethod.indexOf(e) + 1).toString()),
+                          title: Text(
+                            e['name'].toString(),
+                          ),
+                          trailing: Icon(
+                            Icons.check_box,
+                            color: e['isActive'] ? Colors.green : Colors.grey,
+                          ),
+                          onTap: () {
+                            PaymentMethodVal.mapData.value.val = e;
+                            showBottomSheet(
+                              
+                              context: context, builder: (context) => PaymentMethodEdit());
+                          },
                         ),
-                      ),
-                    ),
-                    ...PaymentMethodVal.listPaymentMethod.map(
-                      (el) => Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: [
-                            ..._ls.map(
-                              (e) => SizedBox(
-                                width: e['wid'],
-                                child: e['fid'] == 'no'
-                                    ? Text((PaymentMethodVal.listPaymentMethod.indexOf(el) + 1).toString())
-                                    : e['fid'] == 'isActive'
-                                        ? Icon(
-                                            Icons.circle,
-                                            color: el['isActive'] ? Colors.green : Colors.grey,
-                                          )
-                                        : e['fid'] == 'act'
-                                            ? PopupMenuButton(
-                                                itemBuilder: (con) => [
-                                                  PopupMenuItem(
-                                                    child: Text("Edit"),
-                                                  ),
-                                                  PopupMenuItem(
-                                                    child: Text("Activete"),
-                                                    onTap: () async {
-                                                      final body = {"isActive": true};
+                      )
+                    ],
+                  ),
+                )
+                // Obx(
+                //   () {
+                //     PaymentMethodVal.listPaymentMethod.value;
+                //     return Column(
+                //       children: [
+                //         Ink(
+                //           color: Colors.grey.shade100,
+                //           child: Padding(
+                //             padding: const EdgeInsets.all(8.0),
+                //             child: Row(
+                //               children: [
+                //                 ..._ls.map(
+                //                   (e) => SizedBox(
+                //                     width: e['wid'],
+                //                     child: Text(
+                //                       e['title'],
+                //                       style: TextStyle(fontWeight: FontWeight.bold),
+                //                     ),
+                //                   ),
+                //                 )
+                //               ],
+                //             ),
+                //           ),
+                //         ),
+                //         ...PaymentMethodVal.listPaymentMethod.map(
+                //           (el) => Padding(
+                //             padding: const EdgeInsets.all(8.0),
+                //             child: Row(
+                //               children: [
+                //                 ..._ls.map(
+                //                   (e) => SizedBox(
+                //                     width: e['wid'],
+                //                     child: e['fid'] == 'no'
+                //                         ? Text((PaymentMethodVal.listPaymentMethod.indexOf(el) + 1).toString())
+                //                         : e['fid'] == 'isActive'
+                //                             ? Icon(
+                //                                 Icons.circle,
+                //                                 color: el['isActive'] ? Colors.green : Colors.grey,
+                //                               )
+                //                             : e['fid'] == 'act'
+                //                                 ? PopupMenuButton(
+                //                                     itemBuilder: (con) => [
+                //                                       PopupMenuItem(
+                //                                         child: Text("Edit"),
+                //                                       ),
+                //                                       PopupMenuItem(
+                //                                         child: Text("Activete"),
+                //                                         onTap: () async {
+                //                                           final body = {"isActive": true};
 
-                                                      final res = await Rot.paymentMethodActivatePut(
-                                                          query: 'id=${el["id"]}', body: {"data": jsonEncode(body)});
+                //                                           final res = await Rot.paymentMethodActivatePut(
+                //                                               query: 'id=${el["id"]}',
+                //                                               body: {"data": jsonEncode(body)});
 
-                                                      if (res.statusCode == 201) {
-                                                        PaymentMethodVal.reaload.toggle();
-                                                      }
-                                                    },
-                                                  ),
-                                                  PopupMenuItem(
-                                                    child: Text("Deactivate"),
-                                                    onTap: () async {
-                                                      final body = {"isActive": false};
+                //                                           if (res.statusCode == 201) {
+                //                                             PaymentMethodVal.reaload.toggle();
+                //                                           }
+                //                                         },
+                //                                       ),
+                //                                       PopupMenuItem(
+                //                                         child: Text("Deactivate"),
+                //                                         onTap: () async {
+                //                                           final body = {"isActive": false};
 
-                                                      final res = await Rot.paymentMethodActivatePut(
-                                                          query: 'id=${el["id"]}', body: {"data": jsonEncode(body)});
-                                                      if (res.statusCode == 201) {
-                                                        PaymentMethodVal.reaload.toggle();
-                                                      }
+                //                                           final res = await Rot.paymentMethodActivatePut(
+                //                                               query: 'id=${el["id"]}',
+                //                                               body: {"data": jsonEncode(body)});
+                //                                           if (res.statusCode == 201) {
+                //                                             PaymentMethodVal.reaload.toggle();
+                //                                           }
 
-                                                      debugPrint(res.body);
-                                                    },
-                                                  )
-                                                ],
-                                              )
-                                            : Text(el[e['fid']] ?? ""),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              );
-            },
-          ),
-        )
-      ],
-    );
+                //                                           debugPrint(res.body);
+                //                                         },
+                //                                       )
+                //                                     ],
+                //                                   )
+                //                                 : Text(el[e['fid']] ?? ""),
+                //                   ),
+                //                 )
+                //               ],
+                //             ),
+                //           ),
+                //         )
+                //       ],
+                //     );
+                //   },
+                // )
+              ],
+            ),
+          );
+        }),
+      );
+    });
   }
 }

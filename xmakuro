@@ -163,3 +163,109 @@ function setIp() {
     fs.writeFileSync(tp, rg);
     console.log("success");
 }
+
+
+function CreatePage() {
+
+    const fs = require('fs');
+    const path = require('path');
+    const colors = require('colors');
+    const execSync = require('child_process').execSync;
+    const _ = require('lodash');
+    const beautify = require('js-beautify').js_beautify;
+    const prompts = require("prompts");
+
+    const target = fs.readdirSync(path.join(__dirname, './client/lib/pages'))
+
+    prompts({
+        type: "text",
+        name: "name",
+        message: "masukkan nama page yang ingin anda buat"
+    }).then(({ name }) => {
+        if (name == undefined) return console.log("anda tidak memasukkan nama page".red);
+        if (target.includes(_.snakeCase(name) + "_page.dart")) return console.log("nama page yang anda masukkan sudah ada".red);
+
+        let template = `
+    import 'package:flutter/material.dart';
+    import 'package:responsive_builder/responsive_builder.dart';
+
+    class ${_.upperFirst(_.camelCase(name))}Page extends StatelessWidget {
+    const ${_.upperFirst(_.camelCase(name))}Page({Key? key}) : super(key: key);
+
+    @override
+    Widget build(BuildContext context) {
+        return ResponsiveBuilder(builder: (context, media) {
+        return SafeArea(
+            child: ListView(
+            children: [
+                Text('Hello World'),
+            ],
+            ),
+        );
+        });
+    }
+    }
+
+`
+
+        fs.writeFileSync(path.join(__dirname, `./client/lib/pages/${_.snakeCase(name)}_page.dart`), beautify(template, { indent_size: 2 }));
+        // execSync(`node page_generate.js`, { stdio: "inherit", cwd: path.join(__dirname, './../con/') });
+        console.log("page berhasil dibuat".green);
+    })
+}
+
+function PageGenerate() {
+
+    const fs = require('fs');
+    const path = require('path');
+    const colors = require('colors');
+    const execSync = require('child_process').execSync;
+    const _ = require('lodash');
+    const beautify = require('js-beautify').js_beautify;
+    const prompts = require("prompts");
+
+    const target = fs.readdirSync(path.join(__dirname, './client/lib/pages'));
+
+    let listItm = [];
+    let listImport = [];
+    let listWidget = [];
+    for (let itm of target.map(e => e.split('.')[0])) {
+        if (itm.includes('root')) {
+            listItm.push(`Pages.${_.camelCase(itm)}() : route = "/";`)
+            listWidget.push(`GetPage(
+            name: "/",
+            page: () => ${_.upperFirst(_.camelCase(itm))}(),
+        )`)
+        } else {
+            listItm.push(`Pages.${_.camelCase(itm)}() : route = "/${itm}";`)
+
+            listWidget.push(`GetPage(
+            name: "/${itm}",
+            page: () => ${_.upperFirst(_.camelCase(itm))}(),
+        )`)
+        }
+
+        listImport.push(`import './pages/${itm}.dart';`)
+
+    }
+
+    let template = `
+        import 'package:get/route_manager.dart';
+        ${listImport.join('\n')}
+
+        ${listImport.join('\n')}
+        class Pages {
+        late String route;
+
+        ${listItm.join('\n')}
+
+        static final listPage = <GetPage>[
+            ${listWidget.join(',\n')}
+        ];
+        
+        }
+    `
+
+    fs.writeFileSync(path.join(__dirname, `./client/lib/pages.dart`), beautify(template, { indent_size: 2 }));
+    console.log("page generated");
+}

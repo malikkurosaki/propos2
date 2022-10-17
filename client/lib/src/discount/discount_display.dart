@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:propos/rot.dart';
+import 'package:propos/src/discount/discount_create.dart';
 import 'package:propos/src/discount/discount_val.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
@@ -18,6 +19,17 @@ class DiscountDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     return ResponsiveBuilder(
       builder: (context, media) => Scaffold(
+        floatingActionButton: !media.isMobile
+            ? null
+            : FloatingActionButton(
+                onPressed: () {
+                  showBottomSheet(
+                    context: context,
+                    builder: (context) => DiscountCreate(),
+                  );
+                },
+                child: Icon(Icons.add),
+              ),
         body: Builder(builder: (context) {
           return ListView(
             controller: ScrollController(),
@@ -59,7 +71,10 @@ class DiscountDisplay extends StatelessWidget {
                         leading: Text((DiscountVal.listDiscount.value.val.indexOf(e) + 1).toString()),
                         subtitle: e['isPercentage']
                             ? Text(e['percentage'].toString() + "%")
-                            : Text(NumberFormat.simpleCurrency(decimalDigits: 0, locale: "id_ID", ).format(e['value'])),
+                            : Text(NumberFormat.simpleCurrency(
+                                decimalDigits: 0,
+                                locale: "id_ID",
+                              ).format(e['value'])),
                         trailing: Icon(
                           Icons.check_box,
                           color: e['isActive'] ? Colors.green : Colors.grey,
@@ -114,13 +129,13 @@ class DiscountDisplay extends StatelessWidget {
                                         child: ListTile(
                                           title: MaterialButton(
                                             color: Colors.pink,
-                                            onPressed: () async{
+                                            onPressed: () async {
                                               final res = await Rot.discountDelete(query: "id=${e['id']}");
-                                              if(res.statusCode == 201){
+                                              if (res.statusCode == 201) {
                                                 DiscountVal.reload.refresh();
                                                 SmartDialog.showToast("success");
                                                 Get.back();
-                                              }else{
+                                              } else {
                                                 SmartDialog.showToast(res.body);
                                               }
                                             },

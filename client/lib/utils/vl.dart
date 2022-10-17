@@ -22,6 +22,8 @@ class Vl {
 
   static final cod = {}.val("Vl.cod").obs;
 
+  static final isDebug = false.val("Vl.debug").obs;
+
   static void clear() {
     userId.val = "";
     companyId.val = "";
