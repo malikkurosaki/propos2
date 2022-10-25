@@ -28,8 +28,9 @@ class OutletDisplay extends StatelessWidget {
                 child: Icon(Icons.add),
               ),
         body: Builder(
-          builder: (context) => Card(
-            child: ListView(
+          builder: (context) => SingleChildScrollView(
+            controller: ScrollController(),
+            child: Column(
               children: [
                 SizedBox(
                   height: 4,

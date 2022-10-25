@@ -51,7 +51,13 @@ class Company extends StatelessWidget {
                     Expanded(
                       child: CompanyDisplay(),
                     ),
-                    Visibility(visible: !media.isMobile, child: CompanyCreate())
+                    Visibility(
+                      visible: !media.isMobile,
+                      child: SizedBox(
+                        width: media.isMobile ? Get.width : 460,
+                        child: CompanyCreate(),
+                      ),
+                    )
                   ],
                 ),
               ),

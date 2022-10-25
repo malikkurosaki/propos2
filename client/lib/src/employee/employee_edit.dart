@@ -5,15 +5,16 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:propos/rot.dart';
-import 'package:propos/src/outlet/outlet_val.dart';
+import 'package:propos/src/employee/employee_val.dart';
 import 'package:get/get.dart';
 
-class OutletEdit extends StatelessWidget {
-  const OutletEdit({Key? key}) : super(key: key);
+class EmployeeEdit extends StatelessWidget {
+  const EmployeeEdit({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Material(
+      color: Colors.orange.shade50,
       child: SingleChildScrollView(
         controller: ScrollController(),
         child: Column(
@@ -21,7 +22,7 @@ class OutletEdit extends StatelessWidget {
             ListTile(
               leading: BackButton(),
               title: Text(
-                "Edit Outlet",
+                "Edit Employee",
                 style: TextStyle(fontSize: 18),
               ),
             ),
@@ -29,33 +30,32 @@ class OutletEdit extends StatelessWidget {
             //   color: Colors.grey.shade100,
             //   padding: EdgeInsets.all(8),
             //   child: Row(
-            //     children: [BackButton(), Text("Edit Outlet")],
+            //     children: [BackButton(), Text("Edit Employee")],
             //   ),
             // ),
-            ...OutletVal.mapData.keys.map(
-              (el) => !['name', 'address', 'email', 'phone', 'logoUrl', 'isActive'].contains(el)
+            ...EmployeeVal.mapData.keys.map(
+              (e) => !['name', 'password', 'isActive'].contains(e)
                   ? SizedBox.shrink()
-                  : el.toString() == 'isActive'
+                  : e == 'isActive'
                       ? Obx(
                           () => ListTile(
                             title: CheckboxListTile(
                               title: Text("Is Active ?"),
+                              value: EmployeeVal.mapData['isActive'],
                               onChanged: (val) {
-                                OutletVal.mapData[el] = val;
+                                EmployeeVal.mapData['isActive'] = val;
+                                EmployeeVal.mapData.refresh();
                               },
-                              value: OutletVal.mapData[el],
                             ),
                           ),
                         )
                       : ListTile(
                           title: TextFormField(
-                            onChanged: (val) => OutletVal.mapData[el] = val,
-                            controller: TextEditingController(text: OutletVal.mapData[el] ?? ""),
-                            decoration: InputDecoration(
-                              labelText: el,
-                              filled: true,
-                              border: InputBorder.none,
+                            onChanged: (val) => EmployeeVal.mapData[e] = val,
+                            controller: TextEditingController(
+                              text: EmployeeVal.mapData[e].toString(),
                             ),
+                            decoration: InputDecoration(filled: true, border: InputBorder.none, labelText: e),
                           ),
                         ),
             ),
@@ -81,10 +81,12 @@ class OutletEdit extends StatelessWidget {
                     title: MaterialButton(
                       color: Colors.orange,
                       onPressed: () async {
-                        final res = await Rot.outletUpdatePost(body: {"data": jsonEncode(OutletVal.mapData)});
+                        final body = Map.from(EmployeeVal.mapData);
+                        body.removeWhere((key, value) => value == null);
+                        final res = await Rot.employeeUpdatePost(body: {"data": jsonEncode(body)});
                         if (res.statusCode == 201) {
                           SmartDialog.showToast("success");
-                          OutletVal.reload.toggle();
+                          EmployeeVal.reload.toggle();
                           Get.back();
                         } else {
                           SmartDialog.showToast(res.body);

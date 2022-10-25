@@ -19,6 +19,8 @@ class EmployeeVal {
 
   static final bodyEdit = EmployeeModel().obs;
   static final mapData = {}.obs;
+
+
 }
 
 class EmployeeModel {

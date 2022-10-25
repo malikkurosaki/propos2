@@ -26,6 +26,9 @@ class ProductVal {
   static final primary = ProductModelPrimary();
   static final dataDetail = ProductModelDetail();
 
+  static final mapCompanyOutletCategory = {}.obs;
+  static final mapBodyCreate = {}.val('ProductVal.mapBodyCreate').obs;
+
   static final isCheckAll = false.obs;
   static final listSelected = [].obs;
   // static final lsProduct = [];
@@ -35,6 +38,8 @@ class ProductVal {
   static final listCompany = [].val("ProductVal.listCompany").obs;
   static final selectedCompany = {}.val("ProductVal.selectedCompany2").obs;
   // static final listProduct = [].val("ProductVal.listProduct").obs;
+
+  static final listCompanyCategory = [].obs;
 
   static final listoutlet = [].obs;
   static final selectedOutlet = {}.obs;
@@ -51,7 +56,6 @@ class ProductVal {
   static final listProduct = [].val("ProductVal.listProduct").obs;
 
   static final mapData = {}.val("ProductVal.mapData").obs;
-  
 
   // static Future<void> loadListOutlet() async {
   //   final data = await Rot.productListOutletGet();

@@ -2,12 +2,9 @@ import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:propos/menus.dart';
 import 'package:propos/rot.dart';
 import 'package:propos/src/cashier/cashier_category_view.dart';
 import 'package:propos/src/cashier/cashier_search_box.dart';
@@ -15,8 +12,6 @@ import 'package:propos/src/cashier/casier_val.dart';
 import 'package:propos/utils/config.dart';
 import 'package:propos/utils/val.dart';
 import 'package:responsive_builder/responsive_builder.dart';
-import 'package:short_uuids/short_uuids.dart';
-import 'package:http/http.dart' as http;
 
 /// # Cashier Menu Item
 /// tampilah menu kotak kotak untuk milih menu
@@ -62,15 +57,46 @@ class CashierMenuItem extends StatelessWidget {
             Flexible(
               child: Obx(
                 () => GridView.extent(
+                  controller: ScrollController(),
                   maxCrossAxisExtent: media.isMobile ? Get.width / 2 : 150,
                   childAspectRatio: media.isMobile ? 0.8 : 0.8,
                   children: [
                     for (final prod in CashierVal.listProduct.value.val)
                       InkWell(
+                        onLongPress: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              content: Text("Unselect Item ?"),
+                              actions: [
+                                MaterialButton(
+                                  onPressed: () {
+                                    Get.back();
+                                  },
+                                  child: Text("No"),
+                                ),
+                                MaterialButton(
+                                  color: Colors.pink,
+                                  onPressed: () {
+                                    final lsData = [...Val.listorder.value.val];
+                                    lsData.removeWhere((element) => element["id"] == prod['id']);
+                                    Val.listorder.value.val = lsData;
+                                    Val.listorder.refresh();
+                                  },
+                                  child: Text(
+                                    "Yes",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                )
+                              ],
+                            ),
+                          );
+                        },
                         onTap: () => CashierVal.orderAdd(prod),
-                       
                         child: Card(
-                          borderOnForeground: true,
+                          color: Val.listorder.value.val.map((e) => e['id']).contains(prod['id'])
+                              ? Colors.orange.shade50
+                              : Colors.white,
                           child: Stack(
                             children: [
                               Column(
@@ -106,12 +132,12 @@ class CashierMenuItem extends StatelessWidget {
                                         () {
                                           try {
                                             return Ink(
-                                              color:  prod['ProductStock'][0]['stock'] == 0
+                                              color: prod['ProductStock'][0]['stock'] == 0
                                                   ? Colors.pink
                                                   : prod['ProductStock'][0]['stock'] <=
-                                                      prod['ProductStock'][0]['minStock']
-                                                  ? Colors.orange
-                                                  : Colors.green,
+                                                          prod['ProductStock'][0]['minStock']
+                                                      ? Colors.orange
+                                                      : Colors.green,
                                               child: Row(
                                                 children: [
                                                   Expanded(
@@ -125,7 +151,10 @@ class CashierMenuItem extends StatelessWidget {
                                                           prod['ProductStock'][0]['stock'].toString(),
                                                           style: TextStyle(fontSize: 12, color: Colors.white),
                                                         ),
-                                                        Text("/", style: TextStyle(color: Colors.white, fontSize: 12),),
+                                                        Text(
+                                                          "/",
+                                                          style: TextStyle(color: Colors.white, fontSize: 12),
+                                                        ),
                                                         Text(
                                                           prod['ProductStock'][0]['minStock'].toString(),
                                                           style: TextStyle(fontSize: 12, color: Colors.white),
@@ -133,7 +162,6 @@ class CashierMenuItem extends StatelessWidget {
                                                       ],
                                                     ),
                                                   ),
-                                                 
                                                 ],
                                               ),
                                             );
@@ -146,6 +174,10 @@ class CashierMenuItem extends StatelessWidget {
                                   ),
                                 ],
                               ),
+                              // Align(
+                              //   alignment: Alignment.bottomRight,
+                              //   child: Icon(Icons.check_circle_outline, color: Colors.green,),
+                              // )
                             ],
                           ),
                         ),
@@ -171,7 +203,11 @@ class CashierMenuItem extends StatelessWidget {
                                   width: 100,
                                   child: Row(
                                     children: [
-                                      Icon(Icons.save, size: 16, color: Colors.white,),
+                                      Icon(
+                                        Icons.save,
+                                        size: 16,
+                                        color: Colors.white,
+                                      ),
                                       Text(
                                         e['name'].toString(),
                                         style: TextStyle(color: Colors.white),

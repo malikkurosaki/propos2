@@ -136,6 +136,12 @@ class Rot {
     }) => http.post(Uri.parse("${Config.host}/custom-price-create-post?${query??''}"), headers: {
         "deviceId": Vl.deviceId.val
     }, body: body);
+    static Future < http.Response > customPriceListByCompanyIdGet({
+        String ? query,
+        Map ? body
+    }) => http.get(Uri.parse("${Config.host}/custom-price-list-by-company-id-get?${query??''}"), headers: {
+        "deviceId": Vl.deviceId.val
+    }, );
     static Future < http.Response > customPriceListCompanyGet({
         String ? query,
         Map ? body
@@ -266,6 +272,12 @@ class Rot {
         String ? query,
         Map ? body
     }) => http.get(Uri.parse("${Config.host}/global-list-company-get?${query??''}"), headers: {
+        "deviceId": Vl.deviceId.val
+    }, );
+    static Future < http.Response > globalListCompanyOutletCategoryGet({
+        String ? query,
+        Map ? body
+    }) => http.get(Uri.parse("${Config.host}/global-list-company-outlet-category-get?${query??''}"), headers: {
         "deviceId": Vl.deviceId.val
     }, );
     static Future < http.Response > globalListOutletByProductIdGet({
@@ -410,6 +422,12 @@ class Rot {
         String ? query,
         Map ? body
     }) => http.get(Uri.parse("${Config.host}/product-default-get?${query??''}"), headers: {
+        "deviceId": Vl.deviceId.val
+    }, );
+    static Future < http.Response > productDetailListOutletCategoryGet({
+        String ? query,
+        Map ? body
+    }) => http.get(Uri.parse("${Config.host}/product-detail-list-outlet-category-get?${query??''}"), headers: {
         "deviceId": Vl.deviceId.val
     }, );
     static Future < http.Response > productListCategoryByCompanyIdGet({

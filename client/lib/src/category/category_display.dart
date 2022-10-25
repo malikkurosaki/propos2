@@ -8,6 +8,7 @@ import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:http/http.dart' as http;
 import 'package:propos/rot.dart';
 import 'package:propos/src/category/category_create.dart';
+import 'package:propos/src/category/category_edit.dart';
 import 'package:propos/src/category/category_val.dart';
 import 'package:get/get.dart';
 import 'package:propos/src/developer/developer_val.dart';
@@ -29,7 +30,8 @@ class CategoryDisplay extends StatelessWidget {
                 child: Icon(Icons.add),
               ),
         body: Builder(
-          builder: (context) => Card(
+          builder: (context) => SingleChildScrollView(
+            controller: ScrollController(),
             child: Column(
               children: [
                 SizedBox(
@@ -95,101 +97,15 @@ class CategoryDisplay extends StatelessWidget {
                     );
                   },
                 ),
-                Flexible(
-                    child: Obx(
-                  () => ListView(
+                Obx(
+                  () => Column(
                     children: [
                       ...CategoryVal.listCategory.value.val.map(
                         (element) => ListTile(
                           onTap: () {
                             debugPrint(element.toString());
                             CategoryVal.mapData.assignAll(element);
-                            showBottomSheet(
-                              context: context,
-                              builder: (context) => Material(
-                                child: ListView(
-                                  children: [
-                                    Ink(
-                                      color: Colors.grey.shade100,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Row(
-                                          children: [BackButton(), Text("Edit")],
-                                        ),
-                                      ),
-                                    ),
-                                    ...CategoryVal.mapData.keys.map(
-                                      (e) => !['name', 'isActive'].contains(e)
-                                          ? SizedBox.shrink()
-                                          : e == 'isActive'
-                                              ? Obx(
-                                                  () => ListTile(
-                                                    title: CheckboxListTile(
-                                                      title: Text("Is Active ?"),
-                                                      value: CategoryVal.mapData['isActive'],
-                                                      onChanged: (val) {
-                                                        CategoryVal.mapData['isActive'] = val;
-                                                        // CategoryVal.mapData.refresh();
-                                                      },
-                                                    ),
-                                                  ),
-                                                )
-                                              : ListTile(
-                                                  title: TextFormField(
-                                                    onChanged: (value) => CategoryVal.mapData[e] = value,
-                                                    controller: TextEditingController(text: CategoryVal.mapData[e]),
-                                                    decoration: InputDecoration(
-                                                        filled: true, border: InputBorder.none, labelText: 'Name'),
-                                                  ),
-                                                ),
-                                    ),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                            child: ListTile(
-                                          title: MaterialButton(
-                                            color: Colors.pink,
-                                            onPressed: () {},
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(10.0),
-                                              child: Text(
-                                                "Delete",
-                                                style: TextStyle(color: Colors.white),
-                                              ),
-                                            ),
-                                          ),
-                                        )),
-                                        Expanded(
-                                          child: ListTile(
-                                            title: MaterialButton(
-                                              color: Colors.orange,
-                                              onPressed: () async {
-                                                final res = await Rot.categoryUpdatePost(
-                                                    body: {"data": jsonEncode(CategoryVal.mapData)});
-                                                if (res.statusCode == 201) {
-                                                  SmartDialog.showToast("success");
-                                                  CategoryVal.reload.toggle();
-                                                  Get.back();
-                                                } else {
-                                                  SmartDialog.showToast(res.body);
-                                                }
-                                              },
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(10.0),
-                                                child: Text(
-                                                  "Update",
-                                                  style: TextStyle(color: Colors.white),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              ),
-                            );
+                            showBottomSheet(context: context, builder: (context) => CategoryEdit());
                           },
                           leading: Text((CategoryVal.listCategory.value.val.indexOf(element) + 1).toString()),
                           title: Text(
@@ -204,7 +120,7 @@ class CategoryDisplay extends StatelessWidget {
                       )
                     ],
                   ),
-                ))
+                )
               ],
             ),
           ),

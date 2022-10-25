@@ -164,14 +164,12 @@ model Outlet {
 }
 
 model Product {
-  id                 String               @id @default(uuid())
-  idx                Int?
-  name               String
-  price              Int
-  description        String?              @db.LongText
-  isCustomPrice      Boolean              @default(false)
-  isStock            Boolean              @default(false)
-  isImage            Boolean              @default(false)
+  id          String  @id @default(uuid())
+  idx         Int?
+  name        String
+  price       Int
+  description String? @db.LongText
+
   User               User?                @relation(fields: [userId], references: [id])
   userId             String?
   Outlet             Outlet?              @relation(fields: [outletId], references: [id])
@@ -206,6 +204,10 @@ model Product {
   ProductStock       ProductStock[]
   isActive           Boolean?             @default(true)
   isManual           Boolean?             @default(false)
+  isCustomPrice      Boolean              @default(false)
+  isDetail           Boolean              @default(false)
+  isImage            Boolean              @default(false)
+  isStock            Boolean              @default(false)
 }
 
 model Discount {

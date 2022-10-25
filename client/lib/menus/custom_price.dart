@@ -21,10 +21,13 @@ class CustomPrice extends StatelessWidget {
                     Expanded(
                       child: CustomPriceDisplay()
                     ),
-                    SizedBox(
-                      width: 360,
-                      child: Card(
-                        child: CustomPriceCreate(),
+                    Visibility(
+                      visible: !media.isMobile,
+                      child: SizedBox(
+                        width: 360,
+                        child: Card(
+                          child: CustomPriceCreate(),
+                        ),
                       ),
                     )
                   ],

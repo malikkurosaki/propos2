@@ -27,16 +27,20 @@ class OutletCreate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ResponsiveBuilder(
-      builder: (context, media) {
-        return Card(
+    return ResponsiveBuilder(builder: (context, media) {
+      return Material(
+        color: Colors.blue.shade50,
+        child: SingleChildScrollView(
+          controller: ScrollController(),
           child: Column(
             children: [
               ListTile(
-                leading: media.isMobile? BackButton(): null,
-                title: Text("Create Outlet", style: TextStyle(
-                fontSize: 24
-              ),),),
+                leading: media.isMobile ? BackButton() : null,
+                title: Text(
+                  "Create Outlet",
+                  style: TextStyle(fontSize: 24),
+                ),
+              ),
               SizedBox(
                 height: 4,
                 child: FutureBuilder<http.Response>(
@@ -95,20 +99,20 @@ class OutletCreate extends StatelessWidget {
                     for (final itm in _listInput) {
                       data[itm['title']] = itm['value'];
                     }
-
+      
                     final bodyData = OutletModel.fromJson(data);
                     bodyData.companyId = OutletVal.companyId;
-
+      
                     if (bodyData.companyId!.isEmpty) {
                       SmartDialog.showToast("company no emplty please");
                       return;
                     }
-
+      
                     if (bodyData.name!.isEmpty) {
                       SmartDialog.showToast("name no empty");
                       return;
                     }
-
+      
                     final res = await Rot.outletCreatePost(body: {"data": jsonEncode(bodyData.toJson())});
                     if (res.statusCode == 201) {
                       SmartDialog.showToast("success");
@@ -127,8 +131,8 @@ class OutletCreate extends StatelessWidget {
               )
             ],
           ),
-        );
-      }
-    );
+        ),
+      );
+    });
   }
 }

@@ -141,38 +141,41 @@ class CashierTotalanHeader extends StatelessWidget {
                 // )
               ],
             ),
-            trailing: !media.isMobile
-                ? null
-                : InkWell(
-                    onTap: () {
-                      showBottomSheet(context: context, builder: (context) => Material(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: BackButton(),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text("Select Item"),
-                                        )
-                                      ],
-                                    ),
-                                    // Flexible(child: listMenuItem(media)),
-                                    Flexible(child: CashierMenuItem()),
-                                  ],
-                                ),
-                              ));
-                    },
-                    child: Icon(
-                      Icons.add_box_rounded,
-                      color: Colors.blue,
-                    ),
-                  ),
+            // trailing: !media.isMobile
+            //     ? null
+            //     : InkWell(
+            //         onTap: () {
+            //           showBottomSheet(
+            //             context: context,
+            //             builder: (context) => Material(
+            //               child: Column(
+            //                 crossAxisAlignment: CrossAxisAlignment.start,
+            //                 children: [
+            //                   Row(
+            //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //                     children: [
+            //                       Padding(
+            //                         padding: const EdgeInsets.all(8.0),
+            //                         child: BackButton(),
+            //                       ),
+            //                       Padding(
+            //                         padding: const EdgeInsets.all(8.0),
+            //                         child: Text("Select Item"),
+            //                       )
+            //                     ],
+            //                   ),
+            //                   // Flexible(child: listMenuItem(media)),
+            //                   Flexible(child: CashierMenuItem()),
+            //                 ],
+            //               ),
+            //             ),
+            //           );
+            //         },
+            //         child: Icon(
+            //           Icons.add_box_rounded,
+            //           color: Colors.blue,
+            //         ),
+            //       ),
           ),
         ),
       ),

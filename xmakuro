@@ -44,6 +44,7 @@ if (params.length > 0) {
 const exec = require('child_process').execSync;
 const beautify = require('js-beautify');
 const _ = require('lodash');
+const { execSync } = require('child_process');
 
 function builder() {
     require('./xgenerate')
@@ -268,4 +269,10 @@ function PageGenerate() {
 
     fs.writeFileSync(path.join(__dirname, `./client/lib/pages.dart`), beautify(template, { indent_size: 2 }));
     console.log("page generated");
+}
+
+async function runAndroid() {
+    
+    execSync(`flutter run`, { stdio: "inherit", cwd: path.join(__dirname, "./client") })
+
 }

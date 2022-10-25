@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:propos/menus/product.dart';
 import 'package:propos/rot.dart';
 import 'package:propos/src/product/product_val.dart';
 import 'package:propos/utils/notif.dart';
@@ -45,9 +46,23 @@ class ProductCreateSubmit extends StatelessWidget {
               : MaterialButton(
                   color: Colors.blue,
                   onPressed: () async {
+
+                    // debugPrint(JsonEncoder.withIndent("  ").convert(ProductVal.mapBodyCreate.value.val));
+
+                    final res = await Rot.productCreatePost(body: {"data": jsonEncode(ProductVal.mapBodyCreate.value.val) });
+
+                    debugPrint(res.body);
+
+
+
+                    return;
+                    
+                    // gak dipake dulu karena ada solusi leih siple dan bagus
                     ProductVal.isLoadingCreateButton.value = true;
                     Future.delayed(const Duration(seconds: 2), () => ProductVal.isLoadingCreateButton.value = false);
 
+                    final defaultCod = jsonDecode((await Rot.globalCodGet()).body);
+                    
                     final mapDataId = {};
                     final dataID = await Rot.productCreateIdGet();
                     if (dataID.statusCode == 200) {
@@ -115,7 +130,7 @@ class ProductCreateSubmit extends StatelessWidget {
                       }
 
                       if (ProductVal.dataDetail.listoutlet.isNotEmpty) {
-                        body['listOutlet'] = ProductVal.dataDetail.listoutlet;
+                        body['listOutlet'] = ProductVal.dataDetail.listoutlet.map((element) => element['id']).toList();
                       } else {
                         body['listOutlet'] = [
                           {
@@ -210,7 +225,7 @@ class ProductCreateSubmit extends StatelessWidget {
                       "description": body['des'],
                       "barcodeId": body['barcodeId'],
                       "categoryId": body['categoryId'],
-                      "companyId": body['companyId'],
+                      "companyId": defaultCod['id'],
                       "costOfCapital": body['modal'],
                       "isCustomPrice": body['isCustomPrice'],
                       "isImage": body['isImage'],
@@ -221,34 +236,50 @@ class ProductCreateSubmit extends StatelessWidget {
                       "userId": mapDataId['userId'],
                       "sku": body['sku'],
                       "ProductStock": {
-                        "createMany": {"data": lsStock}
+                        "createMany": {
+                          "data": lsStock,
+                        }
                       },
                       "ProductCustomPrice": body['listCustomPrice'] == null
                           ? null
                           : {
                               "createMany": {"data": body['listCustomPrice']}
                             },
-                      "ProductOutlet": body['listOutlet'] == null
-                          ? null
-                          : {
-                              "createMany": {"data": body['listOutlet']}
-                            },
+                      "ProductOutlet": {
+                        "createMany": {
+                          "data": ProductVal.listoutlet.isEmpty
+                              ? [
+                                  {
+                                    "outletId": defaultCod['Outlet']['id'],
+                                    "companyId": defaultCod['Company']['id'],
+                                  },
+                                ]
+                              : ProductVal.listoutlet.map(
+                                  (e) => {
+                                    "outletId": e['id'],
+                                    "companyId": defaultCod['Company']['id'],
+                                  },
+                                ),
+                        }
+                      },
                     };
 
                     bodyV2.removeWhere((key, value) => value == null);
 
-                    Rot.productCreatePost(body: {"data": jsonEncode(bodyV2)}).then(
-                      (res) {
-                        if (res.statusCode == 201) {
-                          SmartDialog.showToast("success");
-                          ProductVal.reloadProduct.toggle();
-                        } else {
-                          SmartDialog.showToast(res.body);
-                        }
-                      },
-                    );
 
-                    ProductVal.isLoadingCreateButton.value = false;
+
+                    // Rot.productCreatePost(body: {"data": jsonEncode(bodyV2)}).then(
+                    //   (res) {
+                    //     if (res.statusCode == 201) {
+                    //       SmartDialog.showToast("success");
+                    //       ProductVal.reloadProduct.toggle();
+                    //     } else {
+                    //       SmartDialog.showToast(res.body);
+                    //     }
+                    //   },
+                    // );
+
+                    // ProductVal.isLoadingCreateButton.value = false;
                   },
                   child: const Padding(
                     padding: EdgeInsets.all(10.0),

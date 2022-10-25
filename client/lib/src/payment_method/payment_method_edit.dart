@@ -18,6 +18,9 @@ class PaymentMethodEdit extends StatelessWidget {
             child: Column(
               children: [
                 ListTile(
+                  leading: BackButton(),
+                ),
+                ListTile(
                   leading: media.isMobile ? BackButton() : null,
                   title: Text("Edit Payent method"),
                 ),
@@ -38,6 +41,7 @@ class PaymentMethodEdit extends StatelessWidget {
                             )
                           : ListTile(
                               title: TextFormField(
+                                controller: TextEditingController(text: PaymentMethodVal.mapData.value.val['name']),
                                 decoration: InputDecoration(
                                   filled: true,
                                   border: InputBorder.none,

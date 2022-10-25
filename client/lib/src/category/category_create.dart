@@ -18,103 +18,106 @@ class CategoryCreate extends StatelessWidget {
   Widget build(BuildContext context) {
     return ResponsiveBuilder(
       builder: (context, media) {
-        return Card(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ListTile(
-                leading: media.isMobile? BackButton(): null,
-                title: Text("Create Category",
-                style: TextStyle(
-                  fontSize: 24
-                ),
-                ),
-              ),
-              FutureBuilder<http.Response>(
-                future: Rot.categoryListCompanyGet(),
-                builder: (ctx, snp) {
-                  if (snp.connectionState != ConnectionState.done) return LinearProgressIndicator();
-                  if (snp.data!.statusCode == 200) {
-                    Future.delayed(
-                      Duration(microseconds: 1),
-                      () => CategoryVal.listCompanyCreate.assignAll(
-                        jsonDecode(snp.data!.body),
-                      ),
-                    );
-                  }
-                  return SizedBox.shrink();
-                },
-              ),
-              Obx(
-                () => Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Visibility(
-                      visible: false,
-                      child: Text(
-                        CategoryVal.listCompanyCreate.toString(),
-                      ),
-                    ),
-                    ListTile(
-                      title: DropdownSearch<Map>(
-                        dropdownDecoratorProps: DropDownDecoratorProps(
-                            dropdownSearchDecoration:
-                                InputDecoration(filled: true, border: InputBorder.none, hintText: 'Select Company')),
-                        items: [...CategoryVal.listCompanyCreate],
-                        itemAsString: (value) => value['name'].toString(),
-                        onChanged: (value) {
-                          CategoryVal.bodyCreate.value.val['companyId'] = value!['id'];
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Obx(
-                () => ListTile(
-                  title: TextFormField(
-                    onChanged: (value) => CategoryVal.bodyCreate.value.val['name'] = value,
-                    controller: TextEditingController(text: CategoryVal.bodyCreate.value.val['name']),
-                    decoration: InputDecoration(filled: true, border: InputBorder.none, hintText: "Name Category"),
+        return Material(
+          child: SingleChildScrollView(
+            controller: ScrollController(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ListTile(
+                  leading: media.isMobile? BackButton(): null,
+                  title: Text("Create Category",
+                  style: TextStyle(
+                    fontSize: 24
+                  ),
                   ),
                 ),
-              ),
-              ListTile(
-                title: MaterialButton(
-                  color: Colors.blue,
-                  onPressed: () async {
-                    final body = {
-                      "name": CategoryVal.bodyCreate.value.val['name'],
-                      "companyId": CategoryVal.bodyCreate.value.val['companyId']
-                    };
-        
-                    if (body.values.contains("")) {
-                      SmartDialog.showToast("no empty please");
-                      return;
+                FutureBuilder<http.Response>(
+                  future: Rot.categoryListCompanyGet(),
+                  builder: (ctx, snp) {
+                    if (snp.connectionState != ConnectionState.done) return LinearProgressIndicator();
+                    if (snp.data!.statusCode == 200) {
+                      Future.delayed(
+                        Duration(microseconds: 1),
+                        () => CategoryVal.listCompanyCreate.assignAll(
+                          jsonDecode(snp.data!.body),
+                        ),
+                      );
                     }
-        
-                    final data = await Rot.categoryCreatePost(body: {"data": jsonEncode(body)});
-                    if (data.statusCode == 201) {
-                      CategoryVal.bodyCreate.value.val['name'] = "";
-                      CategoryVal.bodyCreate.refresh();
-                      SmartDialog.showToast("Success");
-                      CategoryVal.reload.toggle();
-                    } else {
-                      SmartDialog.showToast("failed");
-                    }
+                    return SizedBox.shrink();
                   },
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Center(
-                      child: Text(
-                        "Save",
-                        style: TextStyle(color: Colors.white),
+                ),
+                Obx(
+                  () => Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Visibility(
+                        visible: false,
+                        child: Text(
+                          CategoryVal.listCompanyCreate.toString(),
+                        ),
                       ),
+                      ListTile(
+                        title: DropdownSearch<Map>(
+                          dropdownDecoratorProps: DropDownDecoratorProps(
+                              dropdownSearchDecoration:
+                                  InputDecoration(filled: true, border: InputBorder.none, hintText: 'Select Company')),
+                          items: [...CategoryVal.listCompanyCreate],
+                          itemAsString: (value) => value['name'].toString(),
+                          onChanged: (value) {
+                            CategoryVal.bodyCreate.value.val['companyId'] = value!['id'];
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Obx(
+                  () => ListTile(
+                    title: TextFormField(
+                      onChanged: (value) => CategoryVal.bodyCreate.value.val['name'] = value,
+                      controller: TextEditingController(text: CategoryVal.bodyCreate.value.val['name']),
+                      decoration: InputDecoration(filled: true, border: InputBorder.none, hintText: "Name Category"),
                     ),
                   ),
                 ),
-              )
-            ],
+                ListTile(
+                  title: MaterialButton(
+                    color: Colors.blue,
+                    onPressed: () async {
+                      final body = {
+                        "name": CategoryVal.bodyCreate.value.val['name'],
+                        "companyId": CategoryVal.bodyCreate.value.val['companyId']
+                      };
+            
+                      if (body.values.contains("")) {
+                        SmartDialog.showToast("no empty please");
+                        return;
+                      }
+            
+                      final data = await Rot.categoryCreatePost(body: {"data": jsonEncode(body)});
+                      if (data.statusCode == 201) {
+                        CategoryVal.bodyCreate.value.val['name'] = "";
+                        CategoryVal.bodyCreate.refresh();
+                        SmartDialog.showToast("Success");
+                        CategoryVal.reload.toggle();
+                      } else {
+                        SmartDialog.showToast("failed");
+                      }
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Center(
+                        child: Text(
+                          "Save",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
           ),
         );
       }

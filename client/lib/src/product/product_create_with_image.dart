@@ -25,45 +25,53 @@ class ProductCreateWithImage extends StatelessWidget {
   //   required this.productImage
   // }) : super(key: key);
 
-
   // final dataImage = _ProductImage();
   // final RxMap<String, dynamic> productImage;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Obx(
-        () => Column(
-          children: [
-            CheckboxListTile(
-              title: const Text("Include With Image ?"),
-              value: ProductVal.dataImage.isInclude.value,
+    return Obx(
+      () => Column(
+        children: [
+          ListTile(
+            title: CheckboxListTile(
+              title: const Text(
+                "Include With Image ?",
+                textAlign: TextAlign.end,
+              ),
+              value: ProductVal.mapBodyCreate.value.val['isImage'] ?? false,
               onChanged: (value) {
-                ProductVal.dataImage.isInclude.value = value!;
+                final data = ProductVal.mapBodyCreate.value.val;
+                data['isImage'] = value;
+                ProductVal.mapBodyCreate.value.val = data;
+                ProductVal.mapBodyCreate.refresh();
+
+                // ProductVal.dataImage.isInclude.value = value!;
               },
-              subtitle: const Text("tab pada gambar dibawah untuk memulai upload gambar"),
-            ),
-            Visibility(
-              visible: ProductVal.dataImage.isInclude.value,
-              child: InkWell(
-                child: SizedBox(
-                    width: double.infinity,
-                    child: CachedNetworkImage(
-                        errorWidget: (context, url, error) => const Center(child: Icon(Icons.error)),
-                        placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
-                        imageUrl: "${Config.host}/product-image/${ProductVal.productImage['name']}")),
-                onTap: () async {
-                  await _uploadImage();
-                },
+              subtitle: const Text(
+                "tab pada gambar dibawah untuk memulai upload gambar",
+                textAlign: TextAlign.end,
               ),
             ),
-          ],
-        ),
+          ),
+          Visibility(
+            visible: ProductVal.mapBodyCreate.value.val['isImage'] ?? false,
+            child: InkWell(
+              child: SizedBox(
+                  width: double.infinity,
+                  child: CachedNetworkImage(
+                      errorWidget: (context, url, error) => const Center(child: Icon(Icons.error)),
+                      placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+                      imageUrl: "${Config.host}/product-image/${ProductVal.productImage['name']}")),
+              onTap: () async {
+                await _uploadImage();
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
-
 
   _uploadImage() async {
     final upload = http.MultipartRequest(
@@ -75,12 +83,18 @@ class ProductCreateWithImage extends StatelessWidget {
       upload.files.add(http.MultipartFile.fromBytes("image", await image.readAsBytes(), filename: "${image.name}.png"));
       final res = await upload.send().then((value) => value.stream.bytesToString());
       final result = jsonDecode(res);
+
+      final data = ProductVal.mapBodyCreate.value.val;
+      data['productImageId'] = result['id'];
+
+      ProductVal.mapBodyCreate.value.val = data;
+
       ProductVal.productImage.assignAll(result);
       ProductVal.productImage.refresh();
       ProductVal.dataImage.imageId.value = ProductVal.productImage['id'];
       ProductVal.dataImage.imageName = result['name'];
 
-      debugPrint(result.toString());
+      // debugPrint(result.toString());
 
       // debugPrint(result.toString());
     } else {
@@ -88,5 +102,3 @@ class ProductCreateWithImage extends StatelessWidget {
     }
   }
 }
-
-

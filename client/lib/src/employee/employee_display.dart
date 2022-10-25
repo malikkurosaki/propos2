@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:propos/rot.dart';
 import 'package:propos/src/developer/developer_val.dart';
 import 'package:propos/src/employee/employee_create.dart';
+import 'package:propos/src/employee/employee_edit.dart';
 import 'package:propos/src/employee/employee_val.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
@@ -119,92 +120,7 @@ class EmployeeDisplay extends StatelessWidget {
                                     EmployeeVal.mapData.assignAll(el);
                                     showBottomSheet(
                                       context: context,
-                                      builder: (context) => Material(
-                                        child: ListView(
-                                          children: [
-                                            Container(
-                                              color: Colors.grey.shade100,
-                                              padding: EdgeInsets.all(8),
-                                              child: Row(
-                                                children: [BackButton(), Text("Edit Employee")],
-                                              ),
-                                            ),
-                                            ...EmployeeVal.mapData.keys.map(
-                                              (e) => !['name', 'password', 'isActive'].contains(e)
-                                                  ? SizedBox.shrink()
-                                                  : e == 'isActive'
-                                                      ? Obx(
-                                                          () => ListTile(
-                                                            title: CheckboxListTile(
-                                                              title: Text("Is Active ?"),
-                                                              value: EmployeeVal.mapData['isActive'],
-                                                              onChanged: (val) {
-                                                                EmployeeVal.mapData['isActive'] = val;
-                                                                EmployeeVal.mapData.refresh();
-                                                              },
-                                                            ),
-                                                          ),
-                                                        )
-                                                      : ListTile(
-                                                          title: TextFormField(
-                                                            onChanged: (val) => EmployeeVal.mapData[e] = val,
-                                                            controller: TextEditingController(
-                                                              text: EmployeeVal.mapData[e].toString(),
-                                                            ),
-                                                            decoration: InputDecoration(
-                                                                filled: true, border: InputBorder.none, labelText: e),
-                                                          ),
-                                                        ),
-                                            ),
-                                            Row(
-                                              children: [
-                                                Expanded(
-                                                  child: ListTile(
-                                                    title: MaterialButton(
-                                                      color: Colors.pink,
-                                                      onPressed: () {},
-                                                      child: Padding(
-                                                        padding: const EdgeInsets.all(10.0),
-                                                        child: Text(
-                                                          "Delete",
-                                                          style: TextStyle(color: Colors.white),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  child: ListTile(
-                                                    title: MaterialButton(
-                                                      color: Colors.orange,
-                                                      onPressed: () async {
-                                                        final body = Map.from(EmployeeVal.mapData);
-                                                        body.removeWhere((key, value) => value == null);
-                                                        final res = await Rot.employeeUpdatePost(
-                                                            body: {"data": jsonEncode(body)});
-                                                        if (res.statusCode == 201) {
-                                                          SmartDialog.showToast("success");
-                                                          EmployeeVal.reload.toggle();
-                                                          Get.back();
-                                                        } else {
-                                                          SmartDialog.showToast(res.body);
-                                                        }
-                                                      },
-                                                      child: Padding(
-                                                        padding: const EdgeInsets.all(10.0),
-                                                        child: Text(
-                                                          "Update",
-                                                          style: TextStyle(color: Colors.white),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                )
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      ),
+                                      builder: (context) => EmployeeEdit(),
                                     );
                                   },
                                 )

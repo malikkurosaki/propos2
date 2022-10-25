@@ -1,19 +1,17 @@
 import 'dart:convert';
-import 'dart:ui';
 
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:json_table/json_table.dart';
 import 'package:propos/rot.dart';
 import 'package:propos/src/developer/developer_val.dart';
 import 'package:propos/src/product/product_create.dart';
 import 'package:propos/src/product/product_edit.dart';
 import 'package:propos/src/product/product_val.dart';
 import 'package:responsive_builder/responsive_builder.dart';
-import 'package:http/http.dart' as http;
 
 class ProductViewMain extends StatelessWidget {
   const ProductViewMain({Key? key}) : super(key: key);
@@ -54,7 +52,8 @@ class ProductViewMain extends StatelessWidget {
         body: Builder(
           builder: (context) => SingleChildScrollView(
             controller: ScrollController(),
-            child: Column(
+            child: 
+            Column(
               children: [
                 // select Company
                 Card(
@@ -381,8 +380,10 @@ class ProductViewMain extends StatelessWidget {
                     // ),
                   ],
                 )
+              
               ],
             ),
+          
           ),
         ),
       ),
